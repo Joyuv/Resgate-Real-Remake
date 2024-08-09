@@ -13,9 +13,10 @@ def jogar():
     #Diminuindo os fps para otimizar o jogo ^
 
 
-    #CARREGANDO IMAGENS v
+#region CARREGANDO IMAGENS
     knight = pygame.image.load('imagens/Knight.png')
     knight = pygame.transform.scale(knight,(48,48),)
+    olhando = 'Direita'
 
     princesa = pygame.image.load('imagens/Princesa.png')
     princesa = pygame.transform.scale(princesa,(48,48))
@@ -28,7 +29,10 @@ def jogar():
 
     grid = pygame.image.load('imagens/Mapa.png')
     grid = pygame.transform.scale(grid,(480,480))
-    #CARREGANDO IMAGENS ^
+    #endregion CARREGANDO IMAGENS
+
+    charx = 112 + 48*randint(0,9)
+    chary = 112 + 48*randint(0,9)
 
     #krect = knight.get_rect(topleft=(40,60))
 
@@ -40,7 +44,7 @@ def jogar():
 
     run = True
     while run:
-        #EVENTOS v
+        #region EVENTOS
         
         for event in pygame.event.get():
             print(event)
@@ -48,7 +52,39 @@ def jogar():
                 
                 run = False
 
-        #EVENTOS ^
+            #region Movimento
+            if event.type == pygame.KEYDOWN:
+
+                if event.key == pygame.K_d:
+                    if charx + 48 >= 590:
+                        pass
+                    else:
+                        charx += 48
+                        if olhando == "Esquerda":
+                            knight = pygame.transform.flip(knight, True, False)
+                            olhando = "Direita"
+                if event.key == pygame.K_a:
+                    if charx - 48 <= 110:
+                        pass
+                    else:
+                        charx -= 48
+                        if olhando == "Direita":
+                            knight = pygame.transform.flip(knight, True, False)
+                            olhando = "Esquerda"
+
+                if event.key == pygame.K_w:
+                    if chary - 48 <= 110:
+                        pass
+                    else:
+                        chary -= 48
+                if event.key == pygame.K_s:
+                    if chary + 48 >= 590:
+                        pass
+                    else:
+                        chary += 48
+            #endregion Movimento
+
+        #endregion EVENTOS
 
         tela.fill('gray')
 
@@ -66,12 +102,11 @@ def jogar():
 
         tela.blit(grid,(112,112))
 
-        tela.blit(knight,(112,112))
+        tela.blit(knight,(charx,chary))
         tela.blit(princesa,(160,160))
         #tela.blit(knight,krect)
-
-        
-        
+    
+    
         pygame.display.flip()
         dt = clock.tick(30)
     pygame.quit()

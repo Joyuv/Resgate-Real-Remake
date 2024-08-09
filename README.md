@@ -1,1 +1,1 @@
-Projetinho sugerido pelo grandissísimo Ciro Gomes (Não o político)
+Projetinho sugerido pelo grandissísimo Ciro (Não o político)
