@@ -1,6 +1,7 @@
 import pygame
-from random import randint
-
+from random import randint, getrandbits
+import time
+import sys
 
 def jogar():
 #region PREPARAÇÃO DO AMBIENTE
@@ -18,10 +19,65 @@ def jogar():
 
 #endregion PREPARAÇÃO DO AMBIENTE
 
-#region CARREGANDO IMAGENS
-    knight = pygame.image.load('imagens/Knight.png')
-    knight = pygame.transform.scale(knight,(48,48),)
-    
+#region Personagens/Objetos
+    class player():
+
+        def __init__(self, coorx, coory):
+            self.__img = pygame.transform.scale(pygame.image.load('imagens/Knight.png'), (48,48),)
+            self.__olhando = True
+            self.__coorx = coorx
+            self.__coory = coory
+        
+        def get_coorx(self):
+            return self.__coorx
+        def get_coory(self):
+            return self.__coory
+        def get_olhando(self):
+            return self.__olhando
+        def get_img(self):
+            return self.__img
+
+        def set_coorx(self, coorx):
+            self.__coorx = coorx
+        def set_coory(self, coory):
+            self.__coory = coory
+        def set__olhando(self, olhando):
+            self.__olhando = olhando
+        def set_img(self, img):
+            self.__img = img
+        
+        def mover(self, key):
+            dist = 48
+            if key == pygame.K_d or key == pygame.K_RIGHT:
+                    if self.__coorx + 48 >= 590:
+                        pass
+                    else:
+                        self.__coorx += dist
+                        if self.__olhando == False:
+                            self.__img = pygame.transform.flip(self.__img, True, False)
+                            self.__olhando = True
+            if key == pygame.K_a or key == pygame.K_LEFT:
+                if self.__coorx - 48 <= 110:
+                    pass
+                else:
+                    self.__coorx -= dist
+                    if self.__olhando == True:
+                        self.__img = pygame.transform.flip(self.__img, True, False)
+                        self.__olhando = False
+            if key == pygame.K_w or key == pygame.K_UP:
+                if self.__coory - 48 < 110:
+                    pass
+                else:
+                    self.__coory -= dist
+            if key == pygame.K_s or key == pygame.K_DOWN:
+                if self.__coory + 48 < 110:
+                    pass
+                else:
+                    self.__coory += dist
+
+#endregion
+
+#region CARREGANDO IMAGENS   
 
     princesa = pygame.image.load('imagens/Princesa.png')
     princesa = pygame.transform.scale(princesa,(48,48))
@@ -35,9 +91,14 @@ def jogar():
     grid = pygame.image.load('imagens/Mapa.png')
     grid = pygame.transform.scale(grid,(480,480))
     #endregion CARREGANDO IMAGENS
+    #region RECTS
+
+    prinx = 112 + 48*randint(0,9)
+    priny = 112 + 48*randint(0,9)
+
+    jgdr1 = player(112 + 48*randint(0,9), 112 + 48*randint(0,9))
     
-    
-#region RECTS
+
     charx = 112 + 48*randint(0,9)
     chary = 112 + 48*randint(0,9)
     charect = pygame.Rect(charx,chary,48,48)
@@ -108,7 +169,7 @@ def jogar():
                 y = 48
         rect = pygame.Rect(charx+x, chary+y, 48,48)
         return rect
-#endregion RECTS
+    #endregion RECTS
     
 
     olhando = 'Direita'
