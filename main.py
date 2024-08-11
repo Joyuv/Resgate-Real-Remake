@@ -2,6 +2,9 @@ import pygame
 from random import randint, getrandbits
 import sys
 
+import pygame.freetype
+import pygame.ftfont
+
 
 def jogar():
 #region PREPARAÇÃO DO AMBIENTE
@@ -184,9 +187,35 @@ def jogar():
         
         cordwall.append(Paredes(x,y).getcord())
     
+    info = True
+    
+    fonte = pygame.font.SysFont('fonte/PixelGameFont.ttf',20)
+    fonte2 = pygame.font.SysFont('fonte/PixelGameFont.ttf',30)
+
+    wasd = pygame.image.load('imagens/wasd.png')
+    wasd = pygame.transform.scale_by(wasd,4)
+
+    setinhas = pygame.image.load('imagens/setinhas.png')
+    setinhas = pygame.transform.scale_by(setinhas,4)
+    
     
 
-    
+    while info:
+        tela.blit(fonte.render('TODAS AS POSIÇÕES DE PERSONAGENS, BARREIRAS E MONSTROS SÃO GERADAS ALEATORIAMENTE',False,'white'),(8,0))
+        tela.blit(fonte2.render('PRESSIONE QUALQUER TECLA PARA INICIAR',False,'white'),(120,260))
+        tela.blit(wasd,(420,300))
+        tela.blit(setinhas,(100,300))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.KEYDOWN:
+                info = False
+
+        
+        pygame.display.flip()
+
+
+        
     #endregion RECTS
 
     run = True
