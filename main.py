@@ -180,6 +180,8 @@ def jogar():
 
         rectotal = Paredes(x,y).rect()
 
+        #podia fazer isso do while dentro da classe paredes 
+        #mas ciro não deixou usar variável global então vai assim mesmo
         while any(rectotal[0].colliderect(condicoes[a])for a in range(0,len(condicoes))) or any(rectotal[1].colliderect(condicoes[a])for a in range(0,len(condicoes))):
             x = 112 + 48*randint(0,9)
             y = 112 + 48*randint(0,9)
@@ -241,7 +243,7 @@ def jogar():
             if event.type == pygame.KEYDOWN:
 
                 jgdr1.mover(event.key)
-
+                
                 # if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                     
                 #     if jgdr1.get_coorx() + 48 >= 590:
@@ -312,7 +314,7 @@ def jogar():
             run = False
             ganhou = True
 
-        pygame.display.flip()
+        pygame.display.flip() #atualizar os frames a cada vez que roda o while
         clock.tick(30) #Diminuindo os fps para otimizar o jogo
     
     
