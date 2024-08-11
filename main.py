@@ -1,7 +1,7 @@
 import pygame
 from random import randint, getrandbits
 import sys
-#DE ALGUM JEITO A BARREIRA SPAWNOU DENTRO DO CAVALEIRO, ARRUMAR DEPOIS
+
 
 def jogar():
 #region PREPARAÇÃO DO AMBIENTE
@@ -64,25 +64,27 @@ def jogar():
         def mover(self, key):
             dist = 48
             if key == pygame.K_d or key == pygame.K_RIGHT:
+                if self.__olhando == False:
+                        self.__img = pygame.transform.flip(self.__img, True, False)
+                        self.__olhando = True
                 if self.__coorx + 48 >= 590:
                     pass
                 elif any(nextrect(x='right').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,2)):
                     pass
                 else:
                     self.__coorx += dist
-                    if self.__olhando == False:
-                        self.__img = pygame.transform.flip(self.__img, True, False)
-                        self.__olhando = True
+                    
             if key == pygame.K_a or key == pygame.K_LEFT:
+                if self.__olhando == True:
+                        self.__img = pygame.transform.flip(self.__img, True, False)
+                        self.__olhando = False
                 if self.__coorx - 48 <= 110:
                     pass
                 elif any(nextrect(x='left').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,2)):
                     pass
                 else:
                     self.__coorx -= dist
-                    if self.__olhando == True:
-                        self.__img = pygame.transform.flip(self.__img, True, False)
-                        self.__olhando = False
+                    
             if key == pygame.K_w or key == pygame.K_UP:
                 if self.__coory - 48 < 110:
                     pass
@@ -99,7 +101,7 @@ def jogar():
                     self.__coory += dist
 
 #endregion
-
+    
 #region CARREGANDO IMAGENS   
 
     princesa = pygame.image.load('imagens/Princesa.png')
@@ -117,15 +119,14 @@ def jogar():
 
     #region RECTS
 
-    prinx = 112 + 48*randint(0,9)
-    priny = 112 + 48*randint(0,9)
+    prinx = 112 #+ 48*randint(0,9)
+    priny = 112 #+ 48*randint(0,9)
 
     jgdr1 = player(112 + 48*randint(0,9), 112 + 48*randint(0,9))
     
     charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
 
-    prinx = 112 + 48*randint(0,9)
-    priny = 112 + 48*randint(0,9)
+    
     
     
     
@@ -149,16 +150,18 @@ def jogar():
     condicoes = [charect,prinrect]
 
     class Paredes:
-    
+        global condicoes
         def __init__(self, x, y):
             
             self.x = x
             self.y = y
             
+            
         def rect(self):
             
             self.rectx = pygame.Rect(self.x-48,self.y,48*3, 48)
             self.recty = pygame.Rect(self.x,self.y-48,48,48*3)
+
             self.listarect = [self.rectx,self.recty]
             return self.listarect
         def getcord(self):
@@ -172,20 +175,25 @@ def jogar():
     cordwall = []
 
     for a in range(0,qntwall):
-        x = 112 + 48*randint(0,9)
-        y = 112 + 48*randint(0,9)
+        x = 112 #+ 48*randint(0,9)
+        y = 112 #+ 48*randint(0,9)
 
-        for b in condicoes:
-            while b.colliderect(Paredes(x,y).rect()[0]) or b.colliderect(Paredes(x,y).rect()[1]):
-                x = 112 + 48*randint(0,9)
-                y = 112 + 48*randint(0,9)
+        rectotal = Paredes(x,y).rect()
+
+        while any(rectotal[0].colliderect(condicoes[a])for a in range(0,len(condicoes))) or any(rectotal[1].colliderect(condicoes[a])for a in range(0,len(condicoes))):
+            x = 112 + 48*randint(0,9)
+            y = 112 + 48*randint(0,9)
+
+            rectotal = Paredes(x,y).rect()
+            
+
+
+        rectwall.append(rectotal)
         
-        rectwall.append(Paredes(x,y).rect())
-
         
         cordwall.append(Paredes(x,y).getcord())
     
-    info = True
+    
     
     fonte = pygame.font.SysFont('fonte/PixelGameFont.ttf',20)
     fonte2 = pygame.font.SysFont('fonte/PixelGameFont.ttf',30)
@@ -197,7 +205,7 @@ def jogar():
     setinhas = pygame.transform.scale_by(setinhas,4)
     
     
-
+    info = True
     while info:
         tela.blit(fonte.render('TODAS AS POSIÇÕES DE PERSONAGENS, BARREIRAS E MONSTROS SÃO GERADAS ALEATORIAMENTE',False,'white'),(8,0))
         tela.blit(fonte2.render('PRESSIONE QUALQUER TECLA PARA INICIAR',False,'white'),(120,260))
@@ -206,6 +214,7 @@ def jogar():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN:
                 info = False
 
@@ -215,7 +224,8 @@ def jogar():
 
         
     #endregion RECTS
-
+    ganhou = False
+    perdeu = False
     run = True
     while run:
         charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
@@ -224,8 +234,8 @@ def jogar():
         for event in pygame.event.get():
             
             if event.type == pygame.QUIT:
-                
-                run = False
+                pygame.quit()
+                sys.exit()
 
             #region MOVIMENTO
             if event.type == pygame.KEYDOWN:
@@ -298,13 +308,35 @@ def jogar():
         tela.blit(jgdr1.get_img(),charect)
         tela.blit(princesa,prinrect)
         
-        
-    
+        if charect.colliderect(prinrect):
+            run = False
+            ganhou = True
+
         pygame.display.flip()
         clock.tick(30) #Diminuindo os fps para otimizar o jogo
-    pygame.quit()
-    sys.exit()
     
+    
+    
+    while ganhou:
+        tela.fill('black')
+        tela.blit(fonte2.render('Parabéns! Você salvou a princesa',False,'white'),(190,300))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        pygame.display.flip()
+        clock.tick(30)
+
+    
+    while perdeu:
+        tela.fill('black')
+        tela.blit(fonte2.render('A princesa foi capturada pelos monstros :C',False,'white'),(140,300))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        pygame.display.flip()
+        clock.tick(30)
     
 if __name__ == '__main__':
     jogar()
