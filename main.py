@@ -1,5 +1,5 @@
 import pygame
-from random import randint
+from random import randint, getrandbits
 import time
 import sys
 
@@ -19,10 +19,65 @@ def jogar():
 
 #endregion PREPARAÇÃO DO AMBIENTE
 
-#region CARREGANDO IMAGENS
-    knight = pygame.image.load('imagens/Knight.png')
-    knight = pygame.transform.scale(knight,(48,48),)
-    
+#region Personagens/Objetos
+    class player():
+
+        def __init__(self, coorx, coory):
+            self.__img = pygame.transform.scale(pygame.image.load('imagens/Knight.png'), (48,48),)
+            self.__olhando = True
+            self.__coorx = coorx
+            self.__coory = coory
+        
+        def get_coorx(self):
+            return self.__coorx
+        def get_coory(self):
+            return self.__coory
+        def get_olhando(self):
+            return self.__olhando
+        def get_img(self):
+            return self.__img
+
+        def set_coorx(self, coorx):
+            self.__coorx = coorx
+        def set_coory(self, coory):
+            self.__coory = coory
+        def set__olhando(self, olhando):
+            self.__olhando = olhando
+        def set_img(self, img):
+            self.__img = img
+        
+        def mover(self, key):
+            dist = 48
+            if key == pygame.K_d or key == pygame.K_RIGHT:
+                    if self.__coorx + 48 >= 590:
+                        pass
+                    else:
+                        self.__coorx += dist
+                        if self.__olhando == False:
+                            self.__img = pygame.transform.flip(self.__img, True, False)
+                            self.__olhando = True
+            if key == pygame.K_a or key == pygame.K_LEFT:
+                if self.__coorx - 48 <= 110:
+                    pass
+                else:
+                    self.__coorx -= dist
+                    if self.__olhando == True:
+                        self.__img = pygame.transform.flip(self.__img, True, False)
+                        self.__olhando = False
+            if key == pygame.K_w or key == pygame.K_UP:
+                if self.__coory - 48 < 110:
+                    pass
+                else:
+                    self.__coory -= dist
+            if key == pygame.K_s or key == pygame.K_DOWN:
+                if self.__coory + 48 < 110:
+                    pass
+                else:
+                    self.__coory += dist
+
+#endregion
+
+#region CARREGANDO IMAGENS   
 
     princesa = pygame.image.load('imagens/Princesa.png')
     princesa = pygame.transform.scale(princesa,(48,48))
@@ -37,12 +92,10 @@ def jogar():
     grid = pygame.transform.scale(grid,(480,480))
     #endregion CARREGANDO IMAGENS
 
-    charx = 112 + 48*randint(0,9)
-    chary = 112 + 48*randint(0,9)
+    prinx = 112 + 48*randint(0,9)
+    priny = 112 + 48*randint(0,9)
 
-
-
-    olhando = 'Direita'
+    jgdr1 = player(112 + 48*randint(0,9), 112 + 48*randint(0,9))
 
     run = True
     while run:
@@ -57,33 +110,8 @@ def jogar():
             #region Movimento
             if event.type == pygame.KEYDOWN:
 
-                if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-                    if charx + 48 >= 590:
-                        pass
-                    else:
-                        charx += 48
-                        if olhando == "Esquerda":
-                            knight = pygame.transform.flip(knight, True, False)
-                            olhando = "Direita"
-                if event.key == pygame.K_a or event.key == pygame.K_LEFT:
-                    if charx - 48 <= 110:
-                        pass
-                    else:
-                        charx -= 48
-                        if olhando == "Direita":
-                            knight = pygame.transform.flip(knight, True, False)
-                            olhando = "Esquerda"
+                jgdr1.mover(event.key) # Change_log: O movimento agora é uma função atrelada ao objeto "jgdr1"
 
-                if event.key == pygame.K_w or event.key == pygame.K_UP:
-                    if chary - 48 <= 110:
-                        pass
-                    else:
-                        chary -= 48
-                if event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                    if chary + 48 >= 590:
-                        pass
-                    else:
-                        chary += 48
             #endregion Movimento
 
         #endregion EVENTOS
@@ -104,8 +132,8 @@ def jogar():
 
         tela.blit(grid,(112,112))
 
-        tela.blit(knight,(charx,chary))
-        tela.blit(princesa,(160,160))
+        tela.blit(jgdr1.get_img(),(jgdr1.get_coorx(),jgdr1.get_coory()))
+        tela.blit(princesa,(prinx,priny))
         #tela.blit(knight,krect)
     
     
