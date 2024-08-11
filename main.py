@@ -4,19 +4,25 @@ import time
 import sys
 
 def jogar():
-    pygame.init()
-    pygame.key.get_focused()
-    tela = pygame.display.set_mode((700,700))
+#region PREPARAÇÃO DO AMBIENTE
+    pygame.init() #iniciando o módulo pygame
+    pygame.key.get_focused() #função para reconhecer eventos do teclado
+    
+    icone = pygame.image.load('imagens/Icon.png')
 
-    #Diminuindo os fps para otimizar o jogo v
-    clock = pygame.time.Clock()
-    #Diminuindo os fps para otimizar o jogo ^
+    tela = pygame.display.set_mode((700,700)) #setando resolução da tela
+    pygame.display.set_caption('Resgate Real') #nome da janela
+    pygame.display.set_icon(icone) #icone da janela
+    
+    clock = pygame.time.Clock() #variável clock para diminuir os FPS em breve
+    
 
+#endregion PREPARAÇÃO DO AMBIENTE
 
 #region CARREGANDO IMAGENS
     knight = pygame.image.load('imagens/Knight.png')
     knight = pygame.transform.scale(knight,(48,48),)
-    olhando = 'Direita'
+    
 
     princesa = pygame.image.load('imagens/Princesa.png')
     princesa = pygame.transform.scale(princesa,(48,48))
@@ -34,13 +40,9 @@ def jogar():
     charx = 112 + 48*randint(0,9)
     chary = 112 + 48*randint(0,9)
 
-    #krect = knight.get_rect(topleft=(40,60))
-
-    #knight = pygame.transform.flip(knight,) #isso vai ser para virar o personagem ao trocar de lado
 
 
-
-    #teste = pygame.draw.line(tela,'white',10,18,5)
+    olhando = 'Direita'
 
     run = True
     while run:
@@ -55,7 +57,7 @@ def jogar():
             #region Movimento
             if event.type == pygame.KEYDOWN:
 
-                if event.key == pygame.K_d:
+                if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                     if charx + 48 >= 590:
                         pass
                     else:
@@ -63,7 +65,7 @@ def jogar():
                         if olhando == "Esquerda":
                             knight = pygame.transform.flip(knight, True, False)
                             olhando = "Direita"
-                if event.key == pygame.K_a:
+                if event.key == pygame.K_a or event.key == pygame.K_LEFT:
                     if charx - 48 <= 110:
                         pass
                     else:
@@ -72,12 +74,12 @@ def jogar():
                             knight = pygame.transform.flip(knight, True, False)
                             olhando = "Esquerda"
 
-                if event.key == pygame.K_w:
+                if event.key == pygame.K_w or event.key == pygame.K_UP:
                     if chary - 48 <= 110:
                         pass
                     else:
                         chary -= 48
-                if event.key == pygame.K_s:
+                if event.key == pygame.K_s or event.key == pygame.K_DOWN:
                     if chary + 48 >= 590:
                         pass
                     else:
@@ -108,7 +110,7 @@ def jogar():
     
     
         pygame.display.flip()
-        dt = clock.tick(30)
+        clock.tick(30) #Diminuindo os fps para otimizar o jogo
     pygame.quit()
     
 if __name__ == '__main__':
