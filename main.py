@@ -49,15 +49,19 @@ def jogar():
         def mover(self, key):
             dist = 48
             if key == pygame.K_d or key == pygame.K_RIGHT:
-                    if self.__coorx + 48 >= 590:
-                        pass
-                    else:
-                        self.__coorx += dist
-                        if self.__olhando == False:
-                            self.__img = pygame.transform.flip(self.__img, True, False)
-                            self.__olhando = True
+                if self.__coorx + 48 >= 590:
+                    pass
+                elif any(nextrect(x='right').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,2)):
+                    pass
+                else:
+                    self.__coorx += dist
+                    if self.__olhando == False:
+                        self.__img = pygame.transform.flip(self.__img, True, False)
+                        self.__olhando = True
             if key == pygame.K_a or key == pygame.K_LEFT:
                 if self.__coorx - 48 <= 110:
+                    pass
+                elif any(nextrect(x='left').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,2)):
                     pass
                 else:
                     self.__coorx -= dist
@@ -67,10 +71,14 @@ def jogar():
             if key == pygame.K_w or key == pygame.K_UP:
                 if self.__coory - 48 < 110:
                     pass
+                elif any(nextrect(y='up').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,2)):
+                        pass
                 else:
                     self.__coory -= dist
             if key == pygame.K_s or key == pygame.K_DOWN:
-                if self.__coory + 48 < 110:
+                if self.__coory + 48 >= 590:
+                    pass
+                elif any(nextrect(y='down').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,2)):
                     pass
                 else:
                     self.__coory += dist
@@ -98,22 +106,19 @@ def jogar():
 
     jgdr1 = player(112 + 48*randint(0,9), 112 + 48*randint(0,9))
     
-
-    charx = 112 + 48*randint(0,9)
-    chary = 112 + 48*randint(0,9)
-    charect = pygame.Rect(charx,chary,48,48)
+    charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
 
     prinx = 112 + 48*randint(0,9)
     priny = 112 + 48*randint(0,9)
     
-    while prinx == charx:
+    while prinx == jgdr1.get_coorx():
         random = randint(0,1)
         if random == 0:
             priny = 112 + 48*randint(0,9)
         else:
             prinx = 112 + 48*randint(0,9)
 
-    while priny == chary:
+    while priny == jgdr1.get_coory():
         random = randint(0,1)
         if random == 0:
             priny = 112 + 48*randint(0,9)
@@ -167,16 +172,13 @@ def jogar():
                 y = -48
             case 'down':
                 y = 48
-        rect = pygame.Rect(charx+x, chary+y, 48,48)
+        rect = pygame.Rect(jgdr1.get_coorx()+x, jgdr1.get_coory()+y, 48,48)
         return rect
     #endregion RECTS
-    
-
-    olhando = 'Direita'
 
     run = True
     while run:
-        charect = pygame.Rect(charx,chary,48,48)
+        charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
         #region EVENTOS
         
         for event in pygame.event.get():
@@ -188,46 +190,44 @@ def jogar():
             #region MOVIMENTO
             if event.type == pygame.KEYDOWN:
 
-                if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                jgdr1.mover(event.key)
+
+                # if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                     
-                    if charx + 48 >= 590:
-                        pass
-                        
-                    elif any(nextrect(x='right').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,2)):
-                        pass
-                    else:
-                        charx += 48
-                    if olhando == "Esquerda":
-                            knight = pygame.transform.flip(knight, True, False)
-                            olhando = "Direita"
-                        
-                if event.key == pygame.K_a or event.key == pygame.K_LEFT:
-                    
-                    if charx - 48 <= 110:
-                        pass
-                    elif any(nextrect(x='left').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,2)):
-                        pass
-                    else:
-                        charx -= 48
-                    if olhando == "Direita":
-                            knight = pygame.transform.flip(knight, True, False)
-                            olhando = "Esquerda"
+                #     if jgdr1.get_coorx() + 48 >= 590:
+                #         pass
                         
 
-                if event.key == pygame.K_w or event.key == pygame.K_UP:
-                    if chary - 48 <= 110:
-                        pass
-                    elif any(nextrect(y='up').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,2)):
-                        pass
-                    else:
-                        chary -= 48
-                if event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                    if chary + 48 >= 590:
-                        pass
-                    elif any(nextrect(y='down').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,2)):
-                        pass
-                    else:
-                        chary += 48
+                #     else:
+                #         jgdr1.get_coorx() += 48
+                #     if olhando == "Esquerda":
+                #             knight = pygame.transform.flip(knight, True, False)
+                #             olhando = "Direita"
+                        
+                # if event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                    
+                #     if jgdr1.get_coorx() - 48 <= 110:
+                #         pass
+
+                #     else:
+                #         jgdr1.get_coorx() -= 48
+                #     if olhando == "Direita":
+                #             knight = pygame.transform.flip(knight, True, False)
+                #             olhando = "Esquerda"
+                        
+
+                # if event.key == pygame.K_w or event.key == pygame.K_UP:
+                #     if jgdr1.get_coory() - 48 <= 110:
+                #         pass
+
+                #     else:
+                #         jgdr1.get_coory() -= 48
+                # if event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                #     if jgdr1.get_coory() + 48 >= 590:
+                #         pass
+
+                #     else:
+                #         jgdr1.get_coory() += 48
             #endregion MOVIMENTO
 
         #endregion EVENTOS
@@ -255,7 +255,7 @@ def jogar():
 
         tela.blit(grid,(112,112))
 
-        tela.blit(knight,charect)
+        tela.blit(jgdr1.get_img(),charect)
         tela.blit(princesa,prinrect)
         
         
