@@ -1,10 +1,7 @@
 import pygame
 from random import randint, getrandbits
 import sys
-
-import pygame.freetype
-import pygame.ftfont
-
+#DE ALGUM JEITO A BARREIRA SPAWNOU DENTRO DO CAVALEIRO, ARRUMAR DEPOIS
 
 def jogar():
 #region PREPARAÇÃO DO AMBIENTE
@@ -117,6 +114,7 @@ def jogar():
     grid = pygame.image.load('imagens/Mapa.png')
     grid = pygame.transform.scale(grid,(480,480))
     #endregion CARREGANDO IMAGENS
+
     #region RECTS
 
     prinx = 112 + 48*randint(0,9)
