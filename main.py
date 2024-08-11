@@ -119,8 +119,8 @@ def jogar():
 
     #region RECTS
 
-    prinx = 112 #+ 48*randint(0,9)
-    priny = 112 #+ 48*randint(0,9)
+    prinx = 112 + 48*randint(0,9)
+    priny = 112 + 48*randint(0,9)
 
     jgdr1 = player(112 + 48*randint(0,9), 112 + 48*randint(0,9))
     
@@ -175,8 +175,8 @@ def jogar():
     cordwall = []
 
     for a in range(0,qntwall):
-        x = 112 #+ 48*randint(0,9)
-        y = 112 #+ 48*randint(0,9)
+        x = 112 + 48*randint(0,9)
+        y = 112 + 48*randint(0,9)
 
         rectotal = Paredes(x,y).rect()
 
