@@ -1,7 +1,7 @@
 import pygame
 from random import randint, getrandbits
-import time
 import sys
+
 
 def jogar():
 #region PREPARAÇÃO DO AMBIENTE
@@ -20,10 +20,25 @@ def jogar():
 #endregion PREPARAÇÃO DO AMBIENTE
 
 #region Personagens/Objetos
+    def nextrect(x=0,y=0): #x = left, right | y= up, down
+        match x:
+            case 'left':
+                x = -48
+            case 'right':
+                x = 48
+
+        match y:
+            case 'up':
+                y = -48
+            case 'down':
+                y = 48
+        rect = pygame.Rect(jgdr1.get_coorx()+x, jgdr1.get_coory()+y, 48,48)
+        return rect
+
     class player():
 
         def __init__(self, coorx, coory):
-            self.__img = pygame.transform.scale(pygame.image.load('imagens/Knight.png'), (48,48),)
+            self.__img = pygame.transform.scale(pygame.image.load('imagens/Knight.png'), (48,48))
             self.__olhando = True
             self.__coorx = coorx
             self.__coory = coory
@@ -111,6 +126,9 @@ def jogar():
     prinx = 112 + 48*randint(0,9)
     priny = 112 + 48*randint(0,9)
     
+    
+    
+
     while prinx == jgdr1.get_coorx():
         random = randint(0,1)
         if random == 0:
@@ -124,18 +142,23 @@ def jogar():
             priny = 112 + 48*randint(0,9)
         else:
             prinx = 112 + 48*randint(0,9)
+    
     prinrect = pygame.Rect(prinx,priny,48,48)
 
+    condicoes = [charect,prinrect]
+
     class Paredes:
+    
         def __init__(self, x, y):
+            
             self.x = x
             self.y = y
             
         def rect(self):
+            
             self.rectx = pygame.Rect(self.x-48,self.y,48*3, 48)
             self.recty = pygame.Rect(self.x,self.y-48,48,48*3)
             self.listarect = [self.rectx,self.recty]
-
             return self.listarect
         def getcord(self):
             self.listacord = [self.x,self.y]
@@ -146,12 +169,15 @@ def jogar():
     
     rectwall = []
     cordwall = []
+
     for a in range(0,qntwall):
         x = 112 + 48*randint(0,9)
         y = 112 + 48*randint(0,9)
 
-
-
+        for b in condicoes:
+            while b.colliderect(Paredes(x,y).rect()[0]) or b.colliderect(Paredes(x,y).rect()[1]):
+                x = 112 + 48*randint(0,9)
+                y = 112 + 48*randint(0,9)
         
         rectwall.append(Paredes(x,y).rect())
 
@@ -160,20 +186,7 @@ def jogar():
     
     
 
-    def nextrect(x=0,y=0): #x = left, right | y= up, down
-        match x:
-            case 'left':
-                x = -48
-            case 'right':
-                x = 48
-
-        match y:
-            case 'up':
-                y = -48
-            case 'down':
-                y = 48
-        rect = pygame.Rect(jgdr1.get_coorx()+x, jgdr1.get_coory()+y, 48,48)
-        return rect
+    
     #endregion RECTS
 
     run = True
@@ -263,6 +276,8 @@ def jogar():
         pygame.display.flip()
         clock.tick(30) #Diminuindo os fps para otimizar o jogo
     pygame.quit()
+    sys.exit()
+    
     
 if __name__ == '__main__':
     jogar()
