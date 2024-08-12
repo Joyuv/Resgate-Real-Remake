@@ -164,7 +164,7 @@ def jogar():
             self.listacord = [self.x,self.y]
             return self.listacord
     
-    qntwall = 10
+    qntwall = 4
 
     
     rectwall = []
