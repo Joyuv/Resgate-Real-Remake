@@ -15,6 +15,7 @@ def jogar():
     pygame.display.set_icon(icone) #icone da janela
     
     clock = pygame.time.Clock() #variável clock para diminuir os FPS em breve
+
     
 
 #endregion PREPARAÇÃO DO AMBIENTE
@@ -209,7 +210,8 @@ def jogar():
     
     info = True
     while info:
-        tela.blit(fonte.render('TODAS AS POSIÇÕES DE PERSONAGENS, BARREIRAS E MONSTROS SÃO GERADAS ALEATORIAMENTE',False,'white'),(8,0))
+        tela.blit(fonte.render('TODAS AS POSIÇÕES DE PERSONAGENS, BARREIRAS E MONSTROS SÃO GERADAS ALEATORIAMENTE',False,'white'),(8,8))
+    
         tela.blit(fonte2.render('PRESSIONE QUALQUER TECLA PARA INICIAR',False,'white'),(120,260))
         tela.blit(wasd,(420,300))
         tela.blit(setinhas,(100,300))
@@ -229,7 +231,10 @@ def jogar():
     ganhou = False
     perdeu = False
     run = True
+    contador = 0
     while run:
+        
+        
         charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
         #region EVENTOS
         
@@ -244,42 +249,6 @@ def jogar():
 
                 jgdr1.mover(event.key)
                 
-                # if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-                    
-                #     if jgdr1.get_coorx() + 48 >= 590:
-                #         pass
-                        
-
-                #     else:
-                #         jgdr1.get_coorx() += 48
-                #     if olhando == "Esquerda":
-                #             knight = pygame.transform.flip(knight, True, False)
-                #             olhando = "Direita"
-                        
-                # if event.key == pygame.K_a or event.key == pygame.K_LEFT:
-                    
-                #     if jgdr1.get_coorx() - 48 <= 110:
-                #         pass
-
-                #     else:
-                #         jgdr1.get_coorx() -= 48
-                #     if olhando == "Direita":
-                #             knight = pygame.transform.flip(knight, True, False)
-                #             olhando = "Esquerda"
-                        
-
-                # if event.key == pygame.K_w or event.key == pygame.K_UP:
-                #     if jgdr1.get_coory() - 48 <= 110:
-                #         pass
-
-                #     else:
-                #         jgdr1.get_coory() -= 48
-                # if event.key == pygame.K_s or event.key == pygame.K_DOWN:
-                #     if jgdr1.get_coory() + 48 >= 590:
-                #         pass
-
-                #     else:
-                #         jgdr1.get_coory() += 48
             #endregion MOVIMENTO
 
         #endregion EVENTOS
@@ -310,6 +279,10 @@ def jogar():
         tela.blit(jgdr1.get_img(),charect)
         tela.blit(princesa,prinrect)
         
+        contador +=1
+        contadoraux = str(int(round(contador/30,0)))
+        tela.blit(fonte.render(contadoraux,False,'black'),(8,8))
+
         if charect.colliderect(prinrect):
             run = False
             ganhou = True
