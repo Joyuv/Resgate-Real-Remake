@@ -127,11 +127,6 @@ def jogar():
     
     charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
 
-    
-    
-    
-    
-
     while prinx == jgdr1.get_coorx():
         random = randint(0,1)
         if random == 0:
@@ -169,7 +164,7 @@ def jogar():
             self.listacord = [self.x,self.y]
             return self.listacord
     
-    qntwall = 3
+    qntwall = 10
 
     
     rectwall = []
