@@ -70,7 +70,7 @@ def jogar():
                         self.__olhando = True
                 if self.__coorx + 48 >= 590:
                     pass
-                elif any(nextrect(x='right').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,5)):
+                elif any(nextrect(x='right').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
                     pass
                 else:
                     self.__coorx += dist
@@ -81,7 +81,7 @@ def jogar():
                         self.__olhando = False
                 if self.__coorx - 48 <= 110:
                     pass
-                elif any(nextrect(x='left').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,5)):
+                elif any(nextrect(x='left').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
                     pass
                 else:
                     self.__coorx -= dist
@@ -89,14 +89,14 @@ def jogar():
             if key == pygame.K_w or key == pygame.K_UP:
                 if self.__coory - 48 < 110:
                     pass
-                elif any(nextrect(y='up').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,5)):
+                elif any(nextrect(y='up').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
                         pass
                 else:
                     self.__coory -= dist
             if key == pygame.K_s or key == pygame.K_DOWN:
                 if self.__coory + 48 >= 590:
                     pass
-                elif any(nextrect(y='down').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,5)):
+                elif any(nextrect(y='down').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
                     pass
                 else:
                     self.__coory += dist
@@ -116,6 +116,9 @@ def jogar():
 
     grid = pygame.image.load('imagens/Mapa.png')
     grid = pygame.transform.scale(grid,(480,480))
+
+    bomba = pygame.image.load('imagens/Princesa.png')
+    bomba = pygame.transform.scale(princesa,(48,48))
     #endregion CARREGANDO IMAGENS
 
     #region RECTS
@@ -207,6 +210,7 @@ def jogar():
     
     frames = 60
     info = True
+    
     while info:
         tela.blit(fonte.render('TODAS AS POSIÇÕES DE PERSONAGENS, BARREIRAS E MONSTROS SÃO GERADAS ALEATORIAMENTE',False,'white'),(8,8))
     
@@ -227,12 +231,19 @@ def jogar():
 
         
     #endregion RECTS
+
     ganhou = False
     perdeu = False
     run = True
+
     contador = 0
+
+    bombanatela = False
+    explosao = False
+    exdelay = 0
     while run:
         
+            
         
         charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
         #region EVENTOS
@@ -247,6 +258,17 @@ def jogar():
             if event.type == pygame.KEYDOWN:
 
                 jgdr1.mover(event.key)
+
+                if event.key == pygame.K_SPACE:
+                    if not bombanatela:
+                        bombanatela = True
+                        posbomba = (charect.x, charect.y)
+                    else:
+                        explosaox = pygame.Rect(posbomba[0]-48,posbomba[1],48*3,48)
+                        explosaoy = pygame.Rect(posbomba[0],posbomba[1]-48,48,48*3)
+                        exrects = [explosaox,explosaoy]
+                        bombanatela = False
+                        explosao = True
                 
             #endregion MOVIMENTO
 
@@ -270,7 +292,7 @@ def jogar():
         
 
         for a in range(0,len(rectwall)):
-            for b in range(0,5):
+            for b in range(0,len(rectwall[a])):
                 tela.blit(barreira,rectwall[a][b])
                 
         
@@ -279,9 +301,46 @@ def jogar():
 
         tela.blit(jgdr1.get_img(),charect)
         tela.blit(princesa,prinrect)
+
+        if bombanatela:
+            
+            tela.blit(bomba,(posbomba))
+        elif explosao:
+            
+            for a in range(0,2):
+                pygame.draw.rect(tela,'yellow',exrects[a])
+                if exrects[a].colliderect(prinrect):       
+                    perdeu = True
+                    run = False
+                #region IMPORTANTE
+
+                #LEMBRAR DE FAZER A IDEIA DE TALLYSON, TELA DE DECAPTADO QUANDO EXPLODIR A PRINCESA
+
+                #endregion IMPORTANTE
+
+            new_wall_rect = []
+            for parede in range(0,len(rectwall)):
+                new_wall_rect.append(rectwall[parede])
+                for square in rectwall[parede]:
+                    for a in range(0,2):
+                        
+                        if exrects[a].colliderect(square):
+                            new_wall_rect[parede].remove(square)
+                        
+            rectwall = new_wall_rect
+                        
+            
+
+            exdelay += 1/frames
+
+            if exdelay >= 1:
+                
+                explosao = False
+                exdelay = 0
+
         
         contador +=1
-        contadoraux = str(int(round(contador/30,0)))
+        contadoraux = str(int(round(contador/frames)))
         tela.blit(fonte.render(contadoraux,False,'black'),(8,8))
 
         
