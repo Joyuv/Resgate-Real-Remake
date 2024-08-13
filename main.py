@@ -70,7 +70,7 @@ def jogar():
                         self.__olhando = True
                 if self.__coorx + 48 >= 590:
                     pass
-                elif any(nextrect(x='right').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,2)):
+                elif any(nextrect(x='right').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,5)):
                     pass
                 else:
                     self.__coorx += dist
@@ -81,7 +81,7 @@ def jogar():
                         self.__olhando = False
                 if self.__coorx - 48 <= 110:
                     pass
-                elif any(nextrect(x='left').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,2)):
+                elif any(nextrect(x='left').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,5)):
                     pass
                 else:
                     self.__coorx -= dist
@@ -89,14 +89,14 @@ def jogar():
             if key == pygame.K_w or key == pygame.K_UP:
                 if self.__coory - 48 < 110:
                     pass
-                elif any(nextrect(y='up').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,2)):
+                elif any(nextrect(y='up').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,5)):
                         pass
                 else:
                     self.__coory -= dist
             if key == pygame.K_s or key == pygame.K_DOWN:
                 if self.__coory + 48 >= 590:
                     pass
-                elif any(nextrect(y='down').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,2)):
+                elif any(nextrect(y='down').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,5)):
                     pass
                 else:
                     self.__coory += dist
@@ -148,27 +148,30 @@ def jogar():
     class Paredes:
         global condicoes
         def __init__(self, x, y):
-            
             self.x = x
             self.y = y
             
-            
         def rect(self):
-            
-            self.rectx = pygame.Rect(self.x-48,self.y,48*3, 48)
-            self.recty = pygame.Rect(self.x,self.y-48,48,48*3)
+            self.listarect = []
+            self.rect0 = pygame.Rect(self.x,self.y,48, 48)
+            self.listarect.append(self.rect0)
+            for a in range(-1,2,2):
+                self.rect1 = pygame.Rect(self.x-48*a,self.y,48, 48)
+                self.rect2 = pygame.Rect(self.x,self.y-48*a,48,48)
+        
+                self.listarect.append(self.rect1)
+                self.listarect.append(self.rect2)
 
-            self.listarect = [self.rectx,self.recty]
+            
             return self.listarect
-        def getcord(self):
-            self.listacord = [self.x,self.y]
-            return self.listacord
+        
+        
     
-    qntwall = 10
+    qntwall = 3
 
     
     rectwall = []
-    cordwall = []
+    
 
     for a in range(0,qntwall):
         x = 112 + 48*randint(0,9)
@@ -178,7 +181,7 @@ def jogar():
 
         #podia fazer isso do while dentro da classe paredes 
         #mas ciro não deixou usar variável global então vai assim mesmo
-        while any(rectotal[0].colliderect(condicoes[a])for a in range(0,len(condicoes))) or any(rectotal[1].colliderect(condicoes[a])for a in range(0,len(condicoes))):
+        while any(rectotal[b].colliderect(condicoes[a])for b in range(0,5)for a in range(0,len(condicoes))): #or any(rectotal[1].colliderect(condicoes[a])for a in range(0,len(condicoes))):
             x = 112 + 48*randint(0,9)
             y = 112 + 48*randint(0,9)
 
@@ -189,7 +192,7 @@ def jogar():
         rectwall.append(rectotal)
         
         
-        cordwall.append(Paredes(x,y).getcord())
+        
     
     
     
@@ -247,7 +250,10 @@ def jogar():
             #endregion MOVIMENTO
 
         #endregion EVENTOS
-        
+        if charect.colliderect(prinrect):
+            run = False
+            ganhou = True
+
         tela.fill('gray')
 
         for a in range(0,10):
@@ -262,12 +268,11 @@ def jogar():
 
         
 
-        for a in range(0,len(cordwall)):
-            for b in range(-1,2):
-                tela.blit(barreira,(cordwall[a][0]+48*b, cordwall[a][1]))
-                tela.blit(barreira,(cordwall[a][0], cordwall[a][1]+48*b))
-            
-            
+        for a in range(0,len(rectwall)):
+            for b in range(0,5):
+                tela.blit(barreira,rectwall[a][b])
+                
+        
 
         tela.blit(grid,(112,112))
 
@@ -278,10 +283,7 @@ def jogar():
         contadoraux = str(int(round(contador/30,0)))
         tela.blit(fonte.render(contadoraux,False,'black'),(8,8))
 
-        if charect.colliderect(prinrect):
-            run = False
-            ganhou = True
-
+        
         pygame.display.flip() #atualizar os frames a cada vez que roda o while
         clock.tick(30) #Diminuindo os fps para otimizar o jogo
     
