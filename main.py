@@ -146,7 +146,7 @@ def jogar():
     condicoes = [charect,prinrect]
 
     class Paredes:
-        global condicoes
+        
         def __init__(self, x, y):
             self.x = x
             self.y = y
@@ -205,7 +205,7 @@ def jogar():
     setinhas = pygame.image.load('imagens/setinhas.png')
     setinhas = pygame.transform.scale_by(setinhas,4)
     
-    
+    frames = 60
     info = True
     while info:
         tela.blit(fonte.render('TODAS AS POSIÇÕES DE PERSONAGENS, BARREIRAS E MONSTROS SÃO GERADAS ALEATORIAMENTE',False,'white'),(8,8))
@@ -222,6 +222,7 @@ def jogar():
 
         
         pygame.display.flip()
+        clock.tick(frames)
 
 
         
@@ -285,30 +286,35 @@ def jogar():
 
         
         pygame.display.flip() #atualizar os frames a cada vez que roda o while
-        clock.tick(30) #Diminuindo os fps para otimizar o jogo
+        clock.tick(frames) #Diminuindo os fps para otimizar o jogo
     
     
     
     while ganhou:
-        tela.fill('black')
-        tela.blit(fonte2.render('Parabéns! Você salvou a princesa',False,'white'),(190,300))
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+        tela.fill('black')
+        tela.blit(fonte2.render('Parabéns! Você salvou a princesa',False,'white'),(190,300))
+
         pygame.display.flip()
-        clock.tick(30)
+        clock.tick(frames)
 
     
     while perdeu:
-        tela.fill('black')
-        tela.blit(fonte2.render('A princesa foi capturada pelos monstros :C',False,'white'),(140,300))
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+        tela.fill('black')
+        tela.blit(fonte2.render('A princesa foi capturada pelos monstros :C',False,'white'),(140,300))
+
         pygame.display.flip()
-        clock.tick(30)
+        clock.tick(frames)
     
 if __name__ == '__main__':
     jogar()
