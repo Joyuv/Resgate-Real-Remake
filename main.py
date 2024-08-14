@@ -325,22 +325,16 @@ def jogar():
             for a in range(0,2):
                 pygame.draw.rect(tela,'yellow',exrects[a])
                 if exrects[a].colliderect(prinrect):       
-                    perdeu = True
+                    decapitado = True
                     run = False
-                #region IMPORTANTE
 
-                #LEMBRAR DE FAZER A IDEIA DE TALLYSON, TELA DE DECAPTADO QUANDO EXPLODIR A PRINCESA
-
-                #endregion IMPORTANTE
 
             new_wall_rect = []
             for parede in range(0,len(rectwall)):
                 new_wall_rect.append(rectwall[parede])
                 for square in rectwall[parede]:
                     for a in range(0,2):
-                        if exrects[a].colliderect(prinrect):
-                            decapitado = True
-                            run = False
+                        
                         if exrects[a].colliderect(square):
                             new_wall_rect[parede].remove(square)
                         
