@@ -119,6 +119,8 @@ def jogar():
 
     bomba = pygame.image.load('imagens/Princesa.png')
     bomba = pygame.transform.scale(princesa,(48,48))
+
+    icone = pygame.transform.scale_by(icone,2)
     #endregion CARREGANDO IMAGENS
 
     #region RECTS
@@ -207,6 +209,9 @@ def jogar():
 
     setinhas = pygame.image.load('imagens/setinhas.png')
     setinhas = pygame.transform.scale_by(setinhas,4)
+
+    espaco = pygame.image.load('imagens/espaco.png')
+    espaco = pygame.transform.scale_by(espaco,3)
     
     frames = 60
     info = True
@@ -217,6 +222,10 @@ def jogar():
         tela.blit(fonte2.render('PRESSIONE QUALQUER TECLA PARA INICIAR',False,'white'),(120,260))
         tela.blit(wasd,(420,300))
         tela.blit(setinhas,(100,300))
+        tela.blit(espaco,(270, 440))
+        tela.blit(fonte2.render('= BOMBA',False,'white'),(440,460))
+        tela.blit(espaco,(270, 520))
+        tela.blit(fonte2.render('= KABOOM',False,'white'),(440,540))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -235,7 +244,7 @@ def jogar():
     ganhou = False
     perdeu = False
     run = True
-    decaptado = False
+    decapitado = False
 
     contador = 0
 
@@ -325,7 +334,7 @@ def jogar():
                 for square in rectwall[parede]:
                     for a in range(0,2):
                         if exrects[a].colliderect(prinrect):
-                            decaptado = True
+                            decapitado = True
                             run = False
                         if exrects[a].colliderect(square):
                             new_wall_rect[parede].remove(square)
@@ -359,17 +368,19 @@ def jogar():
                 pygame.quit()
                 sys.exit()
         tela.fill('black')
+        tela.blit(icone,(320,230))
         tela.blit(fonte2.render('Parabéns! Você salvou a princesa',False,'white'),(190,300))
 
         pygame.display.flip()
         clock.tick(frames)
 
-    while decaptado:
+    while decapitado:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
         tela.fill('black')
+        tela.blit(icone,(320,230))
         tela.blit(fonte2.render('Você assassinou a princesa e foi decapitado',False,'red'),(150,300))
 
         pygame.display.flip()
@@ -382,6 +393,7 @@ def jogar():
                 sys.exit()
 
         tela.fill('black')
+        tela.blit(icone,(320,230))
         tela.blit(fonte2.render('A princesa foi capturada pelos monstros :C',False,'white'),(140,300))
 
         pygame.display.flip()
