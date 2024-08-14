@@ -20,7 +20,7 @@ def jogar():
 
 #endregion PREPARAÇÃO DO AMBIENTE
 
-#region Personagens/Objetos
+#region CAVALEIRO
     def nextrect(x=0,y=0): #x = left, right | y= up, down
         match x:
             case 'left':
@@ -123,7 +123,7 @@ def jogar():
     icone = pygame.transform.scale_by(icone,2)
     #endregion CARREGANDO IMAGENS
 
-    #region RECTS
+    #region PRINCESA
 
     prinx = 112 + 48*randint(0,9)
     priny = 112 + 48*randint(0,9)
@@ -149,7 +149,8 @@ def jogar():
     prinrect = pygame.Rect(prinx,priny,48,48)
 
     condicoes = [charect,prinrect]
-
+#endregion PRINCESA
+#region PAREDES
     class Paredes:
         
         def __init__(self, x, y):
@@ -196,11 +197,11 @@ def jogar():
 
         rectwall.append(rectotal)
         
+#endregion PAREDES
         
-        
     
     
-    
+#region IMAGENS INFO
     fonte = pygame.font.SysFont('fonte/PixelGameFont.ttf',20)
     fonte2 = pygame.font.SysFont('fonte/PixelGameFont.ttf',30)
 
@@ -215,10 +216,11 @@ def jogar():
 
     espaco2 = pygame.image.load('imagens/espaco2.png')
     espaco2 = pygame.transform.scale_by(espaco2,3)
-    
+#endregion IMAGENS INFO
+
     frames = 60
     info = True
-    
+
     while info:
         tela.blit(fonte.render('TODAS AS POSIÇÕES DE PERSONAGENS, BARREIRAS E MONSTROS SÃO GERADAS ALEATORIAMENTE',False,'white'),(8,8))
     
@@ -267,7 +269,7 @@ def jogar():
                 pygame.quit()
                 sys.exit()
 
-            #region MOVIMENTO
+            
             if event.type == pygame.KEYDOWN:
 
                 jgdr1.mover(event.key)
@@ -283,7 +285,7 @@ def jogar():
                         bombanatela = False
                         explosao = True
                 
-            #endregion MOVIMENTO
+           
 
         #endregion EVENTOS
         if charect.colliderect(prinrect):
