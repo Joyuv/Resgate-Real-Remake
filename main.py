@@ -9,9 +9,10 @@ def jogar():
     
     icone = pygame.image.load('imagens/Icon.png')
 
-    tela = pygame.display.set_mode((700,700)) #setando resolução da tela
+    tela = pygame.display.set_mode((700,700),pygame.RESIZABLE) #setando resolução da tela
     pygame.display.set_caption('Resgate Real') #nome da janela
     pygame.display.set_icon(icone) #icone da janela
+    
     
     clock = pygame.time.Clock() #variável clock para diminuir os FPS em breve
 
@@ -116,8 +117,8 @@ def jogar():
     barreira = pygame.image.load('imagens/Preda.png')
     barreira = pygame.transform.scale(barreira,(48,48))
 
-    bomba = pygame.image.load('imagens/Princesa.png')
-    bomba = pygame.transform.scale(princesa,(48,48))
+    bomba = pygame.image.load('imagens/Bomba.png')
+    bomba = pygame.transform.scale(bomba,(48,48))
 
     icone = pygame.transform.scale_by(icone,2)
     #endregion CARREGANDO IMAGENS
@@ -304,7 +305,7 @@ def jogar():
 
 
         for a in range(0,vida_inicial):
-            rectheart = pygame.Rect(8+30*a,8,30,20)
+            rectheart = pygame.Rect(15+30*a,15,30,20)
             if a == 0:
                 pygame.draw.rect(tela,'red',rectheart,border_bottom_left_radius=10,border_top_left_radius=10,width=1)
 
@@ -315,7 +316,7 @@ def jogar():
                 pygame.draw.rect(tela,'red',rectheart,width=1)
             
         for a in range(0,vida):
-            rectheart2 = pygame.Rect(8+30*a,8,30,20)
+            rectheart2 = pygame.Rect(15+30*a,15,30,20)
             if a == 0:
                 pygame.draw.rect(tela,'red',rectheart2,border_bottom_left_radius=10,border_top_left_radius=10)
             elif a == vida_inicial-1:
