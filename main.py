@@ -116,9 +116,6 @@ def jogar():
     barreira = pygame.image.load('imagens/Preda.png')
     barreira = pygame.transform.scale(barreira,(48,48))
 
-    grid = pygame.image.load('imagens/Mapa.png')
-    grid = pygame.transform.scale(grid,(480,480))
-
     bomba = pygame.image.load('imagens/Princesa.png')
     bomba = pygame.transform.scale(princesa,(48,48))
 
@@ -130,7 +127,7 @@ def jogar():
     prinx = 112 + 48*randint(0,9)
     priny = 112 + 48*randint(0,9)
 
-    jgdr1 = player(112 + 48*randint(0,9), 112 + 48*randint(0,9),vida=3)
+    jgdr1 = player(112 + 48*randint(0,9), 112 + 48*randint(0,9),vida=4)
     
     charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
 
@@ -245,6 +242,7 @@ def jogar():
     bombanatela = False
     explosao = False
     exdelay = 0
+    vida_inicial = jgdr1.get_vida()
     while run:
         
         vida = jgdr1.get_vida()
@@ -282,7 +280,7 @@ def jogar():
             run = False
             perdeu = True
 
-        tela.fill('gray')
+        tela.fill('black')
 
         for a in range(0,10):
             for b in range(0,10):
@@ -304,12 +302,28 @@ def jogar():
             for b in range(0,10):
                 pygame.draw.rect(tela,'black', (pygame.Rect(112+48*a,112+48*b,48,48)),width=1)
 
-        for a in range(0,jgdr1.get_vida()):
-            rectheart = pygame.Rect(8+20*a,8,20,20)
-            pygame.draw.rect(tela,'red',rectheart,border_radius=1,width=1)
-        
-        #tela.blit(grid,(112,112))
 
+        for a in range(0,vida_inicial):
+            rectheart = pygame.Rect(8+30*a,8,30,20)
+            if a == 0:
+                pygame.draw.rect(tela,'red',rectheart,border_bottom_left_radius=10,border_top_left_radius=10,width=1)
+
+            elif a == vida_inicial-1:
+                pygame.draw.rect(tela,'red',rectheart,border_bottom_right_radius=10,border_top_right_radius=10,width=1) 
+            else:
+                
+                pygame.draw.rect(tela,'red',rectheart,width=1)
+            
+        for a in range(0,vida):
+            rectheart2 = pygame.Rect(8+30*a,8,30,20)
+            if a == 0:
+                pygame.draw.rect(tela,'red',rectheart2,border_bottom_left_radius=10,border_top_left_radius=10)
+            elif a == vida_inicial-1:
+                pygame.draw.rect(tela,'red',rectheart,border_bottom_right_radius=10,border_top_right_radius=10) 
+            
+            else:
+                pygame.draw.rect(tela,'red',rectheart2)
+            
         tela.blit(jgdr1.get_img(),charect)
         tela.blit(princesa,prinrect)
 
