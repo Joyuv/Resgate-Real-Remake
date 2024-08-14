@@ -212,6 +212,9 @@ def jogar():
 
     espaco = pygame.image.load('imagens/espaco.png')
     espaco = pygame.transform.scale_by(espaco,3)
+
+    espaco2 = pygame.image.load('imagens/espaco2.png')
+    espaco2 = pygame.transform.scale_by(espaco2,3)
     
     frames = 60
     info = True
@@ -224,7 +227,7 @@ def jogar():
         tela.blit(setinhas,(100,300))
         tela.blit(espaco,(270, 440))
         tela.blit(fonte2.render('= BOMBA',False,'white'),(440,460))
-        tela.blit(espaco,(270, 520))
+        tela.blit(espaco2,(270, 520))
         tela.blit(fonte2.render('= KABOOM',False,'white'),(440,540))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
