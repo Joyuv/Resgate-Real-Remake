@@ -235,6 +235,7 @@ def jogar():
     ganhou = False
     perdeu = False
     run = True
+    decaptado = False
 
     contador = 0
 
@@ -323,7 +324,9 @@ def jogar():
                 new_wall_rect.append(rectwall[parede])
                 for square in rectwall[parede]:
                     for a in range(0,2):
-                        
+                        if exrects[a].colliderect(prinrect):
+                            decaptado = True
+                            run = False
                         if exrects[a].colliderect(square):
                             new_wall_rect[parede].remove(square)
                         
@@ -361,7 +364,16 @@ def jogar():
         pygame.display.flip()
         clock.tick(frames)
 
-    
+    while decaptado:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        tela.fill('black')
+        tela.blit(fonte2.render('Você assassinou a princesa e foi decapitado',False,'red'),(150,300))
+
+        pygame.display.flip()
+        clock.tick(frames)
     while perdeu:
         
         for event in pygame.event.get():
