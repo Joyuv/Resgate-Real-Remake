@@ -37,8 +37,11 @@ def jogar():
     class player():
 
         def __init__(self, coorx, coory, vida):
+            
             self.__img = pygame.transform.scale(pygame.image.load('imagens/Knight.png'), (48,48))
-            self.__olhando = True
+            self.__olhando = bool(getrandbits(1))
+            self.__img = pygame.transform.flip(self.__img,self.__olhando,False)
+
             self.__coorx = coorx
             self.__coory = coory
             self.__vida = vida
@@ -103,6 +106,7 @@ def jogar():
                     pass
                 else:
                     self.__coory += dist
+    
 
 #endregion
     
