@@ -2,7 +2,6 @@ import pygame
 from random import randint, getrandbits
 import sys
 
-
 def jogar():
 #region PREPARAÇÃO DO AMBIENTE
     pygame.init() #iniciando o módulo pygame
@@ -10,13 +9,12 @@ def jogar():
     
     icone = pygame.image.load('imagens/Icon.png')
 
-    tela = pygame.display.set_mode((700,700)) #setando resolução da tela
+    tela = pygame.display.set_mode((700,700),pygame.RESIZABLE) #setando resolução da tela
     pygame.display.set_caption('Resgate Real') #nome da janela
     pygame.display.set_icon(icone) #icone da janela
     
-    clock = pygame.time.Clock() #variável clock para diminuir os FPS em breve
-
     
+    clock = pygame.time.Clock() #variável clock para diminuir os FPS em breve
 
 #endregion PREPARAÇÃO DO AMBIENTE
 
@@ -38,11 +36,12 @@ def jogar():
 
     class player():
 
-        def __init__(self, coorx, coory):
+        def __init__(self, coorx, coory, vida):
             self.__img = pygame.transform.scale(pygame.image.load('imagens/Knight.png'), (48,48))
             self.__olhando = bool(getrandbits(1))
             self.__coorx = coorx
             self.__coory = coory
+            self.__vida = vida
         
         def get_coorx(self):
             return self.__coorx
@@ -52,7 +51,11 @@ def jogar():
             return self.__olhando
         def get_img(self):
             return self.__img
+        def get_vida(self):
+            return self.__vida
 
+        def set_vida(self,vida):
+            self.__vida = vida
         def set_coorx(self, coorx):
             self.__coorx = coorx
         def set_coory(self, coory):
@@ -121,11 +124,8 @@ def jogar():
     barreira = pygame.image.load('imagens/Preda.png')
     barreira = pygame.transform.scale(barreira,(48,48))
 
-    grid = pygame.image.load('imagens/Mapa.png')
-    grid = pygame.transform.scale(grid,(480,480))
-
-    bomba = pygame.image.load('imagens/Princesa.png')
-    bomba = pygame.transform.scale(princesa,(48,48))
+    bomba = pygame.image.load('imagens/Bomba.png')
+    bomba = pygame.transform.scale(bomba,(48,48))
 
     icone = pygame.transform.scale_by(icone,2)
     #endregion CARREGANDO IMAGENS
@@ -135,7 +135,7 @@ def jogar():
     prinx = 112 + 48*randint(0,9)
     priny = 112 + 48*randint(0,9)
 
-    jgdr1 = player(112 + 48*randint(0,9), 112 + 48*randint(0,9))
+    jgdr1 = player(112 + 48*randint(0,9), 112 + 48*randint(0,9),vida=4)
     
     charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
 
@@ -168,24 +168,20 @@ def jogar():
             self.listarect = []
             self.rect0 = pygame.Rect(self.x,self.y,48, 48)
             self.listarect.append(self.rect0)
+
             for a in range(-1,2,2):
                 self.rect1 = pygame.Rect(self.x-48*a,self.y,48, 48)
                 self.rect2 = pygame.Rect(self.x,self.y-48*a,48,48)
         
                 self.listarect.append(self.rect1)
                 self.listarect.append(self.rect2)
-
-            
+     
             return self.listarect
         
-        
-    
     qntwall = 3
-
     
     rectwall = []
     
-
     for a in range(0,qntwall):
         x = 112 + 48*randint(0,9)
         y = 112 + 48*randint(0,9)
@@ -200,13 +196,9 @@ def jogar():
 
             rectotal = Paredes(x,y).rect()
             
-
-
         rectwall.append(rectotal)
         
 #endregion PAREDES
-        
-    
     
 #region IMAGENS INFO
     fonte = pygame.font.SysFont('fonte/PixelGameFont.ttf',20)
@@ -245,12 +237,9 @@ def jogar():
             if event.type == pygame.KEYDOWN:
                 info = False
 
-        
         pygame.display.flip()
         clock.tick(frames)
-
-
-        
+   
     #endregion RECTS
 
     ganhou = False
@@ -258,14 +247,13 @@ def jogar():
     run = True
     decapitado = False
 
-    contador = 0
-
     bombanatela = False
     explosao = False
     exdelay = 0
+    vida_inicial = jgdr1.get_vida()
     while run:
         
-            
+        vida = jgdr1.get_vida()
         
         charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
         #region EVENTOS
@@ -275,14 +263,13 @@ def jogar():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
-            
+           
             if event.type == pygame.KEYDOWN:
 
                 jgdr1.mover(event.key)
 
                 if event.key == pygame.K_SPACE:
-                    if not bombanatela:
+                    if not bombanatela and exdelay == 0:
                         bombanatela = True
                         posbomba = (charect.x, charect.y)
                     else:
@@ -292,18 +279,22 @@ def jogar():
                         bombanatela = False
                         explosao = True
                 
-           
-
         #endregion EVENTOS
         if charect.colliderect(prinrect):
             run = False
             ganhou = True
 
-        tela.fill('gray')
+        if vida == 0:
+            run = False
+            perdeu = True
+
+        tela.fill('black')
 
         for a in range(0,10):
             for b in range(0,10):
                 tela.blit(grama,(112+48*a,112+48*b))
+                pygame.draw.rect(tela,'black', (pygame.Rect(112+48*a,112+48*b,48,48)),width=1,border_radius= 4)
+            
         
         for a in range(0,12):
             tela.blit(barreira,(64+48*a,64))
@@ -311,16 +302,36 @@ def jogar():
             tela.blit(barreira,(592,64+48*a))
             tela.blit(barreira,(64,64+48*a))
 
-        
-
         for a in range(0,len(rectwall)):
             for b in range(0,len(rectwall[a])):
                 tela.blit(barreira,rectwall[a][b])
                 
-        
+        for a in range(0,10):
+            for b in range(0,10):
+                pygame.draw.rect(tela,'black', (pygame.Rect(112+48*a,112+48*b,48,48)),width=1)
 
-        tela.blit(grid,(112,112))
 
+        for a in range(0,vida_inicial):
+            rectheart = pygame.Rect(15+30*a,15,30,20)
+            if a == 0:
+                pygame.draw.rect(tela,'red',rectheart,border_bottom_left_radius=10,border_top_left_radius=10,width=1)
+
+            elif a == vida_inicial-1:
+                pygame.draw.rect(tela,'red',rectheart,border_bottom_right_radius=10,border_top_right_radius=10,width=1) 
+            else:
+                
+                pygame.draw.rect(tela,'red',rectheart,width=1)
+            
+        for a in range(0,vida):
+            rectheart2 = pygame.Rect(15+30*a,15,30,20)
+            if a == 0:
+                pygame.draw.rect(tela,'red',rectheart2,border_bottom_left_radius=10,border_top_left_radius=10)
+            elif a == vida_inicial-1:
+                pygame.draw.rect(tela,'red',rectheart,border_bottom_right_radius=10,border_top_right_radius=10) 
+            
+            else:
+                pygame.draw.rect(tela,'red',rectheart2)
+            
         tela.blit(jgdr1.get_img(),charect)
         tela.blit(princesa,prinrect)
 
@@ -335,7 +346,9 @@ def jogar():
                     decapitado = True
                     run = False
 
-
+                elif exrects[a].colliderect(charect) and exdelay == 0:
+                    jgdr1.set_vida(vida-1)
+                    
             new_wall_rect = []
             for parede in range(0,len(rectwall)):
                 new_wall_rect.append(rectwall[parede])
@@ -347,25 +360,15 @@ def jogar():
                         
             rectwall = new_wall_rect
                         
-            
-
             exdelay += 1/frames
 
             if exdelay >= 1:
                 
                 explosao = False
                 exdelay = 0
-
-        
-        contador +=1
-        contadoraux = str(int(round(contador/frames)))
-        tela.blit(fonte.render(contadoraux,False,'black'),(8,8))
-
-        
+                
         pygame.display.flip() #atualizar os frames a cada vez que roda o while
         clock.tick(frames) #Diminuindo os fps para otimizar o jogo
-    
-    
     
     while ganhou:
         
@@ -379,18 +382,20 @@ def jogar():
 
         pygame.display.flip()
         clock.tick(frames)
-
+    icone = pygame.transform.rotate(icone,65)
     while decapitado:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
         tela.fill('black')
-        tela.blit(icone,(320,230))
+        tela.blit(icone,(305,220))
         tela.blit(fonte2.render('Você assassinou a princesa e foi decapitado',False,'red'),(150,300))
 
         pygame.display.flip()
         clock.tick(frames)
+    
+    icone = pygame.transform.grayscale(icone)
     while perdeu:
         
         for event in pygame.event.get():
@@ -399,12 +404,12 @@ def jogar():
                 sys.exit()
 
         tela.fill('black')
-        tela.blit(icone,(320,230))
-        tela.blit(fonte2.render('A princesa foi capturada pelos monstros :C',False,'white'),(140,300))
+        
+        tela.blit(icone,(305,220))
+        tela.blit(fonte2.render('A princesa foi capturada pelos monstros :C',False,'gray'),(140,300))
 
         pygame.display.flip()
         clock.tick(frames)
     
 if __name__ == '__main__':
     jogar()
-
