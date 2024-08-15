@@ -40,6 +40,7 @@ def jogar():
             
             self.__img = pygame.transform.scale(pygame.image.load('imagens/Knight.png'), (48,48))
             self.__olhando = bool(getrandbits(1))
+            
             self.__img = pygame.transform.flip(self.__img,self.__olhando,False)
 
             self.__coorx = coorx
@@ -71,9 +72,9 @@ def jogar():
         def mover(self, key):
             dist = 48
             if key == pygame.K_d or key == pygame.K_RIGHT:
-                if self.__olhando == False:
+                if self.__olhando == True:
                         self.__img = pygame.transform.flip(self.__img, True, False)
-                        self.__olhando = True
+                        self.__olhando = False
                 if self.__coorx + 48 >= 590:
                     pass
                 elif any(nextrect(x='right').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
@@ -82,9 +83,9 @@ def jogar():
                     self.__coorx += dist
                     
             if key == pygame.K_a or key == pygame.K_LEFT:
-                if self.__olhando == True:
+                if self.__olhando == False:
                         self.__img = pygame.transform.flip(self.__img, True, False)
-                        self.__olhando = False
+                        self.__olhando = True
                 if self.__coorx - 48 <= 110:
                     pass
                 elif any(nextrect(x='left').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
