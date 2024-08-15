@@ -40,7 +40,7 @@ def jogar():
 
         def __init__(self, coorx, coory):
             self.__img = pygame.transform.scale(pygame.image.load('imagens/Knight.png'), (48,48))
-            self.__olhando = True
+            self.__olhando = bool(getrandbits(1))
             self.__coorx = coorx
             self.__coory = coory
         
@@ -100,6 +100,13 @@ def jogar():
                     pass
                 else:
                     self.__coory += dist
+
+    class monstro():
+
+        def __init__(self):
+            self.__coorx = coorx
+
+            
 
 #endregion
     
