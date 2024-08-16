@@ -345,9 +345,8 @@ def jogar():
                     run = False
 
                 elif exrects[a].colliderect(charect) and exdelay == 0:
-                    print(jgdr1.get_vida())
                     jgdr1.set_vida(jgdr1.get_vida()-1)
-                    print(jgdr1.get_vida())
+
             new_wall_rect = []
             for parede in range(0,len(rectwall)):
                 new_wall_rect.append(rectwall[parede])
