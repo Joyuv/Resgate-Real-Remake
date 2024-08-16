@@ -316,12 +316,18 @@ def jogar():
         pygame.draw.rect(tela,'red',linhavida,border_radius=10,width=1)
         vida = jgdr1.get_vida() / vida_inicial
         barravida = pygame.Rect(15,15,200*vida,15)
-        pygame.draw.rect(tela,'red',barravida,border_radius=10)
+        pygame.draw.rect(tela,'#A70505',barravida,border_radius=10)
+        barravida.height = 10
+        pygame.draw.rect(tela,'#CD0C0C',barravida,border_radius=10)
+        
+        
 
         linhavigor = pygame.Rect(15,35,200,15)
         pygame.draw.rect(tela,'cyan',linhavigor,border_radius=10,width=1)
         vigor = jgdr1.get_stamina() / vigorinicial
         barravigor = pygame.Rect(15,35,200*vigor,15)
+        pygame.draw.rect(tela,'#00D6D0',barravigor,border_radius=10)
+        barravigor.height = 10
         pygame.draw.rect(tela,'cyan',barravigor,border_radius=10)
         
         
