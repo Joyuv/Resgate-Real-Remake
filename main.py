@@ -244,8 +244,10 @@ def jogar():
     run = True
     decapitado = False
 
+
     bombanatela = False
     explosao = False
+    tomou = False
     exdelay = 0
 
     vida_inicial = jgdr1.get_vida()
@@ -319,9 +321,8 @@ def jogar():
         pygame.draw.rect(tela,'#A70505',barravida,border_radius=10)
         barravida.height = 10
         pygame.draw.rect(tela,'#CD0C0C',barravida,border_radius=10)
+        tela.blit(fonte.render(str(jgdr1.get_vida()),False,'white'),(12+100*vida,15))
         
-        
-
         linhavigor = pygame.Rect(15,35,200,15)
         pygame.draw.rect(tela,'cyan',linhavigor,border_radius=10,width=1)
         vigor = jgdr1.get_stamina() / vigorinicial
@@ -329,6 +330,7 @@ def jogar():
         pygame.draw.rect(tela,'#00D6D0',barravigor,border_radius=10)
         barravigor.height = 10
         pygame.draw.rect(tela,'cyan',barravigor,border_radius=10)
+        tela.blit(fonte.render(str(jgdr1.get_stamina()),False,'black'),(12+100*vigor,35))
         
         
         tela.blit(jgdr1.get_img(),charect)
@@ -344,10 +346,10 @@ def jogar():
                     decapitado = True
                     run = False
 
-                elif exrects[a].colliderect(charect) and exdelay == 0:
-                    print(jgdr1.get_vida())
+                elif exrects[a].colliderect(charect) and tomou == False:
                     jgdr1.set_vida(jgdr1.get_vida()-1)
-                    print(jgdr1.get_vida())
+                    tomou = True
+                        
             new_wall_rect = []
             for parede in range(0,len(rectwall)):
                 new_wall_rect.append(rectwall[parede])
@@ -365,6 +367,7 @@ def jogar():
                 
                 explosao = False
                 exdelay = 0
+                tomou = False
                 
         pygame.display.flip() #atualizar os frames a cada vez que roda o while
         clock.tick(frames) #Diminuindo os fps para otimizar o jogo
