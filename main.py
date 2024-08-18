@@ -9,7 +9,7 @@ def jogar():
     
     icone = pygame.image.load('imagens/Icon.png')
 
-    tela = pygame.display.set_mode((700,700),pygame.RESIZABLE) #setando resolução da tela
+    tela = pygame.display.set_mode((700,700)) #setando resolução da tela
     pygame.display.set_caption('Resgate Real') #nome da janela
     pygame.display.set_icon(icone) #icone da janela
     
@@ -351,29 +351,20 @@ def jogar():
             
             for a in range(0,5):
 
-                #nem tente entender v
-                if a == 0:
-                    tela.blit(excentro,exrects[0])
-                elif a == 1:
-                    flipvert = pygame.transform.flip(exlados,False,True)
-                    tela.blit(flipvert,(exrects[a]))
-                elif a == 2:
-                    fliphor = pygame.transform.rotate(exlados,-90)
-                    tela.blit(fliphor,(exrects[a]))
-                elif a == 3:
-                    tela.blit(exlados,(exrects[a]))
-                else:
-                    fliphor =pygame.transform.rotate(exlados,90)
-                    tela.blit(fliphor,(exrects[a]))
-                #nem tente entender ^
-
-                
-                
-                    
-                    
-                
-                    
-
+                match a:
+                    case 0:
+                        tela.blit(excentro,exrects[0])
+                    case 1:
+                        flipvert = pygame.transform.flip(exlados,False,True)
+                        tela.blit(flipvert,(exrects[a]))
+                    case 2:
+                        fliphor = pygame.transform.rotate(exlados,-90)
+                        tela.blit(fliphor,(exrects[a]))
+                    case 3:
+                        tela.blit(exlados,(exrects[a]))
+                    case 4:
+                        fliphor =pygame.transform.rotate(exlados,90)
+                        tela.blit(fliphor,(exrects[a]))
 
                 if exrects[a].colliderect(prinrect):       
                     decapitado = True
