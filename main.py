@@ -70,7 +70,7 @@ def jogar():
             self.__vida = vida
 
         def mover(self, key):
-            dist = 47.7
+            dist = 48
             if key == pygame.K_d or key == pygame.K_RIGHT:
                 if self.__olhando == True:
                         self.__img = pygame.transform.flip(self.__img, True, False)
@@ -82,6 +82,7 @@ def jogar():
                 else:
                     self.__coorx += dist
                     self.__stamina -= 1
+                    return True
                     
             if key == pygame.K_a or key == pygame.K_LEFT:
                 if self.__olhando == False:
@@ -94,6 +95,7 @@ def jogar():
                 else:
                     self.__coorx -= dist
                     self.__stamina -= 1
+                    return True
             if key == pygame.K_w or key == pygame.K_UP:
                 if self.__coory - 48 < 110:
                     pass
@@ -102,6 +104,7 @@ def jogar():
                 else:
                     self.__coory -= dist
                     self.__stamina -= 1
+                    return True
             if key == pygame.K_s or key == pygame.K_DOWN:
                 if self.__coory + 48 >= 590:
                     pass
@@ -110,6 +113,8 @@ def jogar():
                 else:
                     self.__coory += dist
                     self.__stamina -= 1
+                    return True
+                
     class Ladroes:
         def __init__(self,coorx:int, coory:int):
             self.__img = pygame.transform.scale(pygame.image.load('imagens/gameplay/Ladrao.png'), (48,48))
@@ -337,9 +342,9 @@ def jogar():
            
             if event.type == pygame.KEYDOWN:
 
-                jgdr1.mover(event.key)
-                for thief in listaladroes:
-                    thief.andar(jgdr1.get_coorx(), jgdr1.get_coory())
+                if (jgdr1.mover(event.key) == True):
+                    for thief in listaladroes:
+                        thief.andar(jgdr1.get_coorx(), jgdr1.get_coory())
 
                 if event.key == pygame.K_SPACE:
                     if not bombanatela and exdelay == 0:
