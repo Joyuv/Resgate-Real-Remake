@@ -18,19 +18,26 @@ def jogar():
 #endregion PREPARAÇÃO DO AMBIENTE
 
 #region CAVALEIRO
-    def nextrect(x=0,y=0): #x = left, right | y= up, down
-        match x:
-            case 'left':
-                x = -48
-            case 'right':
-                x = 48
+    def nextrect(x = 'n_anda',y = 'n_anda'): #x = left, right | y= up, down
+        """Função para testar se a posição que o personagem for andar terá algo para colidir"""
+        
+        lr = 0 #Left & Right
+        ud = 0 #Up & Down
 
-        match y:
-            case 'up':
-                y = -48
-            case 'down':
-                y = 48
-        rect = pygame.Rect(jgdr1.get_coorx()+x, jgdr1.get_coory()+y, 48,48)
+        if x != 'n_anda':
+            match x:
+                case 'left':
+                    lr = -48
+                case 'right':
+                    lr = 48
+        if y != 'n_anda':
+            match y:
+                case 'up':
+                    ud = -48
+                case 'down':
+                    ud = 48
+
+        rect = pygame.Rect(jgdr1.get_coorx()+lr, jgdr1.get_coory()+ud, 48,48)
         return rect
 
     class player():
