@@ -19,8 +19,8 @@ def jogar():
 
 #region CAVALEIRO
     def nextrect(x = 'n_anda',y = 'n_anda'): #x = left, right | y= up, down
-        """Função para testar se a posição que o personagem for andar terá algo para colidir"""
-        
+        """Função para retornar o rect do personagem depois de andar"""
+
         lr = 0 #Left & Right
         ud = 0 #Up & Down
 
@@ -41,7 +41,7 @@ def jogar():
         return rect
 
     class player():
-
+        """Classe para checar e manipular os atributos do personagem"""
         def __init__(self, coorx:int, coory:int, vida:int, stamina:int):
             
             self.__img = pygame.transform.scale(pygame.image.load('imagens/gameplay/Knight.png'), (48,48))
@@ -67,8 +67,10 @@ def jogar():
             return self.__stamina
 
        
-        def set_vida(self,vida):
+        def set_vida(self,vida:int):
             self.__vida = vida
+        def set_stamina(self,stamina:int):
+            self.__stamina = stamina
 
         def mover(self, key):
             dist = 48
@@ -130,8 +132,12 @@ def jogar():
             return self.__coory
         def get_img(self):
             return self.__img
+        def get_olhando(self):
+            return self.__olhando
         def get_rect(self):
             return pygame.Rect(self.__coorx,self.__coory,48,48)
+        
+        
         
 
         
@@ -144,8 +150,14 @@ def jogar():
                 if self.random:
                     if self.__coorx < charx:
                         self.__coorx += 48
+                        if self.__olhando == True:
+                            self.__img = pygame.transform.flip(self.__img,True,False)
+                            self.__olhando = False
                     elif self.__coorx > charx:
                         self.__coorx -= 48
+                        if self.__olhando == False:
+                            self.__img = pygame.transform.flip(self.__img,True,False)
+                            self.__olhando = True
 
                 else:
                     if self.__coory < chary:
@@ -155,15 +167,22 @@ def jogar():
             
             elif self.__coorx != charx:
                 if self.__coorx < charx:
-                        self.__coorx += 48
+                    self.__coorx += 48
+                    if self.__olhando == True:
+                            self.__olhando = False
+                            self.__img = pygame.transform.flip(self.__img,True,False)
                 elif self.__coorx > charx:
                     self.__coorx -= 48
+                    if self.__olhando == False:
+                            self.__olhando = True
+                            self.__img = pygame.transform.flip(self.__img,True,False)
 
             elif self.__coory != chary:
                 if self.__coory < chary:
                     self.__coory += 48
                 elif self.__coory > chary:
                     self.__coory -= 48
+
 
 
 
@@ -258,7 +277,7 @@ def jogar():
             
         rectwall.append(rectotal)
 
-    ladraoqnt = 3
+    ladraoqnt = 2
     listaladroes = []
     for a in range(0,ladraoqnt):
         x = 112+48*randint(0,9)
@@ -350,6 +369,12 @@ def jogar():
                 sys.exit()
            
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_j:
+                    jgdr1.set_stamina(1000000)
+                    vigorinicial = 1000000
+                if event.key == pygame.K_v:
+                    jgdr1.set_vida(1000000)
+                    vida_inicial = 1000000
 
                 if jgdr1.mover(event.key):
                     for thief in listaladroes:
@@ -432,6 +457,10 @@ def jogar():
         
         for thief in listaladroes:
             tela.blit(thief.get_img(),thief.get_rect())
+            if thief.get_rect().colliderect(charect):
+                jgdr1.set_vida(jgdr1.get_vida()-1)
+                listaladroes.remove(thief)
+        
 
         if bombanatela:
             tela.blit(bomba,(posbomba))
