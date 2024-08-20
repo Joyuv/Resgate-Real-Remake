@@ -126,7 +126,7 @@ def jogar():
         
         def andar(self,charx, chary):
             
-            if self.__coorx != charx or self.__coory != chary:
+            if self.__coorx != charx and self.__coory != chary:
                 
                 self.random = bool(getrandbits(1))
 
@@ -324,11 +324,12 @@ def jogar():
     
     vigorinicial = jgdr1.get_stamina()
     
+    charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
     while run:
         
         
         
-        charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
+        
         #region EVENTOS
         
         for event in pygame.event.get():
@@ -360,6 +361,7 @@ def jogar():
                         bombanatela = False
                         explosao = True
                 
+        charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
         #endregion EVENTOS
         if charect.colliderect(prinrect):
             run = False
@@ -513,4 +515,3 @@ def jogar():
     
 if __name__ == '__main__':
     jogar()
-    
