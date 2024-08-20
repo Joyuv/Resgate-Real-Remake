@@ -13,7 +13,6 @@ def jogar():
     pygame.display.set_caption('Resgate Real') #nome da janela
     pygame.display.set_icon(icone) #icone da janela
     
-    
     clock = pygame.time.Clock() #variável clock para diminuir os FPS em breve
 
 #endregion PREPARAÇÃO DO AMBIENTE
@@ -36,7 +35,7 @@ def jogar():
 
     class player():
 
-        def __init__(self, coorx, coory, vida, stamina):
+        def __init__(self, coorx:int, coory:int, vida:int, stamina:int):
             
             self.__img = pygame.transform.scale(pygame.image.load('imagens/gameplay/Knight.png'), (48,48))
             self.__olhando = bool(getrandbits(1))
@@ -47,7 +46,6 @@ def jogar():
             self.__vida = vida
             self.__stamina = stamina
 
-        
         def get_coorx(self):
             return self.__coorx
         def get_coory(self):
@@ -128,11 +126,11 @@ def jogar():
         
         def andar(self,charx, chary):
             
-            if self.__coorx != charx and self.__coory != chary:
+            if self.__coorx != charx or self.__coory != chary:
                 
                 self.random = bool(getrandbits(1))
 
-                if self.random and self.__coorx != charx:
+                if self.random:
                     if self.__coorx < charx:
                         self.__coorx += 48
                     elif self.__coorx > charx:
@@ -177,8 +175,7 @@ def jogar():
     excentro = pygame.image.load('imagens/gameplay/Excentro.png')
     exlados = pygame.image.load('imagens/gameplay/Exlados.png')
     
-    ladrao = pygame.image.load('imagens/gameplay/Ladrao.png')
-    ladrao = pygame.transform.scale(ladrao,(48,48))
+    
     icone = pygame.transform.scale_by(icone,2)
     #endregion CARREGANDO IMAGENS
 
@@ -249,6 +246,24 @@ def jogar():
             rectotal = Paredes(x,y).rect()
             
         rectwall.append(rectotal)
+
+    ladraoqnt = 3
+    listaladroes = []
+    for a in range(0,ladraoqnt):
+        x = 112+48*randint(0,9)
+        y = 112+48*randint(0,9)
+        ladrao = Ladroes(x,y)
+        rect = ladrao.get_rect()
+
+        while any(rect.colliderect(rectwall[b][c])for b in range(0,qntwall) for c in range(0,5)) or any(rect.colliderect(condicoes[d]) for d in range(0,2)):
+            x = 112+48*randint(0,9)
+            y = 112+48*randint(0,9)
+            ladrao = Ladroes(x,y)
+            rect = ladrao.get_rect()
+
+        listaladroes.append(ladrao)
+
+        
         
 #endregion PAREDES
     
@@ -308,13 +323,12 @@ def jogar():
     vida_inicial = jgdr1.get_vida()
     
     vigorinicial = jgdr1.get_stamina()
-
-    charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
+    
     while run:
         
         
         
-        
+        charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
         #region EVENTOS
         
         for event in pygame.event.get():
@@ -326,8 +340,8 @@ def jogar():
             if event.type == pygame.KEYDOWN:
 
                 jgdr1.mover(event.key)
-
-                
+                for thief in listaladroes:
+                    thief.andar(jgdr1.get_coorx(), jgdr1.get_coory())
 
                 if event.key == pygame.K_SPACE:
                     if not bombanatela and exdelay == 0:
@@ -347,17 +361,16 @@ def jogar():
                         explosao = True
                 
         #endregion EVENTOS
-        charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
-
         if charect.colliderect(prinrect):
             run = False
             ganhou = True
+            print('princesa')
             
 
         elif jgdr1.get_vida() <= 0 or jgdr1.get_stamina() <= 0:
             run = False
             perdeu = True
-        
+            print('fodeu')
         
 
         tela.fill('black')
@@ -404,6 +417,9 @@ def jogar():
         tela.blit(jgdr1.get_img(),charect)
         tela.blit(princesa,prinrect)
         
+        for thief in listaladroes:
+            tela.blit(thief.get_img(),thief.get_rect())
+
         if bombanatela:
             tela.blit(bomba,(posbomba))
         elif explosao:
@@ -424,7 +440,7 @@ def jogar():
                     case 4:
                         fliphor =pygame.transform.rotate(exlados,90)
                         tela.blit(fliphor,(exrects[a]))
-            
+
                 if exrects[a].colliderect(prinrect):       
                     decapitado = True
                     run = False
@@ -456,7 +472,6 @@ def jogar():
         clock.tick(frames) #Diminuindo os fps para otimizar o jogo
     
     while ganhou:
-        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
