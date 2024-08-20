@@ -36,6 +36,12 @@ def jogar():
         rect = pygame.Rect(jgdr1.get_coorx()+x, jgdr1.get_coory()+y, 48,48)
         return rect
 
+    class monster():
+
+        def __init__(self):
+            self.__img = pygame.transform.scale(pygame.image.load('imagens/Monstro.png'), (48,48))
+            self.__olhando = bool(getrandbits(1))
+
     class player():
 
         def __init__(self, coorx, coory):
@@ -63,28 +69,24 @@ def jogar():
             self.__img = img
         
         def mover(self, key):
-            dist = 48
+            dist = 47.7
             if key == pygame.K_d or key == pygame.K_RIGHT:
-                if self.__olhando == False:
-                        self.__img = pygame.transform.flip(self.__img, True, False)
-                        self.__olhando = True
-                if self.__coorx + 48 >= 590:
-                    pass
-                elif any(nextrect(x='right').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,2)):
+                if self.__coorx + 48 >= 590 or any(nextrect(x='right').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,2)):
                     pass
                 else:
                     self.__coorx += dist
+                    if self.__olhando == False:
+                            self.__img = pygame.transform.flip(self.__img, True, False)
+                            self.__olhando = True
                     
             if key == pygame.K_a or key == pygame.K_LEFT:
-                if self.__olhando == True:
-                        self.__img = pygame.transform.flip(self.__img, True, False)
-                        self.__olhando = False
-                if self.__coorx - 48 <= 110:
-                    pass
-                elif any(nextrect(x='left').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,2)):
+                if self.__coorx - 48 <= 110 or any(nextrect(x='left').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,2)):
                     pass
                 else:
                     self.__coorx -= dist
+                    if self.__olhando == True:
+                            self.__img = pygame.transform.flip(self.__img, True, False)
+                            self.__olhando = False
                     
             if key == pygame.K_w or key == pygame.K_UP:
                 if self.__coory - 48 < 110:
@@ -283,7 +285,7 @@ def jogar():
             ganhou = True
 
         pygame.display.flip() #atualizar os frames a cada vez que roda o while
-        clock.tick(30) #Diminuindo os fps para otimizar o jogo
+        clock.tick(60) #Diminuindo os fps para otimizar o jogo
     
     
     
