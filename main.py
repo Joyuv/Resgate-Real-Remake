@@ -128,11 +128,9 @@ def jogar():
         def get_rect(self):
             return pygame.Rect(self.__coorx,self.__coory,48,48)
         
-
-        
         def andar(self,charx, chary):
             
-            if self.__coorx != charx or self.__coory != chary:
+            if self.__coorx != charx and self.__coory != chary:
                 
                 self.random = bool(getrandbits(1))
 
@@ -159,9 +157,6 @@ def jogar():
                     self.__coory += 48
                 elif self.__coory > chary:
                     self.__coory -= 48
-
-
-
 
 #endregion
     
@@ -269,8 +264,6 @@ def jogar():
 
         listaladroes.append(ladrao)
 
-        
-        
 #endregion PAREDES
     
 #region IMAGENS INFO
@@ -329,12 +322,11 @@ def jogar():
     vida_inicial = jgdr1.get_vida()
     
     vigorinicial = jgdr1.get_stamina()
+       
+    charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
     
     while run:
         
-        
-        
-        charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
         #region EVENTOS
         
         for event in pygame.event.get():
@@ -367,6 +359,9 @@ def jogar():
                         explosao = True
                 
         #endregion EVENTOS
+
+        charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
+
         if charect.colliderect(prinrect):
             run = False
             ganhou = True
