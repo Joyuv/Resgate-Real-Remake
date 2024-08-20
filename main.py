@@ -126,11 +126,11 @@ def jogar():
         
         def andar(self,charx, chary):
             
-            if self.__coorx != charx or self.__coory != chary:
+            if self.__coorx != charx and self.__coory != chary:
                 
                 self.random = bool(getrandbits(1))
 
-                if self.random:
+                if self.random and self.__coorx != charx:
                     if self.__coorx < charx:
                         self.__coorx += 48
                     elif self.__coorx > charx:
@@ -323,12 +323,13 @@ def jogar():
     vida_inicial = jgdr1.get_vida()
     
     vigorinicial = jgdr1.get_stamina()
-    
+
+    charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
     while run:
         
         
         
-        charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
+        
         #region EVENTOS
         
         for event in pygame.event.get():
@@ -361,16 +362,17 @@ def jogar():
                         explosao = True
                 
         #endregion EVENTOS
+        charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
+
         if charect.colliderect(prinrect):
             run = False
             ganhou = True
-            print('princesa')
             
 
         elif jgdr1.get_vida() <= 0 or jgdr1.get_stamina() <= 0:
             run = False
             perdeu = True
-            print('fodeu')
+        
         
 
         tela.fill('black')
@@ -440,7 +442,7 @@ def jogar():
                     case 4:
                         fliphor =pygame.transform.rotate(exlados,90)
                         tela.blit(fliphor,(exrects[a]))
-
+            
                 if exrects[a].colliderect(prinrect):       
                     decapitado = True
                     run = False
