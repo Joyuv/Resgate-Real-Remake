@@ -106,7 +106,58 @@ def jogar():
                 else:
                     self.__coory += dist
                     self.__stamina -= 1
-    
+    class Ladroes:
+        def __init__(self,coorx:int, coory:int):
+            self.__img = pygame.transform.scale(pygame.image.load('imagens/gameplay/Ladrao.png'), (48,48))
+            self.__olhando = bool(getrandbits(1))
+            self.__img = pygame.transform.flip(self.__img,self.__olhando,False)
+
+            self.__coorx = coorx
+            self.__coory = coory
+        
+        def get_coorx(self):
+            return self.__coorx
+        def get_coory(self):
+            return self.__coory
+        def get_img(self):
+            return self.__img
+        def get_rect(self):
+            return pygame.Rect(self.__coorx,self.__coory,48,48)
+        
+
+        
+        def andar(self,charx, chary):
+            
+            if self.__coorx != charx and self.__coory != chary:
+                
+                self.random = bool(getrandbits(1))
+
+                if self.random and self.__coorx != charx:
+                    if self.__coorx < charx:
+                        self.__coorx += 48
+                    elif self.__coorx > charx:
+                        self.__coorx -= 48
+
+                else:
+                    if self.__coory < chary:
+                        self.__coory += 48
+                    elif self.__coory > chary:
+                        self.__coory -= 48
+            
+            elif self.__coorx != charx:
+                if self.__coorx < charx:
+                        self.__coorx += 48
+                elif self.__coorx > charx:
+                    self.__coorx -= 48
+
+            elif self.__coory != chary:
+                if self.__coory < chary:
+                    self.__coory += 48
+                elif self.__coory > chary:
+                    self.__coory -= 48
+
+
+
 
 #endregion
     
@@ -257,12 +308,13 @@ def jogar():
     vida_inicial = jgdr1.get_vida()
     
     vigorinicial = jgdr1.get_stamina()
-    
+
+    charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
     while run:
         
         
         
-        charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
+        
         #region EVENTOS
         
         for event in pygame.event.get():
@@ -295,13 +347,18 @@ def jogar():
                         explosao = True
                 
         #endregion EVENTOS
+        charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
+
         if charect.colliderect(prinrect):
             run = False
             ganhou = True
+            
 
-        if jgdr1.get_vida() <= 0 or jgdr1.get_stamina() <= 0:
+        elif jgdr1.get_vida() <= 0 or jgdr1.get_stamina() <= 0:
             run = False
             perdeu = True
+        
+        
 
         tela.fill('black')
 
@@ -367,7 +424,7 @@ def jogar():
                     case 4:
                         fliphor =pygame.transform.rotate(exlados,90)
                         tela.blit(fliphor,(exrects[a]))
-
+            
                 if exrects[a].colliderect(prinrect):       
                     decapitado = True
                     run = False
