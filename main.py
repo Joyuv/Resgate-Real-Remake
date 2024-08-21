@@ -27,12 +27,6 @@ def jogar():
         rect = pygame.Rect(objeto.get_coorx()+x, objeto.get_coory()+y, 48,48)
         return rect
 
-    class monster():
-
-        def __init__(self):
-            self.__img = pygame.transform.scale(pygame.image.load('imagens/Monstro.png'), (48,48))
-            self.__olhando = bool(getrandbits(1))
-
     class player():
         """Classe para checar e manipular os atributos do personagem"""
         def __init__(self, coorx:int, coory:int, vida:int, stamina:int):
