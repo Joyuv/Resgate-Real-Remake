@@ -9,10 +9,9 @@ def jogar():
     
     icone = pygame.image.load('imagens/Icon.png')
 
-    tela = pygame.display.set_mode((700,700),pygame.RESIZABLE) #setando resolução da tela
+    tela = pygame.display.set_mode((700,700)) #setando resolução da tela
     pygame.display.set_caption('Resgate Real') #nome da janela
     pygame.display.set_icon(icone) #icone da janela
-    
     
     clock = pygame.time.Clock() #variável clock para diminuir os FPS em breve
 
@@ -34,15 +33,25 @@ def jogar():
         rect = pygame.Rect(jgdr1.get_coorx()+x, jgdr1.get_coory()+y, 48,48)
         return rect
 
+    class monster():
+
+        def __init__(self):
+            self.__img = pygame.transform.scale(pygame.image.load('imagens/Monstro.png'), (48,48))
+            self.__olhando = bool(getrandbits(1))
+
     class player():
 
-        def __init__(self, coorx, coory, vida):
-            self.__img = pygame.transform.scale(pygame.image.load('imagens/Knight.png'), (48,48))
+        def __init__(self, coorx:int, coory:int, vida:int, stamina:int):
+            
+            self.__img = pygame.transform.scale(pygame.image.load('imagens/gameplay/Knight.png'), (48,48))
             self.__olhando = bool(getrandbits(1))
+            self.__img = pygame.transform.flip(self.__img,self.__olhando,False)
+
             self.__coorx = coorx
             self.__coory = coory
             self.__vida = vida
-        
+            self.__stamina = stamina
+
         def get_coorx(self):
             return self.__coorx
         def get_coory(self):
@@ -53,42 +62,40 @@ def jogar():
             return self.__img
         def get_vida(self):
             return self.__vida
+        def get_stamina(self):
+            return self.__stamina
 
+       
         def set_vida(self,vida):
             self.__vida = vida
-        def set_coorx(self, coorx):
-            self.__coorx = coorx
-        def set_coory(self, coory):
-            self.__coory = coory
-        def set__olhando(self, olhando):
-            self.__olhando = olhando
-        def set_img(self, img):
-            self.__img = img
-        
+
         def mover(self, key):
             dist = 48
             if key == pygame.K_d or key == pygame.K_RIGHT:
-                if self.__olhando == False:
+                if self.__olhando == True:
                         self.__img = pygame.transform.flip(self.__img, True, False)
-                        self.__olhando = True
+                        self.__olhando = False
                 if self.__coorx + 48 >= 590:
                     pass
                 elif any(nextrect(x='right').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
                     pass
                 else:
                     self.__coorx += dist
+                    self.__stamina -= 1
+                    return True
                     
             if key == pygame.K_a or key == pygame.K_LEFT:
-                if self.__olhando == True:
+                if self.__olhando == False:
                         self.__img = pygame.transform.flip(self.__img, True, False)
-                        self.__olhando = False
+                        self.__olhando = True
                 if self.__coorx - 48 <= 110:
                     pass
                 elif any(nextrect(x='left').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
                     pass
                 else:
                     self.__coorx -= dist
-                    
+                    self.__stamina -= 1
+                    return True
             if key == pygame.K_w or key == pygame.K_UP:
                 if self.__coory - 48 < 110:
                     pass
@@ -96,6 +103,8 @@ def jogar():
                         pass
                 else:
                     self.__coory -= dist
+                    self.__stamina -= 1
+                    return True
             if key == pygame.K_s or key == pygame.K_DOWN:
                 if self.__coory + 48 >= 590:
                     pass
@@ -103,30 +112,76 @@ def jogar():
                     pass
                 else:
                     self.__coory += dist
+                    self.__stamina -= 1
+                    return True
+                
+    class Ladroes:
+        def __init__(self,coorx:int, coory:int):
+            self.__img = pygame.transform.scale(pygame.image.load('imagens/gameplay/Ladrao.png'), (48,48))
+            self.__olhando = bool(getrandbits(1))
+            self.__img = pygame.transform.flip(self.__img,self.__olhando,False)
 
-    class monstro():
-
-        def __init__(self):
             self.__coorx = coorx
-
+            self.__coory = coory
+        
+        def get_coorx(self):
+            return self.__coorx
+        def get_coory(self):
+            return self.__coory
+        def get_img(self):
+            return self.__img
+        def get_rect(self):
+            return pygame.Rect(self.__coorx,self.__coory,48,48)
+        
+        def andar(self,charx, chary):
             
+            if self.__coorx != charx and self.__coory != chary:
+                
+                self.random = bool(getrandbits(1))
+
+                if self.random:
+                    if self.__coorx < charx:
+                        self.__coorx += 48
+                    elif self.__coorx > charx:
+                        self.__coorx -= 48
+
+                else:
+                    if self.__coory < chary:
+                        self.__coory += 48
+                    elif self.__coory > chary:
+                        self.__coory -= 48
+            
+            elif self.__coorx != charx:
+                if self.__coorx < charx:
+                        self.__coorx += 48
+                elif self.__coorx > charx:
+                    self.__coorx -= 48
+
+            elif self.__coory != chary:
+                if self.__coory < chary:
+                    self.__coory += 48
+                elif self.__coory > chary:
+                    self.__coory -= 48
 
 #endregion
     
 #region CARREGANDO IMAGENS   
 
-    princesa = pygame.image.load('imagens/Princesa.png')
+    princesa = pygame.image.load('imagens/gameplay/Princesa.png')
     princesa = pygame.transform.scale(princesa,(48,48))
 
-    grama = pygame.image.load('imagens/Grama.png')
+    grama = pygame.image.load('imagens/gameplay/Grama.png')
     grama = pygame.transform.scale(grama,(48,48))
 
-    barreira = pygame.image.load('imagens/Preda.png')
+    barreira = pygame.image.load('imagens/gameplay/Preda.png')
     barreira = pygame.transform.scale(barreira,(48,48))
 
-    bomba = pygame.image.load('imagens/Bomba.png')
+    bomba = pygame.image.load('imagens/gameplay/Bomba.png')
     bomba = pygame.transform.scale(bomba,(48,48))
-
+    excentro = pygame.image.load('imagens/gameplay/Excentro.png')
+    exlados = pygame.image.load('imagens/gameplay/Exlados.png')
+    
+    
     icone = pygame.transform.scale_by(icone,2)
     #endregion CARREGANDO IMAGENS
 
@@ -135,7 +190,7 @@ def jogar():
     prinx = 112 + 48*randint(0,9)
     priny = 112 + 48*randint(0,9)
 
-    jgdr1 = player(112 + 48*randint(0,9), 112 + 48*randint(0,9),vida=4)
+    jgdr1 = player(112 + 48*randint(0,9), 112 + 48*randint(0,9),vida=4,stamina=20)
     
     charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
 
@@ -197,23 +252,39 @@ def jogar():
             rectotal = Paredes(x,y).rect()
             
         rectwall.append(rectotal)
-        
+
+    ladraoqnt = 3
+    listaladroes = []
+    for a in range(0,ladraoqnt):
+        x = 112+48*randint(0,9)
+        y = 112+48*randint(0,9)
+        ladrao = Ladroes(x,y)
+        rect = ladrao.get_rect()
+
+        while any(rect.colliderect(rectwall[b][c])for b in range(0,qntwall) for c in range(0,5)) or any(rect.colliderect(condicoes[d]) for d in range(0,2)):
+            x = 112+48*randint(0,9)
+            y = 112+48*randint(0,9)
+            ladrao = Ladroes(x,y)
+            rect = ladrao.get_rect()
+
+        listaladroes.append(ladrao)
+
 #endregion PAREDES
     
 #region IMAGENS INFO
     fonte = pygame.font.SysFont('fonte/PixelGameFont.ttf',20)
     fonte2 = pygame.font.SysFont('fonte/PixelGameFont.ttf',30)
 
-    wasd = pygame.image.load('imagens/wasd.png')
+    wasd = pygame.image.load('imagens/info/wasd.png')
     wasd = pygame.transform.scale_by(wasd,4)
 
-    setinhas = pygame.image.load('imagens/setinhas.png')
+    setinhas = pygame.image.load('imagens/info/setinhas.png')
     setinhas = pygame.transform.scale_by(setinhas,4)
 
-    espaco = pygame.image.load('imagens/espaco.png')
+    espaco = pygame.image.load('imagens/info/espaco.png')
     espaco = pygame.transform.scale_by(espaco,3)
 
-    espaco2 = pygame.image.load('imagens/espaco2.png')
+    espaco2 = pygame.image.load('imagens/info/espaco2.png')
     espaco2 = pygame.transform.scale_by(espaco2,3)
 #endregion IMAGENS INFO
 
@@ -247,15 +318,20 @@ def jogar():
     run = True
     decapitado = False
 
+
     bombanatela = False
     explosao = False
+    tomou = False
     exdelay = 0
+
     vida_inicial = jgdr1.get_vida()
+    
+    vigorinicial = jgdr1.get_stamina()
+       
+    charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
+    
     while run:
         
-        vida = jgdr1.get_vida()
-        
-        charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
         #region EVENTOS
         
         for event in pygame.event.get():
@@ -266,27 +342,42 @@ def jogar():
            
             if event.type == pygame.KEYDOWN:
 
-                jgdr1.mover(event.key)
+                if (jgdr1.mover(event.key) == True):
+                    for thief in listaladroes:
+                        thief.andar(jgdr1.get_coorx(), jgdr1.get_coory())
 
                 if event.key == pygame.K_SPACE:
                     if not bombanatela and exdelay == 0:
                         bombanatela = True
                         posbomba = (charect.x, charect.y)
                     else:
-                        explosaox = pygame.Rect(posbomba[0]-48,posbomba[1],48*3,48)
-                        explosaoy = pygame.Rect(posbomba[0],posbomba[1]-48,48,48*3)
-                        exrects = [explosaox,explosaoy]
+                        exrects = [pygame.Rect(posbomba[0],posbomba[1],48,48)]
+                        for a in range(-1,2,2):
+                            recty = pygame.Rect(posbomba[0],posbomba[1]-48*a,48,48)
+                            rectx = pygame.Rect(posbomba[0]-48*a,posbomba[1],48,48)
+                            
+                            exrects.append(recty)
+                            exrects.append(rectx)
+                        
+                        
                         bombanatela = False
                         explosao = True
                 
         #endregion EVENTOS
+
+        charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
+
         if charect.colliderect(prinrect):
             run = False
             ganhou = True
+            print('princesa')
+            
 
-        if vida == 0:
+        elif jgdr1.get_vida() <= 0 or jgdr1.get_stamina() <= 0:
             run = False
             perdeu = True
+            print('fodeu')
+        
 
         tela.fill('black')
 
@@ -311,49 +402,64 @@ def jogar():
                 pygame.draw.rect(tela,'black', (pygame.Rect(112+48*a,112+48*b,48,48)),width=1)
 
 
-        for a in range(0,vida_inicial):
-            rectheart = pygame.Rect(15+30*a,15,30,20)
-            if a == 0:
-                pygame.draw.rect(tela,'red',rectheart,border_bottom_left_radius=10,border_top_left_radius=10,width=1)
-
-            elif a == vida_inicial-1:
-                pygame.draw.rect(tela,'red',rectheart,border_bottom_right_radius=10,border_top_right_radius=10,width=1) 
-            else:
-                
-                pygame.draw.rect(tela,'red',rectheart,width=1)
-            
-        for a in range(0,vida):
-            rectheart2 = pygame.Rect(15+30*a,15,30,20)
-            if a == 0:
-                pygame.draw.rect(tela,'red',rectheart2,border_bottom_left_radius=10,border_top_left_radius=10)
-            elif a == vida_inicial-1:
-                pygame.draw.rect(tela,'red',rectheart,border_bottom_right_radius=10,border_top_right_radius=10) 
-            
-            else:
-                pygame.draw.rect(tela,'red',rectheart2)
-            
+        linhavida = pygame.Rect(15,15,200,15)
+        pygame.draw.rect(tela,'red',linhavida,border_radius=10,width=1)
+        vida = jgdr1.get_vida() / vida_inicial
+        barravida = pygame.Rect(15,15,200*vida,15)
+        pygame.draw.rect(tela,'#A70505',barravida,border_radius=10)
+        barravida.height = 10
+        pygame.draw.rect(tela,'#CD0C0C',barravida,border_radius=10)
+        tela.blit(fonte.render(str(jgdr1.get_vida()),False,'white'),(12+100*vida,15))
+        
+        linhavigor = pygame.Rect(15,35,200,15)
+        pygame.draw.rect(tela,'cyan',linhavigor,border_radius=10,width=1)
+        vigor = jgdr1.get_stamina() / vigorinicial
+        barravigor = pygame.Rect(15,35,200*vigor,15)
+        pygame.draw.rect(tela,'#00D6D0',barravigor,border_radius=10)
+        barravigor.height = 10
+        pygame.draw.rect(tela,'cyan',barravigor,border_radius=10)
+        tela.blit(fonte.render(str(jgdr1.get_stamina()),False,'black'),(12+100*vigor,35))
+        
         tela.blit(jgdr1.get_img(),charect)
         tela.blit(princesa,prinrect)
+        
+        for thief in listaladroes:
+            tela.blit(thief.get_img(),thief.get_rect())
 
         if bombanatela:
-            
             tela.blit(bomba,(posbomba))
         elif explosao:
             
-            for a in range(0,2):
-                pygame.draw.rect(tela,'yellow',exrects[a])
+            for a in range(0,5):
+
+                match a:
+                    case 0:
+                        tela.blit(excentro,exrects[0])
+                    case 1:
+                        flipvert = pygame.transform.flip(exlados,False,True)
+                        tela.blit(flipvert,(exrects[a]))
+                    case 2:
+                        fliphor = pygame.transform.rotate(exlados,-90)
+                        tela.blit(fliphor,(exrects[a]))
+                    case 3:
+                        tela.blit(exlados,(exrects[a]))
+                    case 4:
+                        fliphor =pygame.transform.rotate(exlados,90)
+                        tela.blit(fliphor,(exrects[a]))
+
                 if exrects[a].colliderect(prinrect):       
                     decapitado = True
                     run = False
 
-                elif exrects[a].colliderect(charect) and exdelay == 0:
-                    jgdr1.set_vida(vida-1)
-                    
+                elif exrects[a].colliderect(charect) and tomou == False:
+                    jgdr1.set_vida(jgdr1.get_vida()-1)
+                    tomou = True
+                        
             new_wall_rect = []
             for parede in range(0,len(rectwall)):
                 new_wall_rect.append(rectwall[parede])
                 for square in rectwall[parede]:
-                    for a in range(0,2):
+                    for a in range(0,5):
                         
                         if exrects[a].colliderect(square):
                             new_wall_rect[parede].remove(square)
@@ -366,12 +472,12 @@ def jogar():
                 
                 explosao = False
                 exdelay = 0
+                tomou = False
                 
         pygame.display.flip() #atualizar os frames a cada vez que roda o while
         clock.tick(frames) #Diminuindo os fps para otimizar o jogo
     
     while ganhou:
-        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
