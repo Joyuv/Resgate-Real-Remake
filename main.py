@@ -59,7 +59,7 @@ def jogar():
                         self.__olhando = False
                 if self.__coorx + 48 >= 590:
                     pass
-                elif any(nextrect(jgdr1,x=48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
+                elif any(nextrect(self,x=48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
                     pass
                 else:
                     self.__coorx += dist
@@ -72,7 +72,7 @@ def jogar():
                         self.__olhando = True
                 if self.__coorx - 48 <= 110:
                     pass
-                elif any(nextrect(jgdr1,x=-48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
+                elif any(nextrect(self,x=-48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
                     pass
                 else:
                     self.__coorx -= dist
@@ -81,7 +81,7 @@ def jogar():
             if key == pygame.K_w or key == pygame.K_UP:
                 if self.__coory - 48 < 110:
                     pass
-                elif any(nextrect(jgdr1,y=-48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
+                elif any(nextrect(self,y=-48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
                         pass
                 else:
                     self.__coory -= dist
@@ -90,7 +90,7 @@ def jogar():
             if key == pygame.K_s or key == pygame.K_DOWN:
                 if self.__coory + 48 >= 590:
                     pass
-                elif any(nextrect(jgdr1,y= 48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
+                elif any(nextrect(self,y= 48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
                     pass
                 else:
                     self.__coory += dist
