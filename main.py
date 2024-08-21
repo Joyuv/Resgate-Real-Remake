@@ -73,7 +73,6 @@ def jogar():
                     self.__coorx += dist
                     self.__stamina -= 1
                     return True
-                    return True
                     
             if key == pygame.K_a or key == pygame.K_LEFT:
                 if self.__olhando == False:
@@ -127,27 +126,33 @@ def jogar():
         
 
         def andar(self,charx, chary):
-            
+            self.__ultmov = None
             if self.__coorx != charx and self.__coory != chary:
-                
                 self.random = bool(getrandbits(1))
                 if self.random:
                     if self.__coorx < charx:
-                        self.__coorx += 48
-                        if self.__olhando == True:
-                            self.__img = pygame.transform.flip(self.__img,True,False)
-                            self.__olhando = False
+                        if any(nextrect(self,x=48).colliderect(rectwall[a][b])for a in range(0,len(rectwall))for b in range(0,len(rectwall[a]))): #Resolver mais tarde 
+                            pass
+                        else:
+                            self.__coorx += 48
+                            if self.__olhando == True:
+                                self.__img = pygame.transform.flip(self.__img,True,False)
+                                self.__olhando = False
+                            self.__ultmov = 'rite'
                     elif self.__coorx > charx:
                         self.__coorx -= 48
                         if self.__olhando == False:
                             self.__img = pygame.transform.flip(self.__img,True,False)
                             self.__olhando = True
+                        self.__ultmov = 'lefiti'
 
                 else:
                     if self.__coory < chary:
                         self.__coory += 48
+                        self.__ultmov = 'upi'
                     elif self.__coory > chary:
                         self.__coory -= 48
+                        self.__ultmov = 'daun'
             
             elif self.__coorx != charx:
                 if self.__coorx < charx:
