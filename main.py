@@ -5,8 +5,7 @@ import sys
 def jogar():
 #region PREPARAÇÃO DO AMBIENTE
     pygame.init() #iniciando o módulo pygame
-    pygame.key.get_focused() #função para reconhecer eventos do teclado
-    
+     
     icone = pygame.image.load('imagens/Icon.png')
 
     tela = pygame.display.set_mode((700,700)) #setando resolução da tela
@@ -20,9 +19,9 @@ def jogar():
 #region CAVALEIRO
     
 
-    class player():
+    class Player():
         """Classe para checar e manipular os atributos do personagem"""
-        def __init__(self, coorx:int, coory:int, vida:int, stamina:int):
+        def __init__(self, coorx:int, coory:int, vida:int, stamina:int, img:pygame.Surface):
             
             self.__img = pygame.transform.scale(pygame.image.load('imagens/gameplay/Knight.png'), (48,48))
             self.__olhando = bool(getrandbits(1))
@@ -97,9 +96,11 @@ def jogar():
                     self.__coory += dist
                     self.__stamina -= 1
                     return True
+#region Ladrões
     class Ladroes:
-        def __init__(self,coorx:int, coory:int):
-            self.__img = pygame.transform.scale(pygame.image.load('imagens/gameplay/Ladrao.png'), (48,48))
+        def __init__(self,coorx:int, coory:int, img:pygame.Surface):
+            
+            self.__img = img
             self.__olhando = bool(getrandbits(1))
             self.__img = pygame.transform.flip(self.__img,self.__olhando,False)
 
@@ -158,8 +159,8 @@ def jogar():
                     self.__coory += 48
                 elif self.__coory > chary:
                     self.__coory -= 48
-
-    def nextrect(objeto:player | Ladroes, x:int = 0, y:int = 0): #x = -48 ou 0 ou 48 | y = -48 ou 0 ou 48 
+#endregion Ladrões
+    def nextrect(objeto:Player | Ladroes, x:int = 0, y:int = 0): #x = -48 ou 0 ou 48 | y = -48 ou 0 ou 48 
         #obs para givanilson, objeto é o bicho, por exemplo, o jgdr1 ou algum dos ladrões, se vira aí na tipagem
         
         #outra coisa, eu acho que tem como colocar a tipagem pra ser uma tupla que tu escolhe um dos valores, por exemplo (-48,0,48) descobre aí como faz
@@ -173,7 +174,7 @@ def jogar():
 #endregion
     
 #region CARREGANDO IMAGENS   
-
+    knight = pygame.transform.scale(pygame.image.load('imagens/gameplay/Ladrao.png'), (48,48))
     princesa = pygame.image.load('imagens/gameplay/Princesa.png')
     princesa = pygame.transform.scale(princesa,(48,48))
 
@@ -188,7 +189,7 @@ def jogar():
     excentro = pygame.image.load('imagens/gameplay/Excentro.png')
     exlados = pygame.image.load('imagens/gameplay/Exlados.png')
     
-    
+    imajenladron = pygame.transform.scale(pygame.image.load('imagens/gameplay/Ladrao.png'), (48,48))
     icone = pygame.transform.scale_by(icone,2)
     #endregion CARREGANDO IMAGENS
 
@@ -197,7 +198,7 @@ def jogar():
     prinx = 112 + 48*randint(0,9)
     priny = 112 + 48*randint(0,9)
 
-    jgdr1 = player(112 + 48*randint(0,9), 112 + 48*randint(0,9),vida=4,stamina=20)
+    jgdr1 = Player(112 + 48*randint(0,9), 112 + 48*randint(0,9),vida=4,stamina=20,img=knight)
     
     charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
 
@@ -260,18 +261,18 @@ def jogar():
             
         rectwall.append(rectotal)
 
-    ladraoqnt = 5
+    ladraoqnt = 2
     listaladroes = []
     for a in range(0,ladraoqnt):
         x = 112+48*randint(0,9)
         y = 112+48*randint(0,9)
-        ladrao = Ladroes(x,y)
+        ladrao = Ladroes(x,y,imajenladron)
         rect = ladrao.get_rect()
 
         while any(rect.colliderect(rectwall[b][c])for b in range(0,qntwall) for c in range(0,5)) or any(rect.colliderect(condicoes[d]) for d in range(0,2)):
             x = 112+48*randint(0,9)
             y = 112+48*randint(0,9)
-            ladrao = Ladroes(x,y)
+            ladrao = Ladroes(x,y, imajenladron)
             rect = ladrao.get_rect()
 
         listaladroes.append(ladrao)
