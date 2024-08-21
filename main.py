@@ -18,14 +18,7 @@ def jogar():
 #endregion PREPARAÇÃO DO AMBIENTE
 
 #region CAVALEIRO
-    def nextrect(objeto, x:int = 0, y:int = 0): #x = -48 ou 0 ou 48 | y = -48 ou 0 ou 48 
-        #obs para givanilson, objeto é o bicho, por exemplo, o jgdr1 ou algum dos ladrões, se vira aí na tipagem
-        
-        #outra coisa, eu acho que tem como colocar a tipagem pra ser uma tupla que tu escolhe um dos valores, por exemplo (-48,0,48) descobre aí como faz
-        """Função para retornar o rect do personagem depois de andar"""
-
-        rect = pygame.Rect(objeto.get_coorx()+x, objeto.get_coory()+y, 48,48)
-        return rect
+    
 
     class player():
         """Classe para checar e manipular os atributos do personagem"""
@@ -53,7 +46,7 @@ def jogar():
         def get_stamina(self):
             return self.__stamina
 
-       
+        
         def set_vida(self,vida:int):
             self.__vida = vida
         def set_stamina(self,stamina:int):
@@ -166,7 +159,14 @@ def jogar():
                 elif self.__coory > chary:
                     self.__coory -= 48
 
+    def nextrect(objeto:player | Ladroes, x:int = 0, y:int = 0): #x = -48 ou 0 ou 48 | y = -48 ou 0 ou 48 
+        #obs para givanilson, objeto é o bicho, por exemplo, o jgdr1 ou algum dos ladrões, se vira aí na tipagem
+        
+        #outra coisa, eu acho que tem como colocar a tipagem pra ser uma tupla que tu escolhe um dos valores, por exemplo (-48,0,48) descobre aí como faz
+        """Função para retornar o rect do personagem depois de andar"""
 
+        rect = pygame.Rect(objeto.get_coorx()+x, objeto.get_coory()+y, 48,48)
+        return rect
 
 
 
