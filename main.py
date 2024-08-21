@@ -87,7 +87,7 @@ def jogar():
                         self.__olhando = False
                 if self.__coorx + 48 >= 590:
                     pass
-                elif any(nextrect(jgdr1,x=48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
+                elif any(nextrect(jgdr1,48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
                     pass
                 else:
                     self.__coorx += dist
@@ -100,7 +100,7 @@ def jogar():
                         self.__olhando = True
                 if self.__coorx - 48 <= 110:
                     pass
-                elif any(nextrect(jgdr1,x=-48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
+                elif any(nextrect(jgdr1,-48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
                     pass
                 else:
                     self.__coorx -= dist
@@ -109,7 +109,7 @@ def jogar():
             if key == pygame.K_w or key == pygame.K_UP:
                 if self.__coory - 48 < 110:
                     pass
-                elif any(nextrect(jgdr1,y=-48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
+                elif any(nextrect(jgdr1,-48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
                         pass
                 else:
                     self.__coory -= dist
@@ -118,7 +118,7 @@ def jogar():
             if key == pygame.K_s or key == pygame.K_DOWN:
                 if self.__coory + 48 >= 590:
                     pass
-                elif any(nextrect(jgdr1,y= 48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
+                elif any(nextrect(jgdr1,48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
                     pass
                 else:
                     self.__coory += dist
@@ -146,45 +146,66 @@ def jogar():
         
 
         def andar(self,charx, chary):
-            self.__ultmov = None
+            self.__vaicolidir = []
+            for barreira in rectwall:
+                for a in range (0,len(barreira)):
+                    if nextrect(self,48).colliderect(barreira[a]):
+                        self.__vaicolidir.append('right')
+                    if nextrect(self,-48).colliderect(barreira[a]):
+                        self.__vaicolidir.append('left')
+                    if nextrect(self,-48).colliderect(barreira[a]):
+                        self.__vaicolidir.append('up')
+                    if nextrect(self,48).colliderect(barreira[a]):
+                        self.__vaicolidir.append('down')
             if self.__coorx != charx and self.__coory != chary:
                 self.random = bool(getrandbits(1))
                 if self.random:
-                    if self.__coorx < charx:
-                        if any(nextrect(self,x=48).colliderect(rectwall[a][b])for a in range(0,len(rectwall))for b in range(0,len(rectwall[a]))): #Resolver mais tarde 
-                            pass
-                        else:
+                    if 'right' in self.__vaicolidir:
+                        pass
+                    else:
+                        if self.__coorx < charx:
                             self.__coorx += 48
                             if self.__olhando == True:
                                 self.__img = pygame.transform.flip(self.__img,True,False)
                                 self.__olhando = False
-                            self.__ultmov = 'rite'
-                    elif self.__coorx > charx:
-                        self.__coorx -= 48
-                        if self.__olhando == False:
-                            self.__img = pygame.transform.flip(self.__img,True,False)
-                            self.__olhando = True
-                        self.__ultmov = 'lefiti'
-
+                    if 'left' in self.__vaicolidir:
+                        pass
+                    else:
+                        if self.__coorx > charx:
+                            self.__coorx -= 48
+                            if self.__olhando == False:
+                                self.__img = pygame.transform.flip(self.__img,True,False)
+                                self.__olhando = True
+                        
                 else:
-                    if self.__coory < chary:
-                        self.__coory += 48
-                        self.__ultmov = 'upi'
-                    elif self.__coory > chary:
-                        self.__coory -= 48
-                        self.__ultmov = 'daun'
+                    if 'down' in self.__vaicolidir:
+                        pass
+                    else:
+                        if self.__coory < chary:
+                            self.__coory += 48
+                    if 'up' in self.__vaicolidir:
+                        pass
+                    else:
+                        if self.__coory > chary:
+                            self.__coory -= 48
             
             elif self.__coorx != charx:
-                if self.__coorx < charx:
-                    self.__coorx += 48
-                    if self.__olhando == True:
-                            self.__olhando = False
-                            self.__img = pygame.transform.flip(self.__img,True,False)
-                elif self.__coorx > charx:
-                    self.__coorx -= 48
-                    if self.__olhando == False:
-                            self.__olhando = True
-                            self.__img = pygame.transform.flip(self.__img,True,False)
+                if 'right' in self.__vaicolidir:
+                    pass
+                else:
+                    if self.__coorx < charx:
+                        self.__coorx += 48
+                        if self.__olhando == True:
+                                self.__olhando = False
+                                self.__img = pygame.transform.flip(self.__img,True,False)
+                if 'left' in self.__vaicolidir:
+                    pass
+                else:
+                    if self.__coorx > charx:
+                        self.__coorx -= 48
+                        if self.__olhando == False:
+                                self.__olhando = True
+                                self.__img = pygame.transform.flip(self.__img,True,False)
 
             elif self.__coory != chary:
                 if self.__coory < chary :
@@ -266,7 +287,7 @@ def jogar():
      
             return self.listarect
         
-    qntwall = 3
+    qntwall = 8
     
     rectwall = []
     
