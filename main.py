@@ -18,19 +18,33 @@ def jogar():
 #endregion PREPARAÇÃO DO AMBIENTE
 
 #region CAVALEIRO
-    def nextrect(x=0,y=0): #x = left, right | y= up, down
+    def nextrect(x: str|int = "n_anda",y: str|int = "n_anda"): #x = left, right | y= up, down
+        '''A função retorna o próximo rect do personagem após o movimento
+
+        Parâmetros:
+            - x é a direção do movimento x "left" | "right"
+            - y é a direção do movimento y "up" | "down"
+
+        Retorna:
+            - rect é o valor da próxima posição que o objeto vai ocupar
+            
+        Variáveis internas:
+            - lr corresponde ao valor int do movimento horizontal
+            - ud corresponde ao valor int do movimento vertical'''
+        lr = 0 # Left & Right
+        ud = 0 # Up & Down
         match x:
             case 'left':
-                x = -48
+                lr = -48
             case 'right':
-                x = 48
+                lr = 48
 
         match y:
             case 'up':
-                y = -48
+                ud = -48
             case 'down':
-                y = 48
-        rect = pygame.Rect(jgdr1.get_coorx()+x, jgdr1.get_coory()+y, 48,48)
+                ud = 48
+        rect = pygame.Rect(jgdr1.get_coorx()+lr, jgdr1.get_coory()+ud, 48,48)
         return rect
 
     class monster():
@@ -370,14 +384,10 @@ def jogar():
         if charect.colliderect(prinrect):
             run = False
             ganhou = True
-            print('princesa')
-            
 
         elif jgdr1.get_vida() <= 0 or jgdr1.get_stamina() <= 0:
             run = False
             perdeu = True
-            print('fodeu')
-        
 
         tela.fill('black')
 
