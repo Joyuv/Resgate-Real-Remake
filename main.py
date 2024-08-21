@@ -18,19 +18,13 @@ def jogar():
 #endregion PREPARAÇÃO DO AMBIENTE
 
 #region CAVALEIRO
-    def nextrect(x=0,y=0): #x = left, right | y= up, down
-        match x:
-            case 'left':
-                x = -48
-            case 'right':
-                x = 48
+    def nextrect(objeto, x:int = 0, y:int = 0): #x = -48 ou 0 ou 48 | y = -48 ou 0 ou 48 
+        #obs para givanilson, objeto é o bicho, por exemplo, o jgdr1 ou algum dos ladrões, se vira aí na tipagem
+        
+        #outra coisa, eu acho que tem como colocar a tipagem pra ser uma tupla que tu escolhe um dos valores, por exemplo (-48,0,48) descobre aí como faz
+        """Função para retornar o rect do personagem depois de andar"""
 
-        match y:
-            case 'up':
-                y = -48
-            case 'down':
-                y = 48
-        rect = pygame.Rect(jgdr1.get_coorx()+x, jgdr1.get_coory()+y, 48,48)
+        rect = pygame.Rect(objeto.get_coorx()+x, objeto.get_coory()+y, 48,48)
         return rect
 
     class monster():
@@ -40,7 +34,7 @@ def jogar():
             self.__olhando = bool(getrandbits(1))
 
     class player():
-
+        """Classe para checar e manipular os atributos do personagem"""
         def __init__(self, coorx:int, coory:int, vida:int, stamina:int):
             
             self.__img = pygame.transform.scale(pygame.image.load('imagens/gameplay/Knight.png'), (48,48))
@@ -66,8 +60,10 @@ def jogar():
             return self.__stamina
 
        
-        def set_vida(self,vida):
+        def set_vida(self,vida:int):
             self.__vida = vida
+        def set_stamina(self,stamina:int):
+            self.__stamina = stamina
 
         def mover(self, key):
             dist = 48
@@ -77,11 +73,12 @@ def jogar():
                         self.__olhando = False
                 if self.__coorx + 48 >= 590:
                     pass
-                elif any(nextrect(x='right').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
+                elif any(nextrect(jgdr1,x=48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
                     pass
                 else:
                     self.__coorx += dist
                     self.__stamina -= 1
+                    return True
                     return True
                     
             if key == pygame.K_a or key == pygame.K_LEFT:
@@ -90,7 +87,7 @@ def jogar():
                         self.__olhando = True
                 if self.__coorx - 48 <= 110:
                     pass
-                elif any(nextrect(x='left').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
+                elif any(nextrect(jgdr1,x=-48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
                     pass
                 else:
                     self.__coorx -= dist
@@ -99,7 +96,7 @@ def jogar():
             if key == pygame.K_w or key == pygame.K_UP:
                 if self.__coory - 48 < 110:
                     pass
-                elif any(nextrect(y='up').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
+                elif any(nextrect(jgdr1,y=-48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
                         pass
                 else:
                     self.__coory -= dist
@@ -108,13 +105,12 @@ def jogar():
             if key == pygame.K_s or key == pygame.K_DOWN:
                 if self.__coory + 48 >= 590:
                     pass
-                elif any(nextrect(y='down').colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
+                elif any(nextrect(jgdr1,y= 48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
                     pass
                 else:
                     self.__coory += dist
                     self.__stamina -= 1
                     return True
-                
     class Ladroes:
         def __init__(self,coorx:int, coory:int):
             self.__img = pygame.transform.scale(pygame.image.load('imagens/gameplay/Ladrao.png'), (48,48))
@@ -130,20 +126,28 @@ def jogar():
             return self.__coory
         def get_img(self):
             return self.__img
+        def get_olhando(self):
+            return self.__olhando
         def get_rect(self):
             return pygame.Rect(self.__coorx,self.__coory,48,48)
         
+
         def andar(self,charx, chary):
             
             if self.__coorx != charx and self.__coory != chary:
                 
                 self.random = bool(getrandbits(1))
-
                 if self.random:
                     if self.__coorx < charx:
                         self.__coorx += 48
+                        if self.__olhando == True:
+                            self.__img = pygame.transform.flip(self.__img,True,False)
+                            self.__olhando = False
                     elif self.__coorx > charx:
                         self.__coorx -= 48
+                        if self.__olhando == False:
+                            self.__img = pygame.transform.flip(self.__img,True,False)
+                            self.__olhando = True
 
                 else:
                     if self.__coory < chary:
@@ -153,15 +157,25 @@ def jogar():
             
             elif self.__coorx != charx:
                 if self.__coorx < charx:
-                        self.__coorx += 48
+                    self.__coorx += 48
+                    if self.__olhando == True:
+                            self.__olhando = False
+                            self.__img = pygame.transform.flip(self.__img,True,False)
                 elif self.__coorx > charx:
                     self.__coorx -= 48
+                    if self.__olhando == False:
+                            self.__olhando = True
+                            self.__img = pygame.transform.flip(self.__img,True,False)
 
             elif self.__coory != chary:
-                if self.__coory < chary:
+                if self.__coory < chary :
                     self.__coory += 48
                 elif self.__coory > chary:
                     self.__coory -= 48
+
+
+
+
 
 #endregion
     
@@ -253,7 +267,7 @@ def jogar():
             
         rectwall.append(rectotal)
 
-    ladraoqnt = 3
+    ladraoqnt = 5
     listaladroes = []
     for a in range(0,ladraoqnt):
         x = 112+48*randint(0,9)
@@ -327,10 +341,12 @@ def jogar():
     vida_inicial = jgdr1.get_vida()
     
     vigorinicial = jgdr1.get_stamina()
-       
-    charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
     
+    charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
     while run:
+        
+        
+        
         
         #region EVENTOS
         
@@ -341,8 +357,14 @@ def jogar():
                 sys.exit()
            
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_j:
+                    jgdr1.set_stamina(1000000)
+                    vigorinicial = 1000000
+                if event.key == pygame.K_v:
+                    jgdr1.set_vida(1000000)
+                    vida_inicial = 1000000
 
-                if (jgdr1.mover(event.key) == True):
+                if jgdr1.mover(event.key):
                     for thief in listaladroes:
                         thief.andar(jgdr1.get_coorx(), jgdr1.get_coory())
 
@@ -363,6 +385,7 @@ def jogar():
                         bombanatela = False
                         explosao = True
                 
+        charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
         #endregion EVENTOS
 
         charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
@@ -370,13 +393,13 @@ def jogar():
         if charect.colliderect(prinrect):
             run = False
             ganhou = True
-            print('princesa')
+            
             
 
         elif jgdr1.get_vida() <= 0 or jgdr1.get_stamina() <= 0:
             run = False
             perdeu = True
-            print('fodeu')
+            
         
 
         tela.fill('black')
@@ -425,6 +448,10 @@ def jogar():
         
         for thief in listaladroes:
             tela.blit(thief.get_img(),thief.get_rect())
+            if thief.get_rect().colliderect(charect):
+                jgdr1.set_vida(jgdr1.get_vida()-1)
+                listaladroes.remove(thief)
+        
 
         if bombanatela:
             tela.blit(bomba,(posbomba))
@@ -454,7 +481,10 @@ def jogar():
                 elif exrects[a].colliderect(charect) and tomou == False:
                     jgdr1.set_vida(jgdr1.get_vida()-1)
                     tomou = True
-                        
+                for thief in listaladroes:
+                    if thief.get_rect().colliderect(exrects[a]):
+                        listaladroes.remove(thief)
+
             new_wall_rect = []
             for parede in range(0,len(rectwall)):
                 new_wall_rect.append(rectwall[parede])
