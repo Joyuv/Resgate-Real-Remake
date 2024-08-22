@@ -2,6 +2,15 @@ import pygame
 from random import randint, getrandbits
 import sys
 
+# coisas a melhorar: 
+# 1º IA dos monstros, falta adicionar aleatoriedade nos movimentos
+
+# coisas que planejamos adicionar: 
+# 1º Item coletável que você deixa guardado, quando escolher usar aparece uma tela com duas opções, curar stamina ou vida
+# 2º Sistema de pontos
+# 3º Tela com o nome dos que mais pontuaram
+
+
 def jogar():
 #region PREPARAÇÃO DO AMBIENTE
     pygame.init() #iniciando o módulo pygame
@@ -681,7 +690,7 @@ def jogar():
                 sys.exit()
         tela.fill('black')
         tela.blit(icone,(320,230))
-        tela.blit(fonte2.render('Parabéns! Você salvou a princesa',False,'white'),(190,300))
+        tela.blit(fonte2.render('Parabéns! Você salvou a princesa',False,'cyan'),(190,300))
 
         pygame.display.flip()
         clock.tick(frames)
@@ -709,7 +718,7 @@ def jogar():
         tela.fill('black')
         
         tela.blit(icone,(305,220))
-        tela.blit(fonte2.render('A princesa foi capturada pelos monstros :C',False,'gray'),(140,300))
+        tela.blit(fonte2.render('A princesa foi capturada pelos criminosos :C',False,'gray'),(140,300))
 
         pygame.display.flip()
         clock.tick(frames)
