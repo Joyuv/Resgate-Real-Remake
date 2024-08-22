@@ -415,7 +415,7 @@ def jogar():
      
             return self.listarect
         
-    qntwall = 10
+    qntwall = 3
     
     rectwall = []
     
@@ -435,7 +435,7 @@ def jogar():
             
         rectwall.append(rectotal)
 
-    ladraoqnt = 2
+    ladraoqnt = 4
     listaladroes = []
     for a in range(0,ladraoqnt):
         x = 112+48*randint(0,9)
