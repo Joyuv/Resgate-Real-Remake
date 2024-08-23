@@ -528,7 +528,7 @@ def jogar():
         clock.tick(frames)
    
     #endregion RECTS
-
+    run = True
     ganhou = False
     perdeu = False
     decapitado = False
@@ -544,11 +544,8 @@ def jogar():
     vigorinicial = jgdr1.get_stamina()
     
     charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
-    while True:
-        
-        
-        
-        
+    while run:
+     
         #region EVENTOS
         
         for event in pygame.event.get():
@@ -589,14 +586,14 @@ def jogar():
         charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
         #endregion EVENTOS
         if charect.colliderect(prinrect):
-            #run = False
+            run = False
             ganhou = True
             break
             
             
 
         elif jgdr1.get_vida() <= 0 or jgdr1.get_stamina() <= 0:
-            # run = False
+            run = False
             perdeu = True
             break
             
@@ -674,7 +671,8 @@ def jogar():
                         fliphor =pygame.transform.rotate(exlados,90)
                         tela.blit(fliphor,(exrects[a]))
 
-                if exrects[a].colliderect(prinrect):       
+                if exrects[a].colliderect(prinrect):      
+                    run = False 
                     decapitado = True
                     break
 
