@@ -326,24 +326,14 @@ def jogar():
                 self.__vaicolidir.append('up')
             if any(nextrect(self,y=48).colliderect(barreira[a]) for barreira in rectwall for a in range(0,len(barreira))) or any(nextrect(self,y=48).colliderect(thiefs[t].get_rect())for t in range(0,len(thiefs))):
                 self.__vaicolidir.append('down')
-                
-                # for a in range (0,len(barreira)):
-                #     if nextrect(self,48).colliderect(barreira[a]):
-                #         self.__vaicolidir.append('right')
-                #     if nextrect(self,-48).colliderect(barreira[a]):
-                #         self.__vaicolidir.append('left')
-                #     if nextrect(self,y=-48).colliderect(barreira[a]):
-                #         self.__vaicolidir.append('up')
-                #     if nextrect(self,y=48).colliderect(barreira[a]):
-                #         self.__vaicolidir.append('down')
 
-            if self.__coorx +48 >= 590:
+            if self.__coorx +48 >= 590 or nextrect(self,x=48).colliderect(prinrect):
                 self.__vaicolidir.append('right')
-            if self.__coorx -48 <= 110:
+            if self.__coorx -48 <= 110  or nextrect(self,x=-48).colliderect(prinrect):
                 self.__vaicolidir.append('left')
-            if self.__coory -48 <= 110:
+            if self.__coory -48 <= 110  or nextrect(self,y=-48).colliderect(prinrect):
                 self.__vaicolidir.append('up')
-            if self.__coory +48 >= 590:
+            if self.__coory +48 >= 590  or nextrect(self,y=48).colliderect(prinrect):
                 self.__vaicolidir.append('down')
             
             if 'right' in self.__vaicolidir and 'left' in self.__vaicolidir and 'down' in self.__vaicolidir and 'up' in self.__vaicolidir:
