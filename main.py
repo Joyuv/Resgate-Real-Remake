@@ -128,18 +128,215 @@ def jogar():
             return pygame.Rect(self.__coorx,self.__coory,48,48)
         
 
-        def andar(self,charx, chary):
+        def horizontal(self, charx, chary):
+            if self.__coorx != charx:
+                #region Tentando LEFT
+                if self.__coorx > charx:#andando pra esquerda(-48)
+                    if 'left' in self.__vaicolidir:
+                        if self.__coory > chary: 
+                            if 'up' in self.__vaicolidir:
+                                if 'down' in self.__vaicolidir:
+                                    if 'right' in self.__vaicolidir:
+                                        pass
+                                    else: #direita (+48)
+                                        self.__coorx += 48
+                                        if self.__olhando == True:
+                                            self.__img = pygame.transform.flip(self.__img,True,False)
+                                            self.__olhando = False
+                                else: #desce (+48)
+                                    self.__coory += 48
+
+                            else: #sobe (-48)
+                                self.__coory -= 48
+                        else:
+
+                            if 'down' in self.__vaicolidir:
+                                if 'up' in self.__vaicolidir:
+                                    if 'right' in self.__vaicolidir:
+                                        pass
+                                    else: #direita (+48)
+                                        self.__coorx += 48
+                                        if self.__olhando == True:
+                                            self.__img = pygame.transform.flip(self.__img,True,False)
+                                            self.__olhando = False
+                                else: #sobe (-48)
+                                    self.__coory -= 48
+
+                            else: #desce (+48)
+                                self.__coory += 48
+                            
+                            
+                    
+                    else: #Esquerda (-48)
+                        self.__coorx -=48
+                        if self.__olhando == False:
+                            self.__img = pygame.transform.flip(self.__img,True,False)
+                            self.__olhando = True
+                #endregion Tentando LEFT
+
+                #region Tentando RIGHT
+                elif self.__coorx < charx:
+                    if 'right' in self.__vaicolidir:
+                        if self.__coory > chary: 
+                            if 'up' in self.__vaicolidir:
+                                if 'down' in self.__vaicolidir:
+                                    if 'left' in self.__vaicolidir:
+                                        pass
+                                    else: #esquerda (-48)
+                                        self.__coorx -= 48
+                                        if self.__olhando == False:
+                                            self.__img = pygame.transform.flip(self.__img,True,False)
+                                            self.__olhando = True
+                                else: #desce (+48)
+                                    self.__coory += 48
+
+                            else: #sobe (-48)
+                                self.__coory -= 48
+                        else:
+
+                            if 'down' in self.__vaicolidir:
+                                if 'up' in self.__vaicolidir:
+                                    if 'left' in self.__vaicolidir:
+                                        pass
+                                    else: #esquerda (-48)
+                                        self.__coorx -= 48
+                                        if self.__olhando == False:
+                                            self.__img = pygame.transform.flip(self.__img,True,False)
+                                            self.__olhando = True
+                                else: #sobe (-48)
+                                    self.__coory -= 48
+
+                            else: #desce (+48)
+                                self.__coory += 48
+                            
+                            
+                    
+                    else: #Direita (-48)
+                        self.__coorx +=48
+                        if self.__olhando == True:
+                            self.__img = pygame.transform.flip(self.__img,True,False)
+                            self.__olhando = False
+                #endregion Tentando Right
+        def vertical(self, charx, chary):
+            if self.__coory != chary:
+                #region Tentando UP
+                if self.__coory > chary:#andando pra cima(-48)
+                    if 'up' in self.__vaicolidir:
+                        if self.__coorx > charx: 
+                            if 'right' in self.__vaicolidir:
+                                if 'left' in self.__vaicolidir:
+                                    if 'down' in self.__vaicolidir:
+                                        pass
+                                    else: #baixo (+48)
+                                        self.__coory += 48
+                                        
+                                else: #esquerda (-48)
+                                    self.__coorx -= 48
+                                    if self.__olhando == False:
+                                        self.__img = pygame.transform.flip(self.__img,True,False)
+                                        self.__olhando = True
+
+                            else: #direita (+48)
+                                self.__coorx += 48
+                                if self.__olhando == True:
+                                    self.__img = pygame.transform.flip(self.__img,True,False)
+                                    self.__olhando = False
+                        else:
+
+                            if 'left' in self.__vaicolidir:
+                                if 'right' in self.__vaicolidir:
+                                    if 'down' in self.__vaicolidir:
+                                        pass
+                                    else: #desce (+48)
+                                        self.__coory += 48
+                                else: #direita (+48)
+                                    self.__coorx += 48
+                                    if self.__olhando == True:
+                                        self.__img = pygame.transform.flip(self.__img,True,False)
+                                        self.__olhando = False
+
+                            else: #esquerda (-48)
+                                self.__coorx -= 48
+                                if self.__olhando == False:
+                                        self.__img = pygame.transform.flip(self.__img,True,False)
+                                        self.__olhando = True
+                            
+                            
+                    
+                    else: #cima (-48)
+                        self.__coory -=48
+
+                #endregion Tentando UP
+
+                #region Tentando DOWN
+                elif self.__coory < chary:#andando pra baixo(+48)
+                    if 'down' in self.__vaicolidir:
+                        if self.__coorx > charx: 
+                            if 'right' in self.__vaicolidir:
+                                if 'left' in self.__vaicolidir:
+                                    if 'up' in self.__vaicolidir:
+                                        pass
+                                    else: #cima (-48)
+                                        self.__coory -= 48
+                                        
+                                else: #esquerda (-48)
+                                    self.__coorx -= 48
+                                    if self.__olhando == False:
+                                        self.__img = pygame.transform.flip(self.__img,True,False)
+                                        self.__olhando = True
+
+                            else: #direita (+48)
+                                self.__coorx += 48
+                                if self.__olhando == True:
+                                    self.__img = pygame.transform.flip(self.__img,True,False)
+                                    self.__olhando = False
+                        else:
+
+                            if 'left' in self.__vaicolidir:
+                                if 'right' in self.__vaicolidir:
+                                    if 'up' in self.__vaicolidir:
+                                        pass
+                                    else: #sobe (-48)
+                                        self.__coory -= 48
+                                else: #direita (+48)
+                                    self.__coorx += 48
+                                    if self.__olhando == True:
+                                        self.__img = pygame.transform.flip(self.__img,True,False)
+                                        self.__olhando = False
+
+                            else: #esquerda (-48)
+                                self.__coorx -= 48
+                                if self.__olhando == False:
+                                        self.__img = pygame.transform.flip(self.__img,True,False)
+                                        self.__olhando = True
+                            
+                            
+                    
+                    else: #baixo (+48)
+                        self.__coory +=48
+                #endregion Tentando DOWN
+        def andar(self,charx, chary, thiefs):
             self.__vaicolidir = []
-            for barreira in rectwall:
-                for a in range (0,len(barreira)):
-                    if nextrect(self,48).colliderect(barreira[a]):
-                        self.__vaicolidir.append('right')
-                    if nextrect(self,-48).colliderect(barreira[a]):
-                        self.__vaicolidir.append('left')
-                    if nextrect(self,y=-48).colliderect(barreira[a]):
-                        self.__vaicolidir.append('up')
-                    if nextrect(self,y=48).colliderect(barreira[a]):
-                        self.__vaicolidir.append('down')
+            # for barreira in rectwall:
+            if any(nextrect(self,x=48).colliderect(barreira[a]) for barreira in rectwall for a in range(0,len(barreira))) or any(nextrect(self,x=48).colliderect(thiefs[t].get_rect())for t in range(0,len(thiefs))):
+                self.__vaicolidir.append('right')
+            if any(nextrect(self,x=-48).colliderect(barreira[a]) for barreira in rectwall for a in range(0,len(barreira))) or any(nextrect(self,x=-48).colliderect(thiefs[t].get_rect())for t in range(0,len(thiefs))):
+                self.__vaicolidir.append('left')
+            if any(nextrect(self,y=-48).colliderect(barreira[a]) for barreira in rectwall for a in range(0,len(barreira))) or any(nextrect(self,y=-48).colliderect(thiefs[t].get_rect())for t in range(0,len(thiefs))):
+                self.__vaicolidir.append('up')
+            if any(nextrect(self,y=48).colliderect(barreira[a]) for barreira in rectwall for a in range(0,len(barreira))) or any(nextrect(self,y=48).colliderect(thiefs[t].get_rect())for t in range(0,len(thiefs))):
+                self.__vaicolidir.append('down')
+                
+                # for a in range (0,len(barreira)):
+                #     if nextrect(self,48).colliderect(barreira[a]):
+                #         self.__vaicolidir.append('right')
+                #     if nextrect(self,-48).colliderect(barreira[a]):
+                #         self.__vaicolidir.append('left')
+                #     if nextrect(self,y=-48).colliderect(barreira[a]):
+                #         self.__vaicolidir.append('up')
+                #     if nextrect(self,y=48).colliderect(barreira[a]):
+                #         self.__vaicolidir.append('down')
+
             if self.__coorx +48 >= 590:
                 self.__vaicolidir.append('right')
             if self.__coorx -48 <= 110:
@@ -152,194 +349,20 @@ def jogar():
             if 'right' in self.__vaicolidir and 'left' in self.__vaicolidir and 'down' in self.__vaicolidir and 'up' in self.__vaicolidir:
                 pass
             else:
-                if self.__coorx != charx:
-                    #region Tentando LEFT
-                    if self.__coorx > charx:#andando pra esquerda(-48)
-                        if 'left' in self.__vaicolidir:
-                            if self.__coory > chary: 
-                                if 'up' in self.__vaicolidir:
-                                    if 'down' in self.__vaicolidir:
-                                        if 'right' in self.__vaicolidir:
-                                            pass
-                                        else: #direita (+48)
-                                            self.__coorx += 48
-                                            if self.__olhando == True:
-                                                self.__img = pygame.transform.flip(self.__img,True,False)
-                                                self.__olhando = False
-                                    else: #desce (+48)
-                                        self.__coory += 48
+                
+                if self.__coorx != charx and self.__coory != chary:
+                    self.__random = bool(getrandbits(1))
+                    if self.__random:
+                        self.horizontal(charx,chary)
+                    else:
+                        self.vertical(charx,chary)
 
-                                else: #sobe (-48)
-                                    self.__coory -= 48
-                            else:
-
-                                if 'down' in self.__vaicolidir:
-                                    if 'up' in self.__vaicolidir:
-                                        if 'right' in self.__vaicolidir:
-                                            pass
-                                        else: #direita (+48)
-                                            self.__coorx += 48
-                                            if self.__olhando == True:
-                                                self.__img = pygame.transform.flip(self.__img,True,False)
-                                                self.__olhando = False
-                                    else: #sobe (-48)
-                                        self.__coory -= 48
-
-                                else: #desce (+48)
-                                    self.__coory += 48
-                                
-                                
-                        
-                        else: #Esquerda (-48)
-                            self.__coorx -=48
-                            if self.__olhando == False:
-                                self.__img = pygame.transform.flip(self.__img,True,False)
-                                self.__olhando = True
-                    #endregion Tentando LEFT
-
-                    #region Tentando RIGHT
-                    elif self.__coorx < charx:
-                        if 'right' in self.__vaicolidir:
-                            if self.__coory > chary: 
-                                if 'up' in self.__vaicolidir:
-                                    if 'down' in self.__vaicolidir:
-                                        if 'left' in self.__vaicolidir:
-                                            pass
-                                        else: #esquerda (-48)
-                                            self.__coorx -= 48
-                                            if self.__olhando == False:
-                                                self.__img = pygame.transform.flip(self.__img,True,False)
-                                                self.__olhando = True
-                                    else: #desce (+48)
-                                        self.__coory += 48
-
-                                else: #sobe (-48)
-                                    self.__coory -= 48
-                            else:
-
-                                if 'down' in self.__vaicolidir:
-                                    if 'up' in self.__vaicolidir:
-                                        if 'left' in self.__vaicolidir:
-                                            pass
-                                        else: #esquerda (-48)
-                                            self.__coorx -= 48
-                                            if self.__olhando == False:
-                                                self.__img = pygame.transform.flip(self.__img,True,False)
-                                                self.__olhando = True
-                                    else: #sobe (-48)
-                                        self.__coory -= 48
-
-                                else: #desce (+48)
-                                    self.__coory += 48
-                                
-                                
-                        
-                        else: #Direita (-48)
-                            self.__coorx +=48
-                            if self.__olhando == True:
-                                self.__img = pygame.transform.flip(self.__img,True,False)
-                                self.__olhando = False
-                    #endregion Tentando Right
-            
+                elif self.__coorx != charx and not self.__coory != chary:
+                    self.horizontal(charx,chary)
+                elif self.__coory != chary and not self.__coorx != charx:
+                    self.vertical(charx,chary)
         
-        
-                elif self.__coory != chary:
-                    #region Tentando UP
-                    if self.__coory > chary:#andando pra cima(-48)
-                        if 'up' in self.__vaicolidir:
-                            if self.__coorx > charx: 
-                                if 'right' in self.__vaicolidir:
-                                    if 'left' in self.__vaicolidir:
-                                        if 'down' in self.__vaicolidir:
-                                            pass
-                                        else: #baixo (+48)
-                                            self.__coory += 48
-                                            
-                                    else: #esquerda (-48)
-                                        self.__coorx -= 48
-                                        if self.__olhando == False:
-                                            self.__img = pygame.transform.flip(self.__img,True,False)
-                                            self.__olhando = True
-
-                                else: #direita (+48)
-                                    self.__coorx += 48
-                                    if self.__olhando == True:
-                                        self.__img = pygame.transform.flip(self.__img,True,False)
-                                        self.__olhando = False
-                            else:
-
-                                if 'left' in self.__vaicolidir:
-                                    if 'right' in self.__vaicolidir:
-                                        if 'down' in self.__vaicolidir:
-                                            pass
-                                        else: #desce (+48)
-                                            self.__coory += 48
-                                    else: #direita (+48)
-                                        self.__coorx += 48
-                                        if self.__olhando == True:
-                                            self.__img = pygame.transform.flip(self.__img,True,False)
-                                            self.__olhando = False
-
-                                else: #esquerda (-48)
-                                    self.__coorx -= 48
-                                    if self.__olhando == False:
-                                            self.__img = pygame.transform.flip(self.__img,True,False)
-                                            self.__olhando = True
-                                
-                                
-                        
-                        else: #cima (-48)
-                            self.__coory -=48
-
-                    #endregion Tentando UP
-
-                    #region Tentando DOWN
-                    elif self.__coory < chary:#andando pra baixo(+48)
-                        if 'down' in self.__vaicolidir:
-                            if self.__coorx > charx: 
-                                if 'right' in self.__vaicolidir:
-                                    if 'left' in self.__vaicolidir:
-                                        if 'up' in self.__vaicolidir:
-                                            pass
-                                        else: #cima (-48)
-                                            self.__coory -= 48
-                                            
-                                    else: #esquerda (-48)
-                                        self.__coorx -= 48
-                                        if self.__olhando == False:
-                                            self.__img = pygame.transform.flip(self.__img,True,False)
-                                            self.__olhando = True
-
-                                else: #direita (+48)
-                                    self.__coorx += 48
-                                    if self.__olhando == True:
-                                        self.__img = pygame.transform.flip(self.__img,True,False)
-                                        self.__olhando = False
-                            else:
-
-                                if 'left' in self.__vaicolidir:
-                                    if 'right' in self.__vaicolidir:
-                                        if 'up' in self.__vaicolidir:
-                                            pass
-                                        else: #sobe (-48)
-                                            self.__coory -= 48
-                                    else: #direita (+48)
-                                        self.__coorx += 48
-                                        if self.__olhando == True:
-                                            self.__img = pygame.transform.flip(self.__img,True,False)
-                                            self.__olhando = False
-
-                                else: #esquerda (-48)
-                                    self.__coorx -= 48
-                                    if self.__olhando == False:
-                                            self.__img = pygame.transform.flip(self.__img,True,False)
-                                            self.__olhando = True
-                                
-                                
-                        
-                        else: #baixo (+48)
-                            self.__coory +=48
-                    #endregion Tentando DOWN
+                    
 
     
 #endregion Ladrões
@@ -424,7 +447,7 @@ def jogar():
      
             return self.listarect
         
-    qntwall = 3
+    qntwall = 5
     
     rectwall = []
     
@@ -508,7 +531,6 @@ def jogar():
 
     ganhou = False
     perdeu = False
-    run = True
     decapitado = False
 
 
@@ -522,7 +544,7 @@ def jogar():
     vigorinicial = jgdr1.get_stamina()
     
     charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
-    while run:
+    while True:
         
         
         
@@ -545,7 +567,7 @@ def jogar():
 
                 if jgdr1.mover(event.key):
                     for thief in listaladroes:
-                        thief.andar(jgdr1.get_coorx(), jgdr1.get_coory())
+                        thief.andar(jgdr1.get_coorx(), jgdr1.get_coory(),listaladroes)
 
                 if event.key == pygame.K_SPACE:
                     if not bombanatela and exdelay == 0:
@@ -567,14 +589,16 @@ def jogar():
         charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
         #endregion EVENTOS
         if charect.colliderect(prinrect):
-            run = False
+            #run = False
             ganhou = True
+            break
             
             
 
         elif jgdr1.get_vida() <= 0 or jgdr1.get_stamina() <= 0:
-            run = False
+            # run = False
             perdeu = True
+            break
             
         
 
@@ -652,7 +676,7 @@ def jogar():
 
                 if exrects[a].colliderect(prinrect):       
                     decapitado = True
-                    run = False
+                    break
 
                 elif exrects[a].colliderect(charect) and tomou == False:
                     jgdr1.set_vida(jgdr1.get_vida()-1)
