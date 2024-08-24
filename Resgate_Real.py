@@ -8,7 +8,7 @@ import sys
 # 3º Tela com o nome dos que mais pontuaram
 
 def jogar():
-#region PREPARAÇÃO DO AMBIENTE
+    #region PREPARAÇÃO DO AMBIENTE
     pygame.init() #iniciando o módulo pygame
      
     icone = pygame.image.load('imagens/Icon.png')
@@ -19,9 +19,9 @@ def jogar():
     
     clock = pygame.time.Clock() #variável clock para diminuir os FPS em breve
 
-#endregion PREPARAÇÃO DO AMBIENTE
+    #endregion PREPARAÇÃO DO AMBIENTE
 
-#region CAVALEIRO
+    #region CAVALEIRO
     
 
     class Player:
@@ -101,7 +101,7 @@ def jogar():
                     self.__coory += dist
                     self.__stamina -= 1
                     return True
-#region Ladrões
+    #region Ladrões
     class Ladroes:
         def __init__(self,coorx:int, coory:int, img:pygame.Surface):
             
@@ -348,21 +348,15 @@ def jogar():
                 elif self.__coory != chary and not self.__coorx != charx:
                     self.vertical(charx,chary)
         
-                    
+    #endregion Ladrões
 
-    
-#endregion Ladrões
     def nextrect(objeto:Player | Ladroes, x:int = 0, y:int = 0) -> pygame.Rect: #x = -48 ou 0 ou 48 | y = -48 ou 0 ou 48 
         """Função para retornar o rect que o personagem terá depois de andar, utilizado para chegar futuras colisões"""
 
         rect = pygame.Rect(objeto.get_coorx()+x, objeto.get_coory()+y, 48,48)
         return rect
-
-
-
-#endregion
     
-#region CARREGANDO IMAGENS   
+    #region CARREGANDO IMAGENS   
     knight = pygame.image.load('imagens/gameplay/Knight.png')
     knight = pygame.transform.scale(knight, (48,48))
 
@@ -383,7 +377,7 @@ def jogar():
     imajenladron = pygame.transform.scale(pygame.image.load('imagens/gameplay/Ladrao.png'), (48,48))
     icone = pygame.transform.scale_by(icone,2)
 
-#endregion CARREGANDO IMAGENS
+    #endregion CARREGANDO IMAGENS
 
     #region PRINCESA
 
@@ -411,8 +405,9 @@ def jogar():
     prinrect = pygame.Rect(prinx,priny,48,48)
 
     condicoes = [charect,prinrect]
-#endregion PRINCESA
-#region PAREDES
+    #endregion PRINCESA
+
+    #region PAREDES
     class Paredes:
         
         def __init__(self, x, y):
@@ -443,8 +438,6 @@ def jogar():
 
         rectotal = Paredes(x,y).rect()
 
-        #podia fazer isso do while dentro da classe paredes 
-        #mas ciro não deixou usar variável global então vai assim mesmo
         while any(rectotal[b].colliderect(condicoes[a])for b in range(0,5)for a in range(0,len(condicoes))): #or any(rectotal[1].colliderect(condicoes[a])for a in range(0,len(condicoes))):
             x = 112 + 48*randint(0,9)
             y = 112 + 48*randint(0,9)
@@ -469,11 +462,9 @@ def jogar():
 
         listaladroes.append(ladrao)
 
-        
-        
-#endregion PAREDES
+    #endregion PAREDES
     
-#region IMAGENS INFO
+    #region IMAGENS INFO
     fonte = pygame.font.SysFont('fonte/PixelGameFont.ttf',20)
     fonte2 = pygame.font.SysFont('fonte/PixelGameFont.ttf',30)
 
@@ -488,11 +479,12 @@ def jogar():
 
     espaco2 = pygame.image.load('imagens/info/espaco2.png')
     espaco2 = pygame.transform.scale_by(espaco2,3)
-#endregion IMAGENS INFO
+    #endregion IMAGENS INFO
 
     frames = 60
     info = True
 
+    #region TELA INFO
     while info:
         tela.blit(fonte.render('TODAS AS POSIÇÕES DE PERSONAGENS, BARREIRAS E MONSTROS SÃO GERADAS ALEATORIAMENTE',False,'white'),(8,8))
     
@@ -512,8 +504,7 @@ def jogar():
 
         pygame.display.flip()
         clock.tick(frames)
-   
-    #endregion RECTS
+    #endregion TELA INFO
     run = True
     ganhou = False
     perdeu = False
@@ -530,6 +521,7 @@ def jogar():
     vigorinicial = jgdr1.get_stamina()
     
     charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
+    #region TELA GAME
     while run:
     
         #region EVENTOS
@@ -568,23 +560,21 @@ def jogar():
                         
                         bombanatela = False
                         explosao = True
-                
-        charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
         #endregion EVENTOS
+        charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
+        
         if charect.colliderect(prinrect):
             run = False
             ganhou = True
             break
             
-            
-
         elif jgdr1.get_vida() <= 0 or jgdr1.get_stamina() <= 0:
             run = False
             perdeu = True
             break
             
         
-
+        
         tela.fill('black')
 
         for a in range(0,10):
@@ -689,8 +679,9 @@ def jogar():
                 tomou = False
                 
         pygame.display.flip() #atualizar os frames a cada vez que roda o while
-        clock.tick(frames) #Diminuindo os fps para otimizar o jogo
-    
+        clock.tick(frames) #Diminuindo os fps para não usar tanto o processador
+
+    #region TELAS FINAIS
     while ganhou:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -730,6 +721,7 @@ def jogar():
 
         pygame.display.flip()
         clock.tick(frames)
+    #endregion TELASFINAIS
     
 if __name__ == '__main__':
     jogar()
