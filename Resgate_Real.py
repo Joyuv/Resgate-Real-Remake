@@ -2,14 +2,10 @@ import pygame
 from random import randint, getrandbits
 import sys
 
-# coisas a melhorar: 
-# 1º IA dos monstros, falta adicionar aleatoriedade nos movimentos
-
 # coisas que planejamos adicionar: 
 # 1º Item coletável que você deixa guardado, quando escolher usar aparece uma tela com duas opções, curar stamina ou vida
 # 2º Sistema de pontos
 # 3º Tela com o nome dos que mais pontuaram
-
 
 def jogar():
 #region PREPARAÇÃO DO AMBIENTE
@@ -28,11 +24,11 @@ def jogar():
 #region CAVALEIRO
     
 
-    class Player():
+    class Player:
         """Classe para checar e manipular os atributos do personagem"""
         def __init__(self, coorx:int, coory:int, vida:int, stamina:int, img:pygame.Surface):
             
-            self.__img = pygame.transform.scale(pygame.image.load('imagens/gameplay/Knight.png'), (48,48))
+            self.__img = img
             self.__olhando = bool(getrandbits(1))
             self.__img = pygame.transform.flip(self.__img,self.__olhando,False)
 
@@ -60,7 +56,7 @@ def jogar():
         def set_stamina(self,stamina:int):
             self.__stamina = stamina
 
-        def mover(self, key):
+        def mover(self, key:pygame.key) -> bool:
             dist = 48
             if key == pygame.K_d or key == pygame.K_RIGHT:
                 if self.__olhando == True:
@@ -128,7 +124,7 @@ def jogar():
             return pygame.Rect(self.__coorx,self.__coory,48,48)
         
 
-        def horizontal(self, charx, chary):
+        def horizontal(self, charx:int, chary:int):
             if self.__coorx != charx:
                 #region Tentando LEFT
                 if self.__coorx > charx:#andando pra esquerda(-48)
@@ -217,7 +213,7 @@ def jogar():
                             self.__img = pygame.transform.flip(self.__img,True,False)
                             self.__olhando = False
                 #endregion Tentando Right
-        def vertical(self, charx, chary):
+        def vertical(self, charx:int, chary:int):
             if self.__coory != chary:
                 #region Tentando UP
                 if self.__coory > chary:#andando pra cima(-48)
@@ -315,7 +311,7 @@ def jogar():
                     else: #baixo (+48)
                         self.__coory +=48
                 #endregion Tentando DOWN
-        def andar(self,charx, chary, thiefs):
+        def andar(self,charx:int, chary:int, thiefs:list[pygame.Rect]):
             self.__vaicolidir = []
             # for barreira in rectwall:
             if any(nextrect(self,x=48).colliderect(barreira[a]) for barreira in rectwall for a in range(0,len(barreira))) or any(nextrect(self,x=48).colliderect(thiefs[t].get_rect())for t in range(0,len(thiefs))):
@@ -356,11 +352,8 @@ def jogar():
 
     
 #endregion Ladrões
-    def nextrect(objeto:Player | Ladroes, x:int = 0, y:int = 0): #x = -48 ou 0 ou 48 | y = -48 ou 0 ou 48 
-        #obs para givanilson, objeto é o bicho, por exemplo, o jgdr1 ou algum dos ladrões, se vira aí na tipagem
-        
-        #outra coisa, eu acho que tem como colocar a tipagem pra ser uma tupla que tu escolhe um dos valores, por exemplo (-48,0,48) descobre aí como faz
-        """Função para retornar o rect do personagem depois de andar"""
+    def nextrect(objeto:Player | Ladroes, x:int = 0, y:int = 0) -> pygame.Rect: #x = -48 ou 0 ou 48 | y = -48 ou 0 ou 48 
+        """Função para retornar o rect que o personagem terá depois de andar, utilizado para chegar futuras colisões"""
 
         rect = pygame.Rect(objeto.get_coorx()+x, objeto.get_coory()+y, 48,48)
         return rect
@@ -370,7 +363,9 @@ def jogar():
 #endregion
     
 #region CARREGANDO IMAGENS   
-    knight = pygame.transform.scale(pygame.image.load('imagens/gameplay/Ladrao.png'), (48,48))
+    knight = pygame.image.load('imagens/gameplay/Knight.png')
+    knight = pygame.transform.scale(knight, (48,48))
+    
     princesa = pygame.image.load('imagens/gameplay/Princesa.png')
     princesa = pygame.transform.scale(princesa,(48,48))
 
@@ -387,7 +382,8 @@ def jogar():
     
     imajenladron = pygame.transform.scale(pygame.image.load('imagens/gameplay/Ladrao.png'), (48,48))
     icone = pygame.transform.scale_by(icone,2)
-    #endregion CARREGANDO IMAGENS
+
+#endregion CARREGANDO IMAGENS
 
     #region PRINCESA
 
@@ -535,7 +531,7 @@ def jogar():
     
     charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
     while run:
-     
+    
         #region EVENTOS
         
         for event in pygame.event.get():
