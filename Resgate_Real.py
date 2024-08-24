@@ -56,7 +56,7 @@ def jogar():
         def set_stamina(self,stamina:int):
             self.__stamina = stamina
 
-        def mover(self, key:pygame.key) -> bool:
+        def mover(self, key:int):
             dist = 48
             if key == pygame.K_d or key == pygame.K_RIGHT:
                 if self.__olhando == True:
@@ -311,9 +311,9 @@ def jogar():
                     else: #baixo (+48)
                         self.__coory +=48
                 #endregion Tentando DOWN
-        def andar(self,charx:int, chary:int, thiefs:list[pygame.Rect]):
+        def andar(self,charx:int, chary:int, thiefs:list):
             self.__vaicolidir = []
-            # for barreira in rectwall:
+            
             if any(nextrect(self,x=48).colliderect(barreira[a]) for barreira in rectwall for a in range(0,len(barreira))) or any(nextrect(self,x=48).colliderect(thiefs[t].get_rect())for t in range(0,len(thiefs))):
                 self.__vaicolidir.append('right')
             if any(nextrect(self,x=-48).colliderect(barreira[a]) for barreira in rectwall for a in range(0,len(barreira))) or any(nextrect(self,x=-48).colliderect(thiefs[t].get_rect())for t in range(0,len(thiefs))):
@@ -365,7 +365,7 @@ def jogar():
 #region CARREGANDO IMAGENS   
     knight = pygame.image.load('imagens/gameplay/Knight.png')
     knight = pygame.transform.scale(knight, (48,48))
-    
+
     princesa = pygame.image.load('imagens/gameplay/Princesa.png')
     princesa = pygame.transform.scale(princesa,(48,48))
 
