@@ -101,6 +101,7 @@ def jogar():
                     self.__coory += dist
                     self.__stamina -= 1
                     return True
+    #endregion CAVALEIRO
     #region Ladrões
     class Ladroes:
         def __init__(self,coorx:int, coory:int, img:pygame.Surface):
@@ -680,7 +681,7 @@ def jogar():
                 
         pygame.display.flip() #atualizar os frames a cada vez que roda o while
         clock.tick(frames) #Diminuindo os fps para não usar tanto o processador
-
+    #endregion TELA GAME
     #region TELAS FINAIS
     while ganhou:
         for event in pygame.event.get():
