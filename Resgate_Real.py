@@ -1,11 +1,14 @@
 import pygame
 from random import randint, getrandbits
 import sys
+import json
 
 # coisas que planejamos adicionar: 
 # 1º Item coletável que você deixa guardado, quando escolher usar aparece uma tela com duas opções, curar stamina ou vida
 # 2º Sistema de pontos
 # 3º Tela com o nome dos que mais pontuaram
+
+
 
 def jogar():
     #region PREPARAÇÃO DO AMBIENTE
@@ -522,6 +525,8 @@ def jogar():
     
     charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
     #region TELA GAME
+
+    pontos = 0
     while run:
     
         #region EVENTOS
@@ -566,6 +571,7 @@ def jogar():
         if charect.colliderect(prinrect):
             run = False
             ganhou = True
+            pontos += 1000
             break
             
         elif jgdr1.get_vida() <= 0 or jgdr1.get_stamina() <= 0:
@@ -596,7 +602,8 @@ def jogar():
         for a in range(0,10):
             for b in range(0,10):
                 pygame.draw.rect(tela,'black', (pygame.Rect(112+48*a,112+48*b,48,48)),width=1)
-
+        
+        tela.blit(fonte2.render('Score:'+str(pontos),0,'white'),(590,8))
 
         linhavida = pygame.Rect(15,15,200,15)
         pygame.draw.rect(tela,'red',linhavida,border_radius=10,width=1)
@@ -624,6 +631,7 @@ def jogar():
             if thief.get_rect().colliderect(charect):
                 jgdr1.set_vida(jgdr1.get_vida()-1)
                 listaladroes.remove(thief)
+                pontos -= 250
         
 
         if bombanatela:
@@ -655,9 +663,11 @@ def jogar():
                 elif exrects[a].colliderect(charect) and tomou == False:
                     jgdr1.set_vida(jgdr1.get_vida()-1)
                     tomou = True
+                    pontos -= 250
                 for thief in listaladroes:
                     if thief.get_rect().colliderect(exrects[a]):
                         listaladroes.remove(thief)
+                        pontos += 500
 
             new_wall_rect = []
             for parede in range(0,len(rectwall)):
@@ -667,6 +677,7 @@ def jogar():
                         
                         if exrects[a].colliderect(square):
                             new_wall_rect[parede].remove(square)
+                            pontos += 100
                         
             rectwall = new_wall_rect
                         
@@ -682,16 +693,27 @@ def jogar():
         clock.tick(frames) #Diminuindo os fps para não usar tanto o processador
 
     #region TELAS FINAIS
+    
+    newpontos = (pontos * jgdr1.get_vida()) + pontos * (jgdr1.get_stamina()/10)
+    print(pontos)
+    print(newpontos)
     while ganhou:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
         tela.fill('black')
         tela.blit(icone,(320,230))
         tela.blit(fonte2.render('Parabéns! Você salvou a princesa',False,'cyan'),(190,300))
-
+        
+        score = fonte2.render('Score Base:'+str(newpontos),False,'white')
+        
+        tela.blit(score,((tela.get_width()/2)-score.get_width()/2,tela.get_height()/2))
+        
         pygame.display.flip()
+
+
         clock.tick(frames)
     icone = pygame.transform.rotate(icone,65)
     while decapitado:
@@ -702,7 +724,7 @@ def jogar():
         tela.fill('black')
         tela.blit(icone,(305,220))
         tela.blit(fonte2.render('Você assassinou a princesa e foi decapitado',False,'red'),(150,300))
-
+        
         pygame.display.flip()
         clock.tick(frames)
     
