@@ -730,7 +730,7 @@ def jogar():
                     #alterando
                     for valor in davyjsones.values():
                         if newpontos > valor:
-                            dictcrescente.update({'nome':newpontos})
+                            dictcrescente.update({'nome2':newpontos})
                             break
                     #deixando o dicionario em ordem decrescente 
                     for a in listavalues:
