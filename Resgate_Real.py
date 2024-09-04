@@ -3,11 +3,16 @@ from random import randint, getrandbits
 import sys
 import json
 
+#parei na linha 725
+
 # coisas que planejamos adicionar: 
 # 1º Item coletável que você deixa guardado, quando escolher usar aparece uma tela com duas opções, curar stamina ou vida
 # 2º Sistema de pontos
 # 3º Tela com o nome dos que mais pontuaram
 
+def sprite_leaderboard(tela:pygame.Surface, fonte:pygame.font.Font, img:pygame.Surface):
+    tela.blit(img,(490, 16))
+    tela.blit(fonte.render('LeaderBoard',False, 'white'),(560,32))
 
 
 def jogar():
@@ -380,6 +385,9 @@ def jogar():
     imajenladron = pygame.transform.scale(pygame.image.load('imagens/gameplay/Ladrao.png'), (48,48))
     icone = pygame.transform.scale_by(icone,2)
 
+    lkey = pygame.image.load('imagens/L.png')
+    lkey = pygame.transform.scale_by(lkey,4)
+
     #endregion CARREGANDO IMAGENS
 
     #region PRINCESA
@@ -485,11 +493,17 @@ def jogar():
     #endregion IMAGENS INFO
 
     frames = 60
+
     info = True
+    run = True
+    ganhou = False
+    perdeu = False
+    decapitado = False
+    leader = False
 
     #region TELA INFO
     while info:
-        tela.blit(fonte.render('TODAS AS POSIÇÕES DE PERSONAGENS, BARREIRAS E MONSTROS SÃO GERADAS ALEATORIAMENTE',False,'white'),(8,8))
+        tela.blit(fonte.render('TODAS AS POSIÇÕES DE PERSONAGENS, BARREIRAS E MONSTROS SÃO GERADAS ALEATORIAMENTE',False,'white'),(8,688))
     
         tela.blit(fonte2.render('PRESSIONE QUALQUER TECLA PARA INICIAR',False,'white'),(120,260))
         tela.blit(wasd,(420,300))
@@ -498,20 +512,24 @@ def jogar():
         tela.blit(fonte2.render('= BOMBA',False,'white'),(440,460))
         tela.blit(espaco2,(270, 520))
         tela.blit(fonte2.render('= KABOOM',False,'white'),(440,540))
+        sprite_leaderboard(tela,fonte2,lkey)
+        
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_l:
+                    leader = True
+                    run = False
                 info = False
 
         pygame.display.flip()
         clock.tick(frames)
     #endregion TELA INFO
-    run = True
-    ganhou = False
-    perdeu = False
-    decapitado = False
+    
+    
 
 
     bombanatela = False
@@ -532,7 +550,7 @@ def jogar():
         #region EVENTOS
         
         for event in pygame.event.get():
-            
+
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -693,27 +711,58 @@ def jogar():
         clock.tick(frames) #Diminuindo os fps para não usar tanto o processador
 
     #region TELAS FINAIS
+    if ganhou:
+        newpontos = int((pontos * jgdr1.get_vida()) + pontos * (jgdr1.get_stamina()/10))
+        print(pontos)
+        print(newpontos)
+
+        with open('ranking.json','r') as filer:
+                
+                davyjsones = json.load(filer)
+
+                if len(davyjsones) < 10:
+                    davyjsones.update({"nome":newpontos})
+                else:
+                    
+                    listavalues = sorted(davyjsones.values(),reverse=True)
+
+                    dictcrescente = {}
+                    #alterando
+                    for valor in davyjsones.values():
+                        if newpontos > valor:
+                            dictcrescente.update({'nome':newpontos})
+                            break
+                    #deixando o dicionario em ordem decrescente 
+                    for a in listavalues:
+                        for key in davyjsones:
+                            if davyjsones[key] == a:
+                                dictcrescente.update({key:a})
+                    dictcrescente.pop(key)
+                    print(dictcrescente)
+
+
+                
+        with open('ranking.json','w') as filew:
+            json.dump(dictcrescente,filew,indent=4)
     
-    newpontos = (pontos * jgdr1.get_vida()) + pontos * (jgdr1.get_stamina()/10)
-    print(pontos)
-    print(newpontos)
     while ganhou:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_l:
+                    leader = True
+                    ganhou = False
 
         tela.fill('black')
         tela.blit(icone,(320,230))
         tela.blit(fonte2.render('Parabéns! Você salvou a princesa',False,'cyan'),(190,300))
-        
-        score = fonte2.render('Score Base:'+str(newpontos),False,'white')
-        
-        tela.blit(score,((tela.get_width()/2)-score.get_width()/2,tela.get_height()/2))
+        score = fonte2.render('Score:'+str(newpontos),False,'white')
+        tela.blit(score,((tela.get_width()/2)-score.get_width()/2,(tela.get_height()/2)-20))
+        sprite_leaderboard(tela,fonte2,lkey)
         
         pygame.display.flip()
-
-
         clock.tick(frames)
     icone = pygame.transform.rotate(icone,65)
     while decapitado:
@@ -721,10 +770,15 @@ def jogar():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_l:
+                    leader = True
+                    decapitado = False
         tela.fill('black')
         tela.blit(icone,(305,220))
         tela.blit(fonte2.render('Você assassinou a princesa e foi decapitado',False,'red'),(150,300))
-        
+        sprite_leaderboard(tela,fonte2,lkey)
+
         pygame.display.flip()
         clock.tick(frames)
     
@@ -735,14 +789,33 @@ def jogar():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_l:
+                    leader = True
+                    perdeu = False
+            
 
         tela.fill('black')
         
         tela.blit(icone,(305,220))
         tela.blit(fonte2.render('A princesa foi capturada pelos criminosos :C',False,'gray'),(140,300))
+        sprite_leaderboard(tela,fonte2,lkey)
+        
+        pygame.display.flip()
+        clock.tick(frames)
+
+    while leader:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        tela.fill('black')
+        tela.blit(fonte2.render('Leaderboard fodastico',False,'gray'),(140,300))
 
         pygame.display.flip()
         clock.tick(frames)
+
     #endregion TELASFINAIS
     
 if __name__ == '__main__':
