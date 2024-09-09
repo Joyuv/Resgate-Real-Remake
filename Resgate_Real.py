@@ -495,6 +495,7 @@ def jogar():
     frames = 60
 
     info = True
+    telanome = True
     run = True
     ganhou = False
     perdeu = False
@@ -523,13 +524,67 @@ def jogar():
                 if event.key == pygame.K_l:
                     leader = True
                     run = False
+                    telanome = False
                 info = False
 
         pygame.display.flip()
         clock.tick(frames)
     #endregion TELA INFO
     
-    
+    alfabeto = tuple('abcdefghijklmnopqrstuvwxyz')
+    name = ''
+    while telanome:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                
+                if pygame.key.name(event.key) in alfabeto and not len(name)+1 == 5:
+                    name += pygame.key.name(event.key)
+                elif event.key == pygame.K_KP_ENTER or event.key == 13: #13 é o código da tecla enter
+                    telanome = False
+                    break
+                elif event.key == pygame.K_BACKSPACE:
+                    name = name[:-1]
+                print(name)
+        tela.fill('black')
+        textonick = fonte2.render('Digite seu nick e pressione enter',False,'white')
+        tela.blit(textonick,(tela.get_width()/2-textonick.get_width()/2,tela.get_height()/2-25))
+        
+        rectgrande = pygame.Rect(tela.get_width()/2-125, tela.get_height()/2, 250, 70)
+
+        rect1 = pygame.Rect(rectgrande.x+10,rectgrande.y+10,50,50)
+        rect2 = pygame.Rect(rectgrande.x+70,rectgrande.y+10,50,50)
+        rect3 = pygame.Rect(rectgrande.x+130,rectgrande.y+10,50,50)
+        rect4 = pygame.Rect(rectgrande.x+190,rectgrande.y+10,50,50)
+
+        rects = [rect1,rect2,rect3,rect4]
+        # pygame.draw.rect(tela,'white',rectgrande)
+
+        pygame.draw.rect(tela,'gray',(rect1.x-3,rect1.y-3,53,53))
+        pygame.draw.rect(tela,'gray',(rect2.x-3,rect2.y-3,53,53))
+        pygame.draw.rect(tela,'gray',(rect3.x-3,rect3.y-3,53,53))
+        pygame.draw.rect(tela,'gray',(rect4.x-3,rect4.y-3,53,53))
+        
+        for rect in rects:
+            pygame.draw.rect(tela,'white',rect)
+        
+        for letra in range(0,len(name)):
+            match letra:
+                case 0:
+                    tela.blit(fonte2.render(name[0],False,'black'),(rect1.x+18, rect1.y+13))
+                case 1:
+                    tela.blit(fonte2.render(name[1],False,'black'),(rect2.x+18, rect2.y+13))
+                case 2:
+                    tela.blit(fonte2.render(name[2],False,'black'),(rect3.x+18, rect3.y+13))
+                case 3:
+                    tela.blit(fonte2.render(name[3],False,'black'),(rect4.x+18, rect4.y+13))
+
+        
+        pygame.display.flip()
+        clock.tick(frames)
+
 
 
     bombanatela = False
@@ -721,7 +776,7 @@ def jogar():
                 davyjsones = json.load(filer)
 
                 if len(davyjsones) < 10:
-                    davyjsones.update({"nome":newpontos})
+                    davyjsones.update({name:newpontos})
                 else:
                     
                     listavalues = sorted(davyjsones.values(),reverse=True)
@@ -730,17 +785,16 @@ def jogar():
                     #alterando
                     for valor in davyjsones.values():
                         if newpontos > valor:
-                            dictcrescente.update({'nome3':newpontos})
+                            dictcrescente.update({name:newpontos})
                             break
                     #deixando o dicionario em ordem decrescente 
+
                     for a in listavalues:
                         for key in davyjsones:
                             if davyjsones[key] == a:
                                 dictcrescente.update({key:a})
                     dictcrescente.pop(key)
                     print(dictcrescente)
-
-
                 
         with open('ranking.json','w') as filew:
             json.dump(dictcrescente,filew,indent=4)
