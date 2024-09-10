@@ -3,6 +3,8 @@ from random import randint, getrandbits
 import sys
 import json
 
+open('ranking.json','a').close()
+
 #parei na linha 725
 
 # coisas que planejamos adicionar: 
