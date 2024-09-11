@@ -51,51 +51,33 @@ def jogar():
         def set_stamina(self,stamina:int):
             self.__stamina = stamina
 
-        def mover(self, key):
+        def mover(self, key:int):
             dist = 48
             if key == pygame.K_d or key == pygame.K_RIGHT:
                 if self.__olhando == True:
-                        self.__img = pygame.transform.flip(self.__img, True, False)
-                        self.__olhando = False
-                if self.__coorx + 48 >= 590:
-                    pass
-                elif any(nextrect(self,x=48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
-                    pass
+                        self.__img, self.__olhando = pygame.transform.flip(self.__img, True, False), False
+                if self.__coorx + 48 >= 590: pass
+                elif any(nextrect(self,x=48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))): pass
+
                 else:
-                    self.__coorx += dist
-                    self.__stamina -= 1
-                    return True
-                    
+                    self.__coorx, self.__stamina = self.__coorx + dist, self.__stamina - 1; return True
             if key == pygame.K_a or key == pygame.K_LEFT:
                 if self.__olhando == False:
-                        self.__img = pygame.transform.flip(self.__img, True, False)
-                        self.__olhando = True
-                if self.__coorx - 48 <= 110:
-                    pass
-                elif any(nextrect(self,x=-48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
-                    pass
-                else:
-                    self.__coorx -= dist
-                    self.__stamina -= 1
-                    return True
+                        self.__img, self.__olhando = pygame.transform.flip(self.__img, True, False), True
+                if self.__coorx - 48 <= 110: pass
+                elif any(nextrect(self,x=-48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))): pass
+
+                else: self.__coorx, self.__stamina = self.__coorx - dist, self.__stamina - 1; return True
             if key == pygame.K_w or key == pygame.K_UP:
-                if self.__coory - 48 < 110:
-                    pass
-                elif any(nextrect(self,y=-48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
-                        pass
-                else:
-                    self.__coory -= dist
-                    self.__stamina -= 1
-                    return True
+                if self.__coory - 48 < 110: pass
+                elif any(nextrect(self,y=-48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))): pass
+
+                else: self.__coory, self.__stamina = self.__coory - dist, self.__stamina - 1; return True
             if key == pygame.K_s or key == pygame.K_DOWN:
-                if self.__coory + 48 >= 590:
-                    pass
-                elif any(nextrect(self,y= 48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
-                    pass
-                else:
-                    self.__coory += dist
-                    self.__stamina -= 1
-                    return True
+                if self.__coory + 48 >= 590: pass
+                elif any(nextrect(self,y= 48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))): pass
+
+                else: self.__coory, self.__stamina = self.__coory + dist, self.__stamina - 1; return True
 #region Ladrões
     class Ladroes:
         def __init__(self,coorx:int, coory:int, img:pygame.Surface):
