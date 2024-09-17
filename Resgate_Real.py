@@ -134,7 +134,6 @@ def jogar():
         def get_rect(self):
             return pygame.Rect(self.__coorx,self.__coory,48,48)
         
-
         def horizontal(self, charx:int, chary:int):
             if self.__coorx != charx:
                 #region Tentando LEFT
@@ -148,15 +147,12 @@ def jogar():
                                     else: #direita (+48)
                                         self.__coorx += 48
                                         if self.__olhando == True:
-                                            self.__img = pygame.transform.flip(self.__img,True,False)
-                                            self.__olhando = False
+                                            self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), False
                                 else: #desce (+48)
                                     self.__coory += 48
-
                             else: #sobe (-48)
                                 self.__coory -= 48
                         else:
-
                             if 'down' in self.__vaicolidir:
                                 if 'up' in self.__vaicolidir:
                                     if 'right' in self.__vaicolidir:
@@ -164,21 +160,14 @@ def jogar():
                                     else: #direita (+48)
                                         self.__coorx += 48
                                         if self.__olhando == True:
-                                            self.__img = pygame.transform.flip(self.__img,True,False)
-                                            self.__olhando = False
+                                            self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), False
                                 else: #sobe (-48)
                                     self.__coory -= 48
-
-                            else: #desce (+48)
-                                self.__coory += 48
-                            
-                            
-                    
+                            else: self.__coory += 48 #desce (+48) 
                     else: #Esquerda (-48)
                         self.__coorx -=48
                         if self.__olhando == False:
-                            self.__img = pygame.transform.flip(self.__img,True,False)
-                            self.__olhando = True
+                            self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), True 
                 #endregion Tentando LEFT
 
                 #region Tentando RIGHT
@@ -550,7 +539,7 @@ def jogar():
                     break
                 elif event.key == pygame.K_BACKSPACE:
                     name = name[:-1]
-                print(name)
+                
         tela.fill('black')
         textonick = fonte2.render('Digite seu nick e pressione enter',False,'white')
         tela.blit(textonick,(tela.get_width()/2-textonick.get_width()/2,tela.get_height()/2-25))
@@ -771,36 +760,92 @@ def jogar():
     #region TELAS FINAIS
     if ganhou:
         newpontos = int((pontos * jgdr1.get_vida()) + pontos * (jgdr1.get_stamina()/10))
-        print(pontos)
-        print(newpontos)
-
+        # print(pontos)
+        # print(newpontos)
+                            # print('Dados dentro do JSON:',filer.read())
         with open('ranking.json','r') as filer:
-                
-                davyjsones = json.load(filer)
-
-                if len(davyjsones) < 10:
-                    davyjsones.update({name:newpontos})
-                else:
-                    
-                    listavalues = sorted(davyjsones.values(),reverse=True)
-
-                    dictcrescente = {}
-                    #alterando
-                    for valor in davyjsones.values():
-                        if newpontos > valor:
-                            dictcrescente.update({name:newpontos})
+            
+            try:
+                davyjsones = json.load(filer) 
+                #davyjsones é o arquivo json convertido em dicionário python
+                #pega todos os nomes e tira os números
+                alphalist = []
+                for namejones in davyjsones:
+                    alphaname = ''
+                    for a in range(0,len(namejones)):
+                        if a == len(namejones)-1:
                             break
-                    #deixando o dicionario em ordem decrescente 
+                        alphaname+= namejones[a]
+                    alphalist.append(alphaname)
+                        
+                if name not in alphalist: #tá errado
+                    name += "0"
+                else: #acho que tá certo, pode ter bugs ao já existirem 10 do mesmo nome no ranking
+                    listanames = []
+                    for namejones in davyjsones:
+                        alphaname = ''
+                        for a in range(0,len(namejones)):
+                            if a == len(namejones)-1:
+                                break
+                            alphaname += namejones[a]
 
-                    for a in listavalues:
-                        for key in davyjsones:
-                            if davyjsones[key] == a:
-                                dictcrescente.update({key:a})
-                    dictcrescente.pop(key)
-                    print(dictcrescente)
+                        if alphaname == name:
+                            listanames.append(namejones)
+
+                    listanames.sort()
+                    print(listanames)
+                    parou  = False
+                    for a in range(0,len(listanames)):
+                        for b in range(0,len(listanames[a])):
+                            
+                            if b == len(listanames[a]) - 1:
+                                if int(listanames[a+1][b]) - int(listanames[a][b]) != 1:
+                                    listanames.append(name+str(int(listanames[a+1][b])-1))
+                                    name +=str(int(listanames[a+1][b])-1)
+                                    parou = True
+                                    break
+                                
+                        if parou:
+                            break
+                    print(listanames)
+                    
+            except:
+                with open('ranking.json','w') as filew:
+                    json.dump({name:newpontos},filew,indent=4)
                 
-        with open('ranking.json','w') as filew:
-            json.dump(dictcrescente,filew,indent=4)
+        
+        
+        if len(davyjsones) < 10:
+            davyjsones.update({name:newpontos})
+            print(davyjsones)
+            print('ativou')
+            with open('ranking.json','w') as filew:
+                json.dump(davyjsones,filew,indent=4)
+
+        elif davyjsones and len(davyjsones) != 0:
+            
+            listavalues = sorted(davyjsones.values(),reverse=True)
+
+            dictcrescente = {}
+            #alterando
+            for valor in davyjsones.values():
+                print(valor)
+                if newpontos > valor:
+                    dictcrescente.update({name:newpontos})
+                    break
+            #deixando o dicionario em ordem decrescente 
+            
+            for a in listavalues:
+                for key in davyjsones:
+                    if davyjsones[key] == a:
+                        dictcrescente.update({key:a})
+            dictcrescente.pop(key)
+            # dictcrescente =  sorted(dictcrescente.values(), reverse=True)
+            with open('ranking.json','w') as filew:
+                json.dump(dictcrescente,filew,indent=4)
+                    
+                
+        
     
     while ganhou:
         for event in pygame.event.get():
