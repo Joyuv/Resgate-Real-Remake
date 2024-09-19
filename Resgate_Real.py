@@ -1,9 +1,16 @@
 import pygame
 from random import randint, getrandbits
+import os
 import sys
 import json
 
-open('ranking.json','a').close()
+if not os.path.exists('ranking.json'):
+    jason = open('ranking.json','w')
+    jason.write(
+    """{ 
+
+    }""")
+    jason.close()
 
 #parei na linha 725
 
@@ -793,21 +800,24 @@ def jogar():
                             listanames.append(namejones)
 
                     listanames.sort()
-                    print(listanames)
+                    
                     parou  = False
                     for a in range(0,len(listanames)):
                         for b in range(0,len(listanames[a])):
                             
-                            if b == len(listanames[a]) - 1:
+                            if b == len(listanames[a]) - 1: #esse if não ativa | ai donte now
                                 if int(listanames[a+1][b]) - int(listanames[a][b]) != 1:
                                     listanames.append(name+str(int(listanames[a+1][b])-1))
                                     name +=str(int(listanames[a+1][b])-1)
                                     parou = True
                                     break
                                 
+                        
+                        
+                                
                         if parou:
                             break
-                    print(listanames)
+                    
                     
             except:
                 with open('ranking.json','w') as filew:
@@ -816,6 +826,7 @@ def jogar():
         
         
         if len(davyjsones) < 10:
+
             davyjsones.update({name:newpontos})
             print(davyjsones)
             print('ativou')
