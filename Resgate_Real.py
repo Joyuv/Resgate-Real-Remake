@@ -814,6 +814,7 @@ def jogar():
                                     break
                                 else:
                                     #aqui
+                                    pass
                                 
                         
                         
