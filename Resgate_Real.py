@@ -807,10 +807,13 @@ def jogar():
                             
                             if b == len(listanames[a]) - 1: #esse if não ativa | ai donte now
                                 if int(listanames[a+1][b]) - int(listanames[a][b]) != 1:
-                                    listanames.append(name+str(int(listanames[a+1][b])-1))
+                                    # listanames.append(name+str(int(listanames[a+1][b])-1))
                                     name +=str(int(listanames[a+1][b])-1)
                                     parou = True
+                                    print('ativou kk')
                                     break
+                                else:
+                                    #aqui
                                 
                         
                         
@@ -842,6 +845,7 @@ def jogar():
             for valor in davyjsones.values():
                 print(valor)
                 if newpontos > valor:
+                    print(name)
                     dictcrescente.update({name:newpontos})
                     break
             #deixando o dicionario em ordem decrescente 
