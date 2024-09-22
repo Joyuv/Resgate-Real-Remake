@@ -1,11 +1,28 @@
 import pygame
 from random import randint, getrandbits
+import os
 import sys
+import json
+
+if not os.path.exists('ranking.json'):
+    jason = open('ranking.json','w')
+    jason.write(
+    """{ 
+
+    }""")
+    jason.close()
+
+#parei na linha 725
 
 # coisas que planejamos adicionar: 
 # 1º Item coletável que você deixa guardado, quando escolher usar aparece uma tela com duas opções, curar stamina ou vida
 # 2º Sistema de pontos
 # 3º Tela com o nome dos que mais pontuaram
+
+def sprite_leaderboard(tela:pygame.Surface, fonte:pygame.font.Font, img:pygame.Surface):
+    tela.blit(img,(490, 16))
+    tela.blit(fonte.render('LeaderBoard',False, 'white'),(560,32))
+
 
 def jogar():
     #region PREPARAÇÃO DO AMBIENTE
@@ -124,7 +141,6 @@ def jogar():
         def get_rect(self):
             return pygame.Rect(self.__coorx,self.__coory,48,48)
         
-
         def horizontal(self, charx:int, chary:int):
             if self.__coorx != charx:
                 #region Tentando LEFT
@@ -138,15 +154,12 @@ def jogar():
                                     else: #direita (+48)
                                         self.__coorx += 48
                                         if self.__olhando == True:
-                                            self.__img = pygame.transform.flip(self.__img,True,False)
-                                            self.__olhando = False
+                                            self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), False
                                 else: #desce (+48)
                                     self.__coory += 48
-
                             else: #sobe (-48)
                                 self.__coory -= 48
                         else:
-
                             if 'down' in self.__vaicolidir:
                                 if 'up' in self.__vaicolidir:
                                     if 'right' in self.__vaicolidir:
@@ -154,21 +167,14 @@ def jogar():
                                     else: #direita (+48)
                                         self.__coorx += 48
                                         if self.__olhando == True:
-                                            self.__img = pygame.transform.flip(self.__img,True,False)
-                                            self.__olhando = False
+                                            self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), False
                                 else: #sobe (-48)
                                     self.__coory -= 48
-
-                            else: #desce (+48)
-                                self.__coory += 48
-                            
-                            
-                    
+                            else: self.__coory += 48 #desce (+48) 
                     else: #Esquerda (-48)
                         self.__coorx -=48
                         if self.__olhando == False:
-                            self.__img = pygame.transform.flip(self.__img,True,False)
-                            self.__olhando = True
+                            self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), True 
                 #endregion Tentando LEFT
 
                 #region Tentando RIGHT
@@ -378,6 +384,9 @@ def jogar():
     imajenladron = pygame.transform.scale(pygame.image.load('imagens/gameplay/Ladrao.png'), (48,48))
     icone = pygame.transform.scale_by(icone,2)
 
+    lkey = pygame.image.load('imagens/L.png')
+    lkey = pygame.transform.scale_by(lkey,4)
+
     #endregion CARREGANDO IMAGENS
 
     #region PRINCESA
@@ -483,11 +492,18 @@ def jogar():
     #endregion IMAGENS INFO
 
     frames = 60
+
     info = True
+    telanome = True
+    run = True
+    ganhou = False
+    perdeu = False
+    decapitado = False
+    leader = False
 
     #region TELA INFO
     while info:
-        tela.blit(fonte.render('TODAS AS POSIÇÕES DE PERSONAGENS, BARREIRAS E MONSTROS SÃO GERADAS ALEATORIAMENTE',False,'white'),(8,8))
+        tela.blit(fonte.render('TODAS AS POSIÇÕES DE PERSONAGENS, BARREIRAS E MONSTROS SÃO GERADAS ALEATORIAMENTE',False,'white'),(8,688))
     
         tela.blit(fonte2.render('PRESSIONE QUALQUER TECLA PARA INICIAR',False,'white'),(120,260))
         tela.blit(wasd,(420,300))
@@ -496,20 +512,78 @@ def jogar():
         tela.blit(fonte2.render('= BOMBA',False,'white'),(440,460))
         tela.blit(espaco2,(270, 520))
         tela.blit(fonte2.render('= KABOOM',False,'white'),(440,540))
+        sprite_leaderboard(tela,fonte2,lkey)
+        
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_l:
+                    leader = True
+                    run = False
+                    telanome = False
                 info = False
 
         pygame.display.flip()
         clock.tick(frames)
     #endregion TELA INFO
-    run = True
-    ganhou = False
-    perdeu = False
-    decapitado = False
+    
+    alfabeto = tuple('abcdefghijklmnopqrstuvwxyz')
+    name = ''
+    while telanome:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                
+                if pygame.key.name(event.key) in alfabeto and not len(name)+1 == 5:
+                    name += pygame.key.name(event.key)
+                elif event.key == pygame.K_KP_ENTER or event.key == 13: #13 é o código da tecla enter
+                    telanome = False
+                    break
+                elif event.key == pygame.K_BACKSPACE:
+                    name = name[:-1]
+                
+        tela.fill('black')
+        textonick = fonte2.render('Digite seu nick e pressione enter',False,'white')
+        tela.blit(textonick,(tela.get_width()/2-textonick.get_width()/2,tela.get_height()/2-25))
+        
+        rectgrande = pygame.Rect(tela.get_width()/2-125, tela.get_height()/2, 250, 70)
+
+        rect1 = pygame.Rect(rectgrande.x+10,rectgrande.y+10,50,50)
+        rect2 = pygame.Rect(rectgrande.x+70,rectgrande.y+10,50,50)
+        rect3 = pygame.Rect(rectgrande.x+130,rectgrande.y+10,50,50)
+        rect4 = pygame.Rect(rectgrande.x+190,rectgrande.y+10,50,50)
+
+        rects = [rect1,rect2,rect3,rect4]
+        # pygame.draw.rect(tela,'white',rectgrande)
+
+        pygame.draw.rect(tela,'gray',(rect1.x-3,rect1.y-3,53,53))
+        pygame.draw.rect(tela,'gray',(rect2.x-3,rect2.y-3,53,53))
+        pygame.draw.rect(tela,'gray',(rect3.x-3,rect3.y-3,53,53))
+        pygame.draw.rect(tela,'gray',(rect4.x-3,rect4.y-3,53,53))
+        
+        for rect in rects:
+            pygame.draw.rect(tela,'white',rect)
+        
+        for letra in range(0,len(name)):
+            match letra:
+                case 0:
+                    tela.blit(fonte2.render(name[0],False,'black'),(rect1.x+18, rect1.y+13))
+                case 1:
+                    tela.blit(fonte2.render(name[1],False,'black'),(rect2.x+18, rect2.y+13))
+                case 2:
+                    tela.blit(fonte2.render(name[2],False,'black'),(rect3.x+18, rect3.y+13))
+                case 3:
+                    tela.blit(fonte2.render(name[3],False,'black'),(rect4.x+18, rect4.y+13))
+
+        
+        pygame.display.flip()
+        clock.tick(frames)
+
 
 
     bombanatela = False
@@ -523,12 +597,14 @@ def jogar():
     
     charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
     #region TELA GAME
+
+    pontos = 0
     while run:
     
         #region EVENTOS
         
         for event in pygame.event.get():
-            
+
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -567,6 +643,7 @@ def jogar():
         if charect.colliderect(prinrect):
             run = False
             ganhou = True
+            pontos += 1000
             break
             
         elif jgdr1.get_vida() <= 0 or jgdr1.get_stamina() <= 0:
@@ -597,7 +674,8 @@ def jogar():
         for a in range(0,10):
             for b in range(0,10):
                 pygame.draw.rect(tela,'black', (pygame.Rect(112+48*a,112+48*b,48,48)),width=1)
-
+        
+        tela.blit(fonte2.render('Score:'+str(pontos),0,'white'),(590,8))
 
         linhavida = pygame.Rect(15,15,200,15)
         pygame.draw.rect(tela,'red',linhavida,border_radius=10,width=1)
@@ -625,6 +703,7 @@ def jogar():
             if thief.get_rect().colliderect(charect):
                 jgdr1.set_vida(jgdr1.get_vida()-1)
                 listaladroes.remove(thief)
+                pontos -= 250
         
 
         if bombanatela:
@@ -656,9 +735,11 @@ def jogar():
                 elif exrects[a].colliderect(charect) and tomou == False:
                     jgdr1.set_vida(jgdr1.get_vida()-1)
                     tomou = True
+                    pontos -= 250
                 for thief in listaladroes:
                     if thief.get_rect().colliderect(exrects[a]):
                         listaladroes.remove(thief)
+                        pontos += 500
 
             new_wall_rect = []
             for parede in range(0,len(rectwall)):
@@ -668,6 +749,7 @@ def jogar():
                         
                         if exrects[a].colliderect(square):
                             new_wall_rect[parede].remove(square)
+                            pontos += 100
                         
             rectwall = new_wall_rect
                         
@@ -683,15 +765,116 @@ def jogar():
         clock.tick(frames) #Diminuindo os fps para não usar tanto o processador
     #endregion TELA GAME
     #region TELAS FINAIS
+    if ganhou:
+        newpontos = int((pontos * jgdr1.get_vida()) + pontos * (jgdr1.get_stamina()/10))
+        # print(pontos)
+        # print(newpontos)
+                            # print('Dados dentro do JSON:',filer.read())
+        with open('ranking.json','r') as filer:
+            
+            try:
+                davyjsones = json.load(filer) 
+                #davyjsones é o arquivo json convertido em dicionário python
+                #pega todos os nomes e tira os números
+                alphalist = []
+                for namejones in davyjsones:
+                    alphaname = ''
+                    for a in range(0,len(namejones)):
+                        if a == len(namejones)-1:
+                            break
+                        alphaname+= namejones[a]
+                    alphalist.append(alphaname)
+                        
+                if name not in alphalist: #tá errado
+                    name += "0"
+                else: #acho que tá certo, pode ter bugs ao já existirem 10 do mesmo nome no ranking
+                    listanames = []
+                    for namejones in davyjsones:
+                        alphaname = ''
+                        for a in range(0,len(namejones)):
+                            if a == len(namejones)-1:
+                                break
+                            alphaname += namejones[a]
+
+                        if alphaname == name:
+                            listanames.append(namejones)
+
+                    listanames.sort()
+                    
+                    parou  = False
+                    for a in range(0,len(listanames)):
+                        for b in range(0,len(listanames[a])):
+                            
+                            if b == len(listanames[a]) - 1: #esse if não ativa | ai donte now
+                                if int(listanames[a+1][b]) - int(listanames[a][b]) != 1:
+                                    listanames.append(name+str(int(listanames[a+1][b])-1))
+                                    name +=str(int(listanames[a+1][b])-1)
+                                    parou = True
+                                    break
+                                
+                        
+                        
+                                
+                        if parou:
+                            break
+                    
+                    
+            except:
+                with open('ranking.json','w') as filew:
+                    json.dump({name:newpontos},filew,indent=4)
+                
+        
+        
+        if len(davyjsones) < 10:
+
+            davyjsones.update({name:newpontos})
+            print(davyjsones)
+            print('ativou')
+            with open('ranking.json','w') as filew:
+                json.dump(davyjsones,filew,indent=4)
+
+        elif davyjsones and len(davyjsones) != 0:
+            
+            listavalues = sorted(davyjsones.values(),reverse=True)
+
+            dictcrescente = {}
+            #alterando
+            for valor in davyjsones.values():
+                print(valor)
+                if newpontos > valor:
+                    dictcrescente.update({name:newpontos})
+                    break
+            #deixando o dicionario em ordem decrescente 
+            
+            for a in listavalues:
+                for key in davyjsones:
+                    if davyjsones[key] == a:
+                        dictcrescente.update({key:a})
+            dictcrescente.pop(key)
+            # dictcrescente =  sorted(dictcrescente.values(), reverse=True)
+            with open('ranking.json','w') as filew:
+                json.dump(dictcrescente,filew,indent=4)
+                    
+                
+        
+    
     while ganhou:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_l:
+                    leader = True
+                    ganhou = False
+
         tela.fill('black')
         tela.blit(icone,(320,230))
         tela.blit(fonte2.render('Parabéns! Você salvou a princesa',False,'cyan'),(190,300))
-
+        score = fonte2.render('Score:'+str(newpontos),False,'white')
+        tela.blit(score,((tela.get_width()/2)-score.get_width()/2,(tela.get_height()/2)-20))
+        sprite_leaderboard(tela,fonte2,lkey)
+        
         pygame.display.flip()
         clock.tick(frames)
     icone = pygame.transform.rotate(icone,65)
@@ -700,9 +883,14 @@ def jogar():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_l:
+                    leader = True
+                    decapitado = False
         tela.fill('black')
         tela.blit(icone,(305,220))
         tela.blit(fonte2.render('Você assassinou a princesa e foi decapitado',False,'red'),(150,300))
+        sprite_leaderboard(tela,fonte2,lkey)
 
         pygame.display.flip()
         clock.tick(frames)
@@ -714,14 +902,33 @@ def jogar():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_l:
+                    leader = True
+                    perdeu = False
+            
 
         tela.fill('black')
         
         tela.blit(icone,(305,220))
         tela.blit(fonte2.render('A princesa foi capturada pelos criminosos :C',False,'gray'),(140,300))
+        sprite_leaderboard(tela,fonte2,lkey)
+        
+        pygame.display.flip()
+        clock.tick(frames)
+
+    while leader:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        tela.fill('black')
+        tela.blit(fonte2.render('Leaderboard fodastico',False,'gray'),(140,300))
 
         pygame.display.flip()
         clock.tick(frames)
+
     #endregion TELASFINAIS
     
 if __name__ == '__main__':
