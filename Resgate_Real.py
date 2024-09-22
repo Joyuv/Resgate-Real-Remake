@@ -1,7 +1,16 @@
 import pygame
 from random import randint, getrandbits
+import os
 import sys
 import json
+
+if not os.path.exists('ranking.json'):
+    jason = open('ranking.json','w')
+    jason.write(
+    """{ 
+
+    }""")
+    jason.close()
 
 #parei na linha 725
 
@@ -87,10 +96,15 @@ def jogar():
 
                 else: self.__coory, self.__stamina = self.__coory - dist, self.__stamina - 1; return True
             if key == pygame.K_s or key == pygame.K_DOWN:
-                if self.__coory + 48 >= 590: pass
-                elif any(nextrect(self,y= 48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))): pass
-
-                else: self.__coory, self.__stamina = self.__coory + dist, self.__stamina - 1; return True
+                if self.__coory + 48 >= 590:
+                    pass
+                elif any(nextrect(self,y= 48).colliderect(rectwall[a][b])for a in range(0,len(rectwall)) for b in range(0,len(rectwall[a]))):
+                    pass
+                else:
+                    self.__coory += dist
+                    self.__stamina -= 1
+                    return True
+    #endregion CAVALEIRO
     #region Ladrões
     class Ladroes:
         def __init__(self,coorx:int, coory:int, img:pygame.Surface):
@@ -113,135 +127,182 @@ def jogar():
         def get_rect(self):
             return pygame.Rect(self.__coorx,self.__coory,48,48)
         
-        def h_left(self, chary: int):
-            if 'left' in self.__vaicolidir:
-                if self.__coory > chary: 
-                    if 'up' in self.__vaicolidir:
-                        if 'down' in self.__vaicolidir:
-                            if 'right' in self.__vaicolidir: pass
-                            else: #direita (+48)
-                                self.__coorx += 48
-                                if self.__olhando == True:
-                                    self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), False
-                        else: self.__coory += 48 #desce (+48)
-                    else: self.__coory -= 48 #sobe (-48)
-                else:
-                    if 'down' in self.__vaicolidir:
-                        if 'up' in self.__vaicolidir:
-                            if 'right' in self.__vaicolidir: pass
-                            else: #direita (+48)
-                                self.__coorx += 48
-                                if self.__olhando == True:
-                                    self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), False
-                        else: self.__coory -= 48 #sobe (-48)
-                    else: self.__coory += 48 #desce (+48)                    
-            else: #Esquerda (-48)
-                self.__coorx -=48
-                if self.__olhando == False:
-                    self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), True
-        def h_right(self, chary: int):
-            if 'right' in self.__vaicolidir:
-                if self.__coory > chary: 
-                    if 'up' in self.__vaicolidir:
-                        if 'down' in self.__vaicolidir:
-                            if 'left' in self.__vaicolidir: pass
-                            else: #esquerda (-48)
-                                self.__coorx -= 48
-                                if self.__olhando == False:
-                                    self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), True
-                        else: self.__coory += 48 #desce (+48)
-                    else: self.__coory -= 48 #sobe (-48)                       
-                else:
-                    if 'down' in self.__vaicolidir:
-                        if 'up' in self.__vaicolidir:
-                            if 'left' in self.__vaicolidir: pass
-                            else: #esquerda (-48)
-                                self.__coorx -= 48
-                                if self.__olhando == False:
-                                    self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), True
-                        else: self.__coory -= 48 #sobe (-48)
-                    else: self.__coory += 48 #desce (+48)
-            else: #Direita (-48)
-                self.__coorx +=48
-                if self.__olhando == True:
-                    self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), False
-        def v_up(self, charx: int):
-            if 'up' in self.__vaicolidir:
-                if self.__coorx > charx: 
-                    if 'right' in self.__vaicolidir:
-                        if 'left' in self.__vaicolidir:
-                            if 'down' in self.__vaicolidir: pass
-                            else: self.__coory += 48 #baixo (+48)
-                        else: #esquerda (-48)
-                            self.__coorx -= 48
-                            if self.__olhando == False:
-                                self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), True
-                    else: #direita (+48)
-                        self.__coorx += 48
-                        if self.__olhando == True:
-                            self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), False     
-                else:
-                    if 'left' in self.__vaicolidir:
-                        if 'right' in self.__vaicolidir:
-                            if 'down' in self.__vaicolidir: pass
-                            else: self.__coory += 48 #desce (+48)
-                        else: #direita (+48)
-                            self.__coorx += 48
-                            if self.__olhando == True:
-                                self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), False
-                    else: #esquerda (-48)
-                        self.__coorx -= 48
-                        if self.__olhando == False:
-                            self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), True
-            else: self.__coory -=48 #cima (-48)
-        def v_down(self, charx: int):
-            if 'down' in self.__vaicolidir:
-                if self.__coorx > charx: 
-                    if 'right' in self.__vaicolidir:
-                        if 'left' in self.__vaicolidir:
-                            if 'up' in self.__vaicolidir: pass
-                            else: self.__coory -= 48 #cima (-48)
-                        else: #esquerda (-48)
-                            self.__coorx -= 48
-                            if self.__olhando == False:
-                                self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), True
-                    else: #direita (+48)
-                        self.__coorx += 48
-                        if self.__olhando == True:
-                            self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), False
-                else:
-                    if 'left' in self.__vaicolidir:
-                        if 'right' in self.__vaicolidir:
-                            if 'up' in self.__vaicolidir: pass
-                            else: self.__coory -= 48 #sobe (-48)                                      
-                        else: #direita (+48)
-                            self.__coorx += 48
-                            if self.__olhando == True:
-                                self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), False                                       
-                    else: #esquerda (-48)
-                        self.__coorx -= 48
-                        if self.__olhando == False:
-                                self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), True                                                                                 
-            else: self.__coory +=48 #baixo (+48)
         def horizontal(self, charx:int, chary:int):
             if self.__coorx != charx:
                 #region Tentando LEFT
                 if self.__coorx > charx:#andando pra esquerda(-48)
-                    self.h_left(chary)
+                    if 'left' in self.__vaicolidir:
+                        if self.__coory > chary: 
+                            if 'up' in self.__vaicolidir:
+                                if 'down' in self.__vaicolidir:
+                                    if 'right' in self.__vaicolidir:
+                                        pass
+                                    else: #direita (+48)
+                                        self.__coorx += 48
+                                        if self.__olhando == True:
+                                            self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), False
+                                else: #desce (+48)
+                                    self.__coory += 48
+                            else: #sobe (-48)
+                                self.__coory -= 48
+                        else:
+                            if 'down' in self.__vaicolidir:
+                                if 'up' in self.__vaicolidir:
+                                    if 'right' in self.__vaicolidir:
+                                        pass
+                                    else: #direita (+48)
+                                        self.__coorx += 48
+                                        if self.__olhando == True:
+                                            self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), False
+                                else: #sobe (-48)
+                                    self.__coory -= 48
+                            else: self.__coory += 48 #desce (+48) 
+                    else: #Esquerda (-48)
+                        self.__coorx -=48
+                        if self.__olhando == False:
+                            self.__img, self.__olhando = pygame.transform.flip(self.__img,True,False), True 
                 #endregion Tentando LEFT
+
                 #region Tentando RIGHT
                 elif self.__coorx < charx:
-                    self.h_right(chary)
+                    if 'right' in self.__vaicolidir:
+                        if self.__coory > chary: 
+                            if 'up' in self.__vaicolidir:
+                                if 'down' in self.__vaicolidir:
+                                    if 'left' in self.__vaicolidir:
+                                        pass
+                                    else: #esquerda (-48)
+                                        self.__coorx -= 48
+                                        if self.__olhando == False:
+                                            self.__img = pygame.transform.flip(self.__img,True,False)
+                                            self.__olhando = True
+                                else: #desce (+48)
+                                    self.__coory += 48
+
+                            else: #sobe (-48)
+                                self.__coory -= 48
+                        else:
+
+                            if 'down' in self.__vaicolidir:
+                                if 'up' in self.__vaicolidir:
+                                    if 'left' in self.__vaicolidir:
+                                        pass
+                                    else: #esquerda (-48)
+                                        self.__coorx -= 48
+                                        if self.__olhando == False:
+                                            self.__img = pygame.transform.flip(self.__img,True,False)
+                                            self.__olhando = True
+                                else: #sobe (-48)
+                                    self.__coory -= 48
+
+                            else: #desce (+48)
+                                self.__coory += 48
+                            
+                            
+                    
+                    else: #Direita (-48)
+                        self.__coorx +=48
+                        if self.__olhando == True:
+                            self.__img = pygame.transform.flip(self.__img,True,False)
+                            self.__olhando = False
                 #endregion Tentando Right
         def vertical(self, charx:int, chary:int):
             if self.__coory != chary:
                 #region Tentando UP
                 if self.__coory > chary:#andando pra cima(-48)
-                    self.v_up(charx)
+                    if 'up' in self.__vaicolidir:
+                        if self.__coorx > charx: 
+                            if 'right' in self.__vaicolidir:
+                                if 'left' in self.__vaicolidir:
+                                    if 'down' in self.__vaicolidir:
+                                        pass
+                                    else: #baixo (+48)
+                                        self.__coory += 48
+                                        
+                                else: #esquerda (-48)
+                                    self.__coorx -= 48
+                                    if self.__olhando == False:
+                                        self.__img = pygame.transform.flip(self.__img,True,False)
+                                        self.__olhando = True
+
+                            else: #direita (+48)
+                                self.__coorx += 48
+                                if self.__olhando == True:
+                                    self.__img = pygame.transform.flip(self.__img,True,False)
+                                    self.__olhando = False
+                        else:
+
+                            if 'left' in self.__vaicolidir:
+                                if 'right' in self.__vaicolidir:
+                                    if 'down' in self.__vaicolidir:
+                                        pass
+                                    else: #desce (+48)
+                                        self.__coory += 48
+                                else: #direita (+48)
+                                    self.__coorx += 48
+                                    if self.__olhando == True:
+                                        self.__img = pygame.transform.flip(self.__img,True,False)
+                                        self.__olhando = False
+
+                            else: #esquerda (-48)
+                                self.__coorx -= 48
+                                if self.__olhando == False:
+                                        self.__img = pygame.transform.flip(self.__img,True,False)
+                                        self.__olhando = True
+                            
+                            
+                    
+                    else: #cima (-48)
+                        self.__coory -=48
+
                 #endregion Tentando UP
+
                 #region Tentando DOWN
                 elif self.__coory < chary:#andando pra baixo(+48)
-                    self.v_down(charx)
+                    if 'down' in self.__vaicolidir:
+                        if self.__coorx > charx: 
+                            if 'right' in self.__vaicolidir:
+                                if 'left' in self.__vaicolidir:
+                                    if 'up' in self.__vaicolidir:
+                                        pass
+                                    else: #cima (-48)
+                                        self.__coory -= 48
+                                        
+                                else: #esquerda (-48)
+                                    self.__coorx -= 48
+                                    if self.__olhando == False:
+                                        self.__img = pygame.transform.flip(self.__img,True,False)
+                                        self.__olhando = True
+
+                            else: #direita (+48)
+                                self.__coorx += 48
+                                if self.__olhando == True:
+                                    self.__img = pygame.transform.flip(self.__img,True,False)
+                                    self.__olhando = False
+                        else:
+
+                            if 'left' in self.__vaicolidir:
+                                if 'right' in self.__vaicolidir:
+                                    if 'up' in self.__vaicolidir:
+                                        pass
+                                    else: #sobe (-48)
+                                        self.__coory -= 48
+                                else: #direita (+48)
+                                    self.__coorx += 48
+                                    if self.__olhando == True:
+                                        self.__img = pygame.transform.flip(self.__img,True,False)
+                                        self.__olhando = False
+
+                            else: #esquerda (-48)
+                                self.__coorx -= 48
+                                if self.__olhando == False:
+                                        self.__img = pygame.transform.flip(self.__img,True,False)
+                                        self.__olhando = True
+                            
+                            
+                    
+                    else: #baixo (+48)
+                        self.__coory +=48
                 #endregion Tentando DOWN
         def andar(self,charx:int, chary:int, thiefs:list):
             self.__vaicolidir = []
@@ -471,7 +532,7 @@ def jogar():
                     break
                 elif event.key == pygame.K_BACKSPACE:
                     name = name[:-1]
-                print(name)
+                
         tela.fill('black')
         textonick = fonte2.render('Digite seu nick e pressione enter',False,'white')
         tela.blit(textonick,(tela.get_width()/2-textonick.get_width()/2,tela.get_height()/2-25))
@@ -688,40 +749,100 @@ def jogar():
                 
         pygame.display.flip() #atualizar os frames a cada vez que roda o while
         clock.tick(frames) #Diminuindo os fps para não usar tanto o processador
-
+    #endregion TELA GAME
     #region TELAS FINAIS
     if ganhou:
         newpontos = int((pontos * jgdr1.get_vida()) + pontos * (jgdr1.get_stamina()/10))
-        print(pontos)
-        print(newpontos)
-
+        # print(pontos)
+        # print(newpontos)
+                            # print('Dados dentro do JSON:',filer.read())
         with open('ranking.json','r') as filer:
-                
-                davyjsones = json.load(filer)
-
-                if len(davyjsones) < 10:
-                    davyjsones.update({name:newpontos})
-                else:
-                    
-                    listavalues = sorted(davyjsones.values(),reverse=True)
-
-                    dictcrescente = {}
-                    #alterando
-                    for valor in davyjsones.values():
-                        if newpontos > valor:
-                            dictcrescente.update({name:newpontos})
+            
+            try:
+                davyjsones = json.load(filer) 
+                #davyjsones é o arquivo json convertido em dicionário python
+                #pega todos os nomes e tira os números
+                alphalist = []
+                for namejones in davyjsones:
+                    alphaname = ''
+                    for a in range(0,len(namejones)):
+                        if a == len(namejones)-1:
                             break
-                    #deixando o dicionario em ordem decrescente 
+                        alphaname+= namejones[a]
+                    alphalist.append(alphaname)
+                        
+                if name not in alphalist: #tá errado
+                    name += "0"
+                else: #acho que tá certo, pode ter bugs ao já existirem 10 do mesmo nome no ranking
+                    listanames = []
+                    for namejones in davyjsones:
+                        alphaname = ''
+                        for a in range(0,len(namejones)):
+                            if a == len(namejones)-1:
+                                break
+                            alphaname += namejones[a]
 
-                    for a in listavalues:
-                        for key in davyjsones:
-                            if davyjsones[key] == a:
-                                dictcrescente.update({key:a})
-                    dictcrescente.pop(key)
-                    print(dictcrescente)
+                        if alphaname == name:
+                            listanames.append(namejones)
+
+                    listanames.sort()
+                    
+                    parou  = False
+                    for a in range(0,len(listanames)):
+                        for b in range(0,len(listanames[a])):
+                            
+                            if b == len(listanames[a]) - 1: #esse if não ativa | ai donte now
+                                if int(listanames[a+1][b]) - int(listanames[a][b]) != 1:
+                                    listanames.append(name+str(int(listanames[a+1][b])-1))
+                                    name +=str(int(listanames[a+1][b])-1)
+                                    parou = True
+                                    break
+                                
+                        
+                        
+                                
+                        if parou:
+                            break
+                    
+                    
+            except:
+                with open('ranking.json','w') as filew:
+                    json.dump({name:newpontos},filew,indent=4)
                 
-        with open('ranking.json','w') as filew:
-            json.dump(dictcrescente,filew,indent=4)
+        
+        
+        if len(davyjsones) < 10:
+
+            davyjsones.update({name:newpontos})
+            print(davyjsones)
+            print('ativou')
+            with open('ranking.json','w') as filew:
+                json.dump(davyjsones,filew,indent=4)
+
+        elif davyjsones and len(davyjsones) != 0:
+            
+            listavalues = sorted(davyjsones.values(),reverse=True)
+
+            dictcrescente = {}
+            #alterando
+            for valor in davyjsones.values():
+                print(valor)
+                if newpontos > valor:
+                    dictcrescente.update({name:newpontos})
+                    break
+            #deixando o dicionario em ordem decrescente 
+            
+            for a in listavalues:
+                for key in davyjsones:
+                    if davyjsones[key] == a:
+                        dictcrescente.update({key:a})
+            dictcrescente.pop(key)
+            # dictcrescente =  sorted(dictcrescente.values(), reverse=True)
+            with open('ranking.json','w') as filew:
+                json.dump(dictcrescente,filew,indent=4)
+                    
+                
+        
     
     while ganhou:
         for event in pygame.event.get():
