@@ -4,6 +4,7 @@ import os
 import sys
 import json
 import rank
+import logica
 
 if not os.path.exists('ranking.json'):
     jason = open('ranking.json','w')
@@ -385,6 +386,11 @@ def jogar():
     imajenladron = pygame.transform.scale(pygame.image.load('imagens/gameplay/Ladrao.png'), (48,48))
     icone = pygame.transform.scale_by(icone,2)
 
+    sangueimg = [
+        pygame.transform.scale(pygame.image.load('imagens/gameplay/Sangue_01.png'),(48,48)),
+        pygame.transform.scale(pygame.image.load('imagens/gameplay/Sangue_02.png'),(48,48))
+        ]
+
     lkey = pygame.image.load('imagens/L.png')
     lkey = pygame.transform.scale_by(lkey,4)
 
@@ -438,7 +444,7 @@ def jogar():
                 self.listarect.append(self.rect2)
      
             return self.listarect
-        
+    
     qntwall = 5
     
     rectwall = []
@@ -599,9 +605,10 @@ def jogar():
     charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
     #region TELA GAME
 
-    pontos = 0
-    while run:
     
+    pontos = 0
+    sanguelist = []
+    while run:
         #region EVENTOS
         
         for event in pygame.event.get():
@@ -696,6 +703,9 @@ def jogar():
         pygame.draw.rect(tela,'cyan',barravigor,border_radius=10)
         tela.blit(fonte.render(str(jgdr1.get_stamina()),False,'black'),(12+100*vigor,35))
         
+        for sangue in sanguelist:
+            tela.blit(sangue.get_img(),sangue.get_pos())
+
         tela.blit(jgdr1.get_img(),charect)
         tela.blit(princesa,prinrect)
         
@@ -704,6 +714,7 @@ def jogar():
             if thief.get_rect().colliderect(charect):
                 jgdr1.set_vida(jgdr1.get_vida()-1)
                 listaladroes.remove(thief)
+                sanguelist.append(logica.Sangue(jgdr1.get_coorx(), jgdr1.get_coory(), sangueimg))
                 pontos -= 250
         
 
@@ -735,6 +746,7 @@ def jogar():
 
                 elif exrects[a].colliderect(charect) and tomou == False:
                     jgdr1.set_vida(jgdr1.get_vida()-1)
+                    sanguelist.append(logica.Sangue(jgdr1.get_coorx(), jgdr1.get_coory(), sangueimg))
                     tomou = True
                     pontos -= 250
                 for thief in listaladroes:
@@ -866,8 +878,6 @@ def jogar():
         for a in range(0,len(rankordenado['jogadores'])):
             tela.blit(fonte2.render(f'{a+1}° '+rankordenado['jogadores'][a]+':'+rankordenado['pontos'][a],False,'cyan'),(tela.get_width()/2-(140/2),200+25*(a+1)))
         
-    
-
         pygame.display.flip()
         clock.tick(frames)
 

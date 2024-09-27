@@ -108,7 +108,7 @@ def addranking(name: str, pontos:int, rankdict:dict[str,int]):
 
         if pontos > menor['pontos']:
             if name != '?????':
-                rankdict.pop(menor['pontos'])
+                rankdict.pop(menor['nome'])
                 rankdict[name] = pontos
             else:
                 rankdict[menor['nome']] = pontos
