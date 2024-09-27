@@ -3,13 +3,14 @@ from random import randint, getrandbits
 import os
 import sys
 import json
+import rank
 
 if not os.path.exists('ranking.json'):
     jason = open('ranking.json','w')
     jason.write(
     """{ 
 
-    }""")
+}""")
     jason.close()
 
 #parei na linha 725
@@ -21,7 +22,7 @@ if not os.path.exists('ranking.json'):
 
 def sprite_leaderboard(tela:pygame.Surface, fonte:pygame.font.Font, img:pygame.Surface):
     tela.blit(img,(490, 16))
-    tela.blit(fonte.render('LeaderBoard',False, 'white'),(560,32))
+    tela.blit(fonte.render('LeaderBoard',False, 'cyan'),(560,32))
 
 
 def jogar():
@@ -503,7 +504,7 @@ def jogar():
 
     #region TELA INFO
     while info:
-        tela.blit(fonte.render('TODAS AS POSIÇÕES DE PERSONAGENS, BARREIRAS E MONSTROS SÃO GERADAS ALEATORIAMENTE',False,'white'),(8,688))
+        tela.blit(fonte.render('TODAS AS POSIÇÕES DE PERSONAGENS, BARREIRAS E MONSTROS SÃO GERADAS ALEATORIAMENTE',False,'red'),(8,688))
     
         tela.blit(fonte2.render('PRESSIONE QUALQUER TECLA PARA INICIAR',False,'white'),(120,260))
         tela.blit(wasd,(420,300))
@@ -769,100 +770,22 @@ def jogar():
         newpontos = int((pontos * jgdr1.get_vida()) + pontos * (jgdr1.get_stamina()/10))
         # print(pontos)
         # print(newpontos)
-                            # print('Dados dentro do JSON:',filer.read())
+
         with open('ranking.json','r') as filer:
-            
-            try:
-                davyjsones = json.load(filer) 
-                #davyjsones é o arquivo json convertido em dicionário python
-                #pega todos os nomes e tira os números
-                alphalist = []
-                for namejones in davyjsones:
-                    alphaname = ''
-                    for a in range(0,len(namejones)):
-                        if a == len(namejones)-1:
-                            break
-                        alphaname+= namejones[a]
-                    alphalist.append(alphaname)
-                        
-                if name not in alphalist: #tá errado
-                    name += "0"
-                else: #acho que tá certo, pode ter bugs ao já existirem 10 do mesmo nome no ranking
-                    listanames = []
-                    for namejones in davyjsones:
-                        alphaname = ''
-                        for a in range(0,len(namejones)):
-                            if a == len(namejones)-1:
-                                break
-                            alphaname += namejones[a]
-
-                        if alphaname == name:
-                            listanames.append(namejones)
-
-                    listanames.sort()
-                    
-                    parou  = False
-                    for a in range(0,len(listanames)):
-                        for b in range(0,len(listanames[a])):
-                            
-                            if b == len(listanames[a]) - 1: #esse if não ativa | ai donte now
-                                if int(listanames[a+1][b]) - int(listanames[a][b]) != 1:
-                                    # listanames.append(name+str(int(listanames[a+1][b])-1))
-                                    name +=str(int(listanames[a+1][b])-1)
-                                    parou = True
-                                    print('ativou kk')
-                                    break
-                                else:
-                                    #aqui
-                                    pass
-                                
-                        
-                        
-                                
-                        if parou:
-                            break
-                    
-                    
-            except:
-                with open('ranking.json','w') as filew:
-                    json.dump({name:newpontos},filew,indent=4)
-                
+            davyjsones = json.load(filer)
         
-        
-        if len(davyjsones) < 10:
+        alphanames = rank.get_alphalist(davyjsones)
 
-            davyjsones.update({name:newpontos})
-            print(davyjsones)
-            print('ativou')
-            with open('ranking.json','w') as filew:
-                json.dump(davyjsones,filew,indent=4)
+        namelist = rank.get_ocorrencias(name,davyjsones)
+        # print(alphanames)
+        # print(namelist)
 
-        elif davyjsones and len(davyjsones) != 0:
-            
-            listavalues = sorted(davyjsones.values(),reverse=True)
+        name = rank.formatname(name,alphanames,namelist)
 
-            dictcrescente = {}
-            #alterando
-            for valor in davyjsones.values():
-                print(valor)
-                if newpontos > valor:
-                    print(name)
-                    dictcrescente.update({name:newpontos})
-                    break
-            #deixando o dicionario em ordem decrescente 
-            
-            for a in listavalues:
-                for key in davyjsones:
-                    if davyjsones[key] == a:
-                        dictcrescente.update({key:a})
-            dictcrescente.pop(key)
-            # dictcrescente =  sorted(dictcrescente.values(), reverse=True)
-            with open('ranking.json','w') as filew:
-                json.dump(dictcrescente,filew,indent=4)
-                    
-                
-        
-    
+        # print(name)
+
+        rank.addranking(name,newpontos,davyjsones)
+
     while ganhou:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -882,7 +805,8 @@ def jogar():
         
         pygame.display.flip()
         clock.tick(frames)
-    icone = pygame.transform.rotate(icone,65)
+    if perdeu or decapitado:
+        iconerotate = pygame.transform.rotate(icone,65)
     while decapitado:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -893,14 +817,14 @@ def jogar():
                     leader = True
                     decapitado = False
         tela.fill('black')
-        tela.blit(icone,(305,220))
+        tela.blit(iconerotate,(305,220))
         tela.blit(fonte2.render('Você assassinou a princesa e foi decapitado',False,'red'),(150,300))
         sprite_leaderboard(tela,fonte2,lkey)
 
         pygame.display.flip()
         clock.tick(frames)
-    
-    icone = pygame.transform.grayscale(icone)
+    if perdeu:
+        iconegray = pygame.transform.grayscale(iconerotate)
     while perdeu:
         
         for event in pygame.event.get():
@@ -915,21 +839,34 @@ def jogar():
 
         tela.fill('black')
         
-        tela.blit(icone,(305,220))
+        tela.blit(iconegray,(305,220))
         tela.blit(fonte2.render('A princesa foi capturada pelos criminosos :C',False,'gray'),(140,300))
         sprite_leaderboard(tela,fonte2,lkey)
         
         pygame.display.flip()
         clock.tick(frames)
 
+    
+    with open('ranking.json','r') as filer:
+        davyjsones = json.load(filer)
+    rankordenado = rank.get_rankdecrescente(davyjsones)
     while leader:
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
         tela.fill('black')
-        tela.blit(fonte2.render('Leaderboard fodastico',False,'gray'),(140,300))
+        leadertxt = fonte2.render('~~~~~~~LEADERBOARD~~~~~~~',False,'yellow')
+        tela.blit(leadertxt,(tela.get_width()/2-(leadertxt.get_width()/2),180))
+        tela.blit(leadertxt,(tela.get_width()/2-(leadertxt.get_width()/2),500))
+        tela.blit(icone,(tela.get_width()/2-(icone.get_width()/2),120))
+        
+        for a in range(0,len(rankordenado['jogadores'])):
+            tela.blit(fonte2.render(f'{a+1}° '+rankordenado['jogadores'][a]+':'+rankordenado['pontos'][a],False,'cyan'),(tela.get_width()/2-(140/2),200+25*(a+1)))
+        
+    
 
         pygame.display.flip()
         clock.tick(frames)
