@@ -179,7 +179,7 @@ def jogar():
         tela.blit(fonte.render('TODAS AS POSIÇÕES DE PERSONAGENS, BARREIRAS E MONSTROS SÃO GERADAS ALEATORIAMENTE',False,'red'),(8,680))
         
         
-        tela.blit(PRESSINICIARTXT,(tela.get_width()/2-PRESSINICIARTXT.get_width()/2,120))
+        tela.blit(PRESSINICIARTXT,(tela.get_width()/2-PRESSINICIARTXT.get_width()/2,130))
 
         tela.blit(wasd,(420,170))
         tela.blit(setinhas,(100,170))
@@ -201,14 +201,14 @@ def jogar():
         flipHorInfo = pygame.transform.rotate(exlados,90)
         tela.blit(flipHorInfo,(cordBombaInfo[0]-48, cordBombaInfo[1])) #esquerda
         
-        tela.blit(fonte2.render("A bomba pode explodir inimigos e paredes",False,"orange"),(100, 470))
+        tela.blit(fonte2.render("A bomba pode explodir inimigos e pedras",False,"orange"),(100, 470))
         tela.blit(fonte2.render("MAS TAMBÉM PODE EXPLODIR VOCÊ E A PRINCESA!!!",False,"red"),(100, 500))
 
         print_hp(tela, jgdr1, fonte, vida_inicial, 100, 550,heart)
-        tela.blit(fonte2.render('Pontos de vida',False,'red'),(350,550))
+        tela.blit(fonte2.render('Pontos de vida',False,'red'),(335,550))
 
         print_vigor(tela, jgdr1, fonte, vigor_inicial, 100, 580,tenis)
-        tela.blit(fonte2.render('Quantidade de passos restantes',False,'cyan'),(350,580))
+        tela.blit(fonte2.render('Quantidade de passos restantes',False,'cyan'),(335,580))
 
         tela.blit(OBJETIVOTXT,(tela.get_width()/2 - OBJETIVOTXT.get_width()/2,630))
         tela.blit(knight, (30,620))
