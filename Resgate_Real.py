@@ -8,6 +8,9 @@ from modulos.interface import *
 from modulos.rank import *
 from modulos.logica import *
 
+#LEMBRAR DE TIRAR OS CHEATS NA VERSÃO FINAL
+
+
 def jogar():
     '''Função que inicializa o jogo e a interface gráfica'''
 
@@ -49,6 +52,11 @@ def jogar():
     bomba = pygame.transform.scale(bomba,(48,48))
     excentro = pygame.image.load('imagens/gameplay/Excentro.png')
     exlados = pygame.image.load('imagens/gameplay/Exlados.png')
+
+    tenis = pygame.image.load('imagens/gameplay/Tenis.png')
+    tenis = pygame.transform.scale_by(tenis,3)
+    heart = pygame.image.load('imagens/gameplay/Heart.png')
+    heart = pygame.transform.scale_by(heart,3)
     
     imajenladron = pygame.transform.scale(pygame.image.load('imagens/gameplay/Ladrao.png'), (48,48))
     icone = pygame.transform.scale_by(icone,2)
@@ -159,18 +167,52 @@ def jogar():
 
     leader = False
 
-    #region TELA INFO
-    while info:
-        tela.blit(fonte.render('TODAS AS POSIÇÕES DE PERSONAGENS, BARREIRAS E MONSTROS SÃO GERADAS ALEATORIAMENTE',False,'red'),(8,680))
+    vida_inicial = jgdr1.get_vida()
     
-        tela.blit(fonte2.render('PRESSIONE QUALQUER TECLA PARA INICIAR',False,'white'),(120,260))
-        tela.blit(wasd,(420,300))
-        tela.blit(setinhas,(100,300))
-        tela.blit(espaco,(100, 440))
-        tela.blit(fonte2.render('= POSICIONA A BOMBA',False,'white'),(270,460))
-        tela.blit(espaco2,(100, 520))
-        tela.blit(fonte2.render('= EXPLODE A BOMBA',False,'white'),(270,540))
+    vigor_inicial = jgdr1.get_stamina()
+
+    #region TELA INFO
+    PRESSINICIARTXT = fonte2.render('PRESSIONE QUALQUER TECLA PARA INICIAR',False,'yellow')
+    OBJETIVOTXT = fonte2.render('Você é o cavaleiro e o seu objetivo é salvar a princesa',False,'white')
+    while info:
         sprite_leaderboard(tela,fonte2,lkey)
+        tela.blit(fonte.render('TODAS AS POSIÇÕES DE PERSONAGENS, BARREIRAS E MONSTROS SÃO GERADAS ALEATORIAMENTE',False,'red'),(8,680))
+        
+        
+        tela.blit(PRESSINICIARTXT,(tela.get_width()/2-PRESSINICIARTXT.get_width()/2,120))
+
+        tela.blit(wasd,(420,170))
+        tela.blit(setinhas,(100,170))
+
+        tela.blit(espaco,(100, 310))
+        tela.blit(fonte2.render('POSICIONA A BOMBA',False,'white'),(270,335))
+        tela.blit(bomba, (500, 315))
+
+        tela.blit(espaco2,(100, 390))
+        tela.blit(fonte2.render('EXPLODE A BOMBA',False,'white'),(270,415))
+
+        cordBombaInfo = [530, 410]
+        tela.blit(excentro,(cordBombaInfo[0], cordBombaInfo[1])) #centro
+        flipVertInfo = pygame.transform.flip(exlados,False,True)
+        tela.blit(flipVertInfo,(cordBombaInfo[0], cordBombaInfo[1]+48))
+        flipHorInfo = pygame.transform.rotate(exlados,-90)
+        tela.blit(flipHorInfo,(cordBombaInfo[0]+48, cordBombaInfo[1])) #direita
+        tela.blit(exlados,(cordBombaInfo[0], cordBombaInfo[1]-48)) #cima
+        flipHorInfo = pygame.transform.rotate(exlados,90)
+        tela.blit(flipHorInfo,(cordBombaInfo[0]-48, cordBombaInfo[1])) #esquerda
+        
+        tela.blit(fonte2.render("A bomba pode explodir inimigos e paredes",False,"orange"),(100, 470))
+        tela.blit(fonte2.render("MAS TAMBÉM PODE EXPLODIR VOCÊ E A PRINCESA!!!",False,"red"),(100, 500))
+
+        print_hp(tela, jgdr1, fonte, vida_inicial, 100, 550,heart)
+        tela.blit(fonte2.render('Pontos de vida',False,'red'),(350,550))
+
+        print_vigor(tela, jgdr1, fonte, vigor_inicial, 100, 580,tenis)
+        tela.blit(fonte2.render('Quantidade de passos restantes',False,'cyan'),(350,580))
+
+        tela.blit(OBJETIVOTXT,(tela.get_width()/2 - OBJETIVOTXT.get_width()/2,630))
+        tela.blit(knight, (30,620))
+        tela.blit(princesa,(670-princesa.get_width(), 620))
         
 
         for event in pygame.event.get():
@@ -205,6 +247,7 @@ def jogar():
 
         pygame.display.flip()
         clock.tick(frames)
+
     alfabeto = tuple('abcdefghijklmnopqrstuvwxyz')
     name = ''
     while telanome:
@@ -234,7 +277,7 @@ def jogar():
         rect4 = pygame.Rect(rectgrande.x+190,rectgrande.y+10,50,50)
 
         rects = [rect1,rect2,rect3,rect4]
-        # pygame.draw.rect(tela,'white',rectgrande)
+        
 
         pygame.draw.rect(tela,'gray',(rect1.x-3,rect1.y-3,53,53))
         pygame.draw.rect(tela,'gray',(rect2.x-3,rect2.y-3,53,53))
@@ -266,9 +309,7 @@ def jogar():
     tomou = False
     exdelay = 0
 
-    vida_inicial = jgdr1.get_vida()
-    
-    vigorinicial = jgdr1.get_stamina()
+
     
     charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
     #region TELA GAME
@@ -285,10 +326,10 @@ def jogar():
                 pygame.quit()
                 sys.exit()
            
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN: 
                 if event.key == pygame.K_j:
                     jgdr1.set_stamina(1000000)
-                    vigorinicial = 1000000
+                    vigor_inicial = 1000000
                 if event.key == pygame.K_v:
                     jgdr1.set_vida(1000000)
                     vida_inicial = 1000000
@@ -353,16 +394,9 @@ def jogar():
         
         tela.blit(fonte2.render('Score:'+str(pontos),0,'white'),(590,8))
 
-        print_hp(tela, jgdr1, fonte, vida_inicial,15,15)
+        print_hp(tela, jgdr1, fonte, vida_inicial,15,15,heart)
         
-        linhavigor = pygame.Rect(15,35,200,15)
-        pygame.draw.rect(tela,'cyan',linhavigor,border_radius=10,width=1)
-        vigor = jgdr1.get_stamina() / vigorinicial
-        barravigor = pygame.Rect(15,35,200*vigor,15)
-        pygame.draw.rect(tela,'#00D6D0',barravigor,border_radius=10)
-        barravigor.height = 10
-        pygame.draw.rect(tela,'cyan',barravigor,border_radius=10)
-        tela.blit(fonte.render(str(jgdr1.get_stamina()),False,'black'),(12+100*vigor,35))
+        print_vigor(tela,jgdr1,fonte,vigor_inicial,15,35,tenis)
         
         for sangue in sanguelist:
             tela.blit(sangue.get_img(),sangue.get_pos())
