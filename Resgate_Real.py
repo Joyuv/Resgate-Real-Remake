@@ -148,24 +148,28 @@ def jogar():
     frames = 60
 
     info = True
+    info2 = False
     telanome = True
+
     run = True
+
     ganhou = False
     perdeu = False
     decapitado = False
+
     leader = False
 
     #region TELA INFO
     while info:
-        tela.blit(fonte.render('TODAS AS POSIÇÕES DE PERSONAGENS, BARREIRAS E MONSTROS SÃO GERADAS ALEATORIAMENTE',False,'red'),(8,688))
+        tela.blit(fonte.render('TODAS AS POSIÇÕES DE PERSONAGENS, BARREIRAS E MONSTROS SÃO GERADAS ALEATORIAMENTE',False,'red'),(8,680))
     
         tela.blit(fonte2.render('PRESSIONE QUALQUER TECLA PARA INICIAR',False,'white'),(120,260))
         tela.blit(wasd,(420,300))
         tela.blit(setinhas,(100,300))
-        tela.blit(espaco,(270, 440))
-        tela.blit(fonte2.render('= BOMBA',False,'white'),(440,460))
-        tela.blit(espaco2,(270, 520))
-        tela.blit(fonte2.render('= KABOOM',False,'white'),(440,540))
+        tela.blit(espaco,(100, 440))
+        tela.blit(fonte2.render('= POSICIONA A BOMBA',False,'white'),(270,460))
+        tela.blit(espaco2,(100, 520))
+        tela.blit(fonte2.render('= EXPLODE A BOMBA',False,'white'),(270,540))
         sprite_leaderboard(tela,fonte2,lkey)
         
 
@@ -183,7 +187,24 @@ def jogar():
         pygame.display.flip()
         clock.tick(frames)
     #endregion TELA INFO
-    
+    while info2:
+        tela.fill("black")
+        sprite_leaderboard(tela,fonte2,lkey)
+        
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_l:
+                    leader = True
+                    run = False
+                    telanome = False
+                info = False
+
+        pygame.display.flip()
+        clock.tick(frames)
     alfabeto = tuple('abcdefghijklmnopqrstuvwxyz')
     name = ''
     while telanome:
@@ -332,14 +353,7 @@ def jogar():
         
         tela.blit(fonte2.render('Score:'+str(pontos),0,'white'),(590,8))
 
-        linhavida = pygame.Rect(15,15,200,15)
-        pygame.draw.rect(tela,'red',linhavida,border_radius=10,width=1)
-        vida = jgdr1.get_vida() / vida_inicial
-        barravida = pygame.Rect(15,15,200*vida,15)
-        pygame.draw.rect(tela,'#A70505',barravida,border_radius=10)
-        barravida.height = 10
-        pygame.draw.rect(tela,'#CD0C0C',barravida,border_radius=10)
-        tela.blit(fonte.render(str(jgdr1.get_vida()),False,'white'),(12+100*vida,15))
+        print_hp(tela, jgdr1, fonte, vida_inicial,15,15)
         
         linhavigor = pygame.Rect(15,35,200,15)
         pygame.draw.rect(tela,'cyan',linhavigor,border_radius=10,width=1)
