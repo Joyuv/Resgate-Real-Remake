@@ -16,6 +16,10 @@ def sprite_leaderboard(tela:pygame.Surface, fonte:pygame.font.Font, img:pygame.S
     tela.blit(img,(490, 16))
     tela.blit(fonte.render('LeaderBoard',False, 'cyan'),(560,32))
 
+def sprite_restart(tela:pygame.Surface, fonte:pygame.font.Font, img:pygame.Surface):
+    tela.blit(img,(16, 16))
+    tela.blit(fonte.render('Restart',False, 'white'),(86,32))
+
 def print_hp(tela: pygame.Surface, player: Player, fonte: pygame.font, vida_inicial: int, x:int, y: int, img: pygame.Surface) -> None:
     '''Função para exibir a barra de vida do player
     
