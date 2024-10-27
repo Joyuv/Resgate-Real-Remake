@@ -521,30 +521,27 @@ def jogar():
             sprite_leaderboard(tela,fonte2,lkey)
             sprite_restart(tela,fonte2,rkey)
 
+            
+
             stats = fonte2.render("Estatísticas", False, "white")
             tela.blit(stats,(tela.get_width()/2-stats.get_width()/2, 400))
 
-            pKill = fonte2.render(('Pontuação por derrotar ladrões: '+str(killEnemy)),False,'white')
-            tela.blit(pKill,(tela.get_width()/2-pKill.get_width()/2,440))
-
-            pPedra = fonte2.render(('Pontuação por explodir pedras: '+str(breakWall)),False,'white')
-            tela.blit(pPedra,(tela.get_width()/2-pPedra.get_width()/2,460))
+            rVida = fonte2.render(('Vida restante: '+str(jgdr1.get_vida())),False,'cyan')
+            tela.blit(rVida,(tela.get_width()/2-rVida.get_width()/2,440))
+            rStamina = fonte2.render(('Stamina restante: '+str(jgdr1.get_stamina())),False,'cyan')
+            tela.blit(rStamina,(tela.get_width()/2-rStamina.get_width()/2,460))
 
             pPrincesa = fonte2.render('Pontuação por salvar a princesa: 1500',False,'white')
-            tela.blit(pPrincesa,(tela.get_width()/2-pPrincesa.get_width()/2,480))
-
+            tela.blit(pPrincesa,(tela.get_width()/2-pPrincesa.get_width()/2,500))
+            pKill = fonte2.render(('Pontuação por derrotar ladrões: '+str(killEnemy)),False,'white')
+            tela.blit(pKill,(tela.get_width()/2-pKill.get_width()/2,520))
+            pPedra = fonte2.render(('Pontuação por explodir pedras: '+str(breakWall)),False,'white')
+            tela.blit(pPedra,(tela.get_width()/2-pPedra.get_width()/2,540))
             pPerdidos = fonte2.render('Pontos perdidos por tomar dano: '+str(danoTomado),False,'red')
-            tela.blit(pPerdidos,(tela.get_width()/2-pPerdidos.get_width()/2,500))
-            
-            rVida = fonte2.render(('Vida restante: '+str(jgdr1.get_vida())),False,'cyan')
-            tela.blit(rVida,(tela.get_width()/2-rVida.get_width()/2,540))
-
-            rStamina = fonte2.render(('Stamina restante: '+str(jgdr1.get_stamina())),False,'cyan')
-            tela.blit(rStamina,(tela.get_width()/2-rStamina.get_width()/2,560))
+            tela.blit(pPerdidos,(tela.get_width()/2-pPerdidos.get_width()/2,560))
             
             bVida = fonte2.render(('Bônus de pontos por quantidade de vida: '+str(int(pontos/2*jgdr1.get_vida()))),False,'yellow')
             tela.blit(bVida,(tela.get_width()/2-bVida.get_width()/2,600))
-            
             bStamina = fonte2.render(('Bônus de pontos por quantidade de stamina: '+str(int(pontos * jgdr1.get_stamina()/10))),False,'yellow')
             tela.blit(bStamina,(tela.get_width()/2-bStamina.get_width()/2,620))
             
