@@ -6,11 +6,11 @@ Estudar e entender melhor módulos, funções e classes de python, afin de melho
 
 - ### O que é o projeto
 
-Um jogo com sua lógica e interface em python com o auxilio do módulo *"pygame"*, aparte a lógica e interface os *"sprites"* ou imagens, foram feitos principalmente por (Givanilson) e alguns por (Pedro) com auxílio de programas como *"Pixelorama"* e *"Krita"*. O jogo se baseia em um cavalheiro que precisa resgatar uma princesa de bandidos.
+Um jogo com sua lógica e interface em python com o auxilio do módulo *"pygame"*, aparte a lógica e interface os *"sprites"* ou imagens, foram feitos principalmente por (Givanilson) e alguns por (Pedro) com auxílio de programas como *"Pixelorama"* e *"Krita"*. O jogo se baseia em um cavaleiro que precisa resgatar uma princesa de bandidos.
 
 - ### Organizador do projeto
 
-Professor do IFRN Campus Caicó Ciro; **A.K.A 'Ciro Games'**
+Professor do IFRN Campus Caicó, Ciro Morais; **A.K.A 'Ciro Games'**
 
 ---
 
