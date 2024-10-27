@@ -166,6 +166,7 @@ def jogar():
         ganhou = False
         perdeu = False
         decapitado = False
+        listaTelas = [ganhou, perdeu, decapitado]
 
         leader = False
 
@@ -245,7 +246,7 @@ def jogar():
                     
                     if pygame.key.name(event.key) in alfabeto and not len(name)+1 == 5:
                         name += pygame.key.name(event.key)
-                    elif event.key == pygame.K_KP_ENTER or event.key == 13: #13 é o código da tecla enter
+                    elif (event.key == pygame.K_KP_ENTER or event.key == 13) and len(name): #13 é o código da tecla enter
                         telanome = False
                         break
                     elif event.key == pygame.K_BACKSPACE:
@@ -303,6 +304,11 @@ def jogar():
         
         pontos = 0
         sanguelist = []
+
+        killEnemy = 0
+        danoTomado = 0
+        breakWall = 0
+
         while run:
             #region EVENTOS
             
@@ -312,7 +318,7 @@ def jogar():
                     pygame.quit()
                     sys.exit()
             
-                if event.type == pygame.KEYDOWN: 
+                if event.type == pygame.KEYDOWN and all(listaTelas[a] == False for a in range(len(listaTelas))):
                     if event.key == pygame.K_j:
                         jgdr1.set_stamina(1000000)
                         vigor_inicial = 1000000
@@ -352,7 +358,7 @@ def jogar():
             if charect.colliderect(prinrect):
                 run = False
                 ganhou = True
-                pontos += 1000
+                pontos += 1500
                 break
                 
             elif jgdr1.get_vida() <= 0 or jgdr1.get_stamina() <= 0:
@@ -383,8 +389,9 @@ def jogar():
             for a in range(0,10):
                 for b in range(0,10):
                     pygame.draw.rect(tela,'black', (pygame.Rect(112+48*a,112+48*b,48,48)),width=1)
-            
-            tela.blit(fonte2.render('Score:'+str(pontos),0,'white'),(590,8))
+
+            # * jgdr1.get_vida() + pontos * (jgdr1.get_stamina()/10) multiplicadores antigos
+            tela.blit(fonte2.render('Score:'+str(int(pontos)),0,'white'),(590,8))
 
             print_hp(tela, jgdr1, fonte, vida_inicial,15,15,heart)
             
@@ -403,6 +410,8 @@ def jogar():
                     listaladroes.remove(thief)
                     sanguelist.append(Sangue(jgdr1.get_coorx(), jgdr1.get_coory(), sangueimg))
                     pontos -= 250
+
+                    danoTomado += 250
             
 
             if bombanatela:
@@ -436,10 +445,12 @@ def jogar():
                         sanguelist.append(Sangue(jgdr1.get_coorx(), jgdr1.get_coory(), sangueimg))
                         tomou = True
                         pontos -= 250
+                        danoTomado += 250
                     for thief in listaladroes:
                         if thief.get_rect().colliderect(exrects[a]):
                             listaladroes.remove(thief)
                             pontos += 500
+                            killEnemy += 500
 
                 new_wall_rect = []
                 for parede in range(0,len(rectwall)):
@@ -449,7 +460,8 @@ def jogar():
                             
                             if exrects[a].colliderect(square):
                                 new_wall_rect[parede].remove(square)
-                                pontos += 100
+                                pontos += 250
+                                breakWall += 250
                             
                 rectwall = new_wall_rect
                             
@@ -460,13 +472,13 @@ def jogar():
                     explosao = False
                     exdelay = 0
                     tomou = False
-                    
+            tela.set_colorkey("blue")
             pygame.display.flip() #atualizar os frames a cada vez que roda o while
             clock.tick(frames) #Diminuindo os fps para não usar tanto o processador
         #endregion TELA GAME
         #region TELAS FINAIS
         if ganhou:
-            newpontos = int((pontos * jgdr1.get_vida()) + pontos * (jgdr1.get_stamina()/10))
+            newpontos = int((pontos)+pontos/2 * jgdr1.get_vida() + pontos * (jgdr1.get_stamina()/10))
             # print(pontos)
             # print(newpontos)
 
@@ -508,7 +520,45 @@ def jogar():
             tela.blit(score,((tela.get_width()/2)-score.get_width()/2,(tela.get_height()/2)-20))
             sprite_leaderboard(tela,fonte2,lkey)
             sprite_restart(tela,fonte2,rkey)
+
+            stats = fonte2.render("Estatísticas", False, "white")
+            tela.blit(stats,(tela.get_width()/2-stats.get_width()/2, 400))
+
+            pKill = fonte2.render(('Pontuação por derrotar ladrões: '+str(killEnemy)),False,'white')
+            tela.blit(pKill,(tela.get_width()/2-pKill.get_width()/2,440))
+
+            pPedra = fonte2.render(('Pontuação por explodir pedras: '+str(breakWall)),False,'white')
+            tela.blit(pPedra,(tela.get_width()/2-pPedra.get_width()/2,460))
+
+            pPrincesa = fonte2.render('Pontuação por salvar a princesa: 1500',False,'white')
+            tela.blit(pPrincesa,(tela.get_width()/2-pPrincesa.get_width()/2,480))
+
+            pPerdidos = fonte2.render('Pontos perdidos por tomar dano: '+str(danoTomado),False,'red')
+            tela.blit(pPerdidos,(tela.get_width()/2-pPerdidos.get_width()/2,500))
             
+            rVida = fonte2.render(('Vida restante: '+str(jgdr1.get_vida())),False,'cyan')
+            tela.blit(rVida,(tela.get_width()/2-rVida.get_width()/2,540))
+
+            rStamina = fonte2.render(('Stamina restante: '+str(jgdr1.get_stamina())),False,'cyan')
+            tela.blit(rStamina,(tela.get_width()/2-rStamina.get_width()/2,560))
+            
+            bVida = fonte2.render(('Bônus de pontos por quantidade de vida: '+str(int(pontos/2*jgdr1.get_vida()))),False,'yellow')
+            tela.blit(bVida,(tela.get_width()/2-bVida.get_width()/2,600))
+            
+            bStamina = fonte2.render(('Bônus de pontos por quantidade de stamina: '+str(int(pontos * jgdr1.get_stamina()/10))),False,'yellow')
+            tela.blit(bStamina,(tela.get_width()/2-bStamina.get_width()/2,620))
+            
+        
+            pygame.draw.rect(tela, 'white', (10,
+                                             400+stats.get_height()/2,
+                                             tela.get_width()/2-stats.get_width()/2 -15,
+                                             3
+                                             ),border_radius=3)
+            pygame.draw.rect(tela, 'white', (tela.get_width()/2+stats.get_width()/2+ 5,
+                                             400+stats.get_height()/2,
+                                             tela.get_width()/2-stats.get_width()/2 -15,
+                                             3
+                                             ),border_radius=3)
             pygame.display.flip()
             clock.tick(frames)
         if perdeu or decapitado:
