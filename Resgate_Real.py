@@ -319,12 +319,16 @@ def jogar():
                     sys.exit()
             
                 if event.type == pygame.KEYDOWN and all(listaTelas[a] == False for a in range(len(listaTelas))):
-                    if event.key == pygame.K_j:
-                        jgdr1.set_stamina(1000000)
-                        vigor_inicial = 1000000
-                    if event.key == pygame.K_v:
-                        jgdr1.set_vida(1000000)
-                        vida_inicial = 1000000
+                    
+                    #region Cheats
+                    # if event.key == pygame.K_j:
+                    #     jgdr1.set_stamina(1000000)
+                    #     vigor_inicial = 1000000
+                    # if event.key == pygame.K_v:
+                    #     jgdr1.set_vida(1000000)
+                    #     vida_inicial = 1000000
+                    #endregion Cheats
+
                     if event.key == pygame.K_r:
                         ganhou = False
                         perdeu = False
