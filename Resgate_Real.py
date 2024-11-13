@@ -318,7 +318,7 @@ def jogar():
                     pygame.quit()
                     sys.exit()
             
-                if event.type == pygame.KEYDOWN and all(listaTelas[a] == False for a in range(len(listaTelas))):
+                if event.type == pygame.KEYDOWN and not explosao and all(listaTelas[a] == False for a in range(len(listaTelas))):
                     
                     #region Cheats
                     # if event.key == pygame.K_j:
