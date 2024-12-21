@@ -1,5 +1,5 @@
 import pygame
-from modulos.logica import Player
+from .logica import Player
 
 def sprite_leaderboard(tela:pygame.Surface, fonte:pygame.font.Font, img:pygame.Surface) -> None:
     '''Função para renderizar na tela a imagem da tecla L junto com a palavra leaderboard
