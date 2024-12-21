@@ -4,12 +4,9 @@ import os
 import sys
 import json
 
-from modulos.interface import *
-from modulos.rank import *
-from modulos.logica import *
+from modulos import *
 
 #LEMBRAR DE TIRAR OS CHEATS NA VERSÃO FINAL
-
 
 def jogar():
     '''Função que inicializa o jogo e a interface gráfica'''
