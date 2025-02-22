@@ -4,9 +4,10 @@ import os
 import sys
 import json
 
-from modulos import *
+# importa todos os módulos dentro do container (interface, logica, rank)
+from modulos import * 
 
-#LEMBRAR DE TIRAR OS CHEATS NA VERSÃO FINAL
+# LEMBRAR DE TIRAR OS CHEATS NA VERSÃO FINAL
 
 def jogar():
     '''Função que inicializa o jogo e a interface gráfica'''
@@ -133,6 +134,8 @@ def jogar():
             rectwall.append(rectotal)
 
         ladraoqnt = 4
+
+        listaladroes: list[Ladroes]
         listaladroes = []
         for a in range(0,ladraoqnt):
             x = 112+48*randint(0,9)
@@ -300,6 +303,8 @@ def jogar():
 
         
         pontos = 0
+
+        sanguelist: list[Entidade]
         sanguelist = []
 
         killEnemy = 0
@@ -397,9 +402,10 @@ def jogar():
             print_hp(tela, jgdr1, fonte, vida_inicial,15,15,heart)
             
             print_vigor(tela,jgdr1,fonte,vigor_inicial,15,35,tenis)
-            
+        
             for sangue in sanguelist:
-                tela.blit(sangue.get_img(),sangue.get_pos())
+                # print(sangue.get_img())
+                tela.blit(sangue.get_img(), ( sangue.get_x(), sangue.get_y() ))
 
             tela.blit(jgdr1.get_img(),charect)
             tela.blit(princesa,prinrect)
@@ -409,7 +415,9 @@ def jogar():
                 if thief.get_rect().colliderect(charect):
                     jgdr1.set_vida(jgdr1.get_vida()-1)
                     listaladroes.remove(thief)
-                    sanguelist.append(Sangue(jgdr1.get_coorx(), jgdr1.get_coory(), sangueimg))
+
+                    aux_sangue = random_blood_sprite(sangueimg)
+                    sanguelist.append(Entidade(jgdr1.get_coorx(), jgdr1.get_coory(), aux_sangue))
                     pontos -= 250
 
                     danoTomado += 250
@@ -443,7 +451,7 @@ def jogar():
 
                     elif exrects[a].colliderect(charect) and tomou == False:
                         jgdr1.set_vida(jgdr1.get_vida()-1)
-                        sanguelist.append(Sangue(jgdr1.get_coorx(), jgdr1.get_coory(), sangueimg))
+                        sanguelist.append(Entidade(jgdr1.get_coorx(), jgdr1.get_coory(), random_blood_sprite(sangueimg)))
                         tomou = True
                         pontos -= 250
                         danoTomado += 250

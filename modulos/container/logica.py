@@ -1,44 +1,30 @@
+
 import pygame
 from random import randint, getrandbits
 
-class Sangue:
-    '''Classe para o sangue deixado no chão após o cavaleiro tomar dano.
+from abc import ABC, abstractmethod
 
-    Essa classe foi feita pois existe aleatoriedade no sangue, podem ser dois sprites e também os sprites
-    podem ser flipados.
-
-    - Parâmetros: 
-        - x: Coordenada X que o sangue será localizado no mapa.
-        - y: Coordenada Y que o sangue será localizado no mapa.
-        - img: Lista com os sprites de sangue.
-    '''
-    def __init__(self, x:int, y:int, img:list[pygame.Surface]) -> None:
+class Entidade(ABC):
+    def __init__(self, x: int, y: int, img: pygame.Surface):        
         self.__x = x
         self.__y = y
+        self.__img = img
 
-        self.__rand1 = bool(getrandbits(1))
-        self.__rand2 = bool(getrandbits(1))
+    def get_x(self):
+        return self.__x
+    
+    def get_y(self):
+        return self.__y
 
-        self.__img = img[randint(0,1)]
-        self.__img = pygame.transform.flip(self.__img,self.__rand1,self.__rand2)
-        
-    def get_img(self) -> pygame.Surface:
-        '''Função para pegar o sprite.
+    def get_img(self):
+        '''Função para pegar o sprite personagem.
         
         - Retorna:
-            O sprite após suas devidas modificações.
+            O sprite do personagem.
         '''
+        print(self.__img)
         return self.__img
-    
-    def get_pos(self) -> tuple[int, int]:
-        '''Função para pegar a posição em que o sangue ficará localizado.
-        
-        - Retorna:
-            Uma tupla com as posições X e Y em que o sangue ficará.
-        '''
-        self.__pos = (self.__x,self.__y)
-        return self.__pos
-    
+
 class Player:
     '''Classe para checar e manipular os atributos do personagem.
     
@@ -416,17 +402,19 @@ class Ladroes:
                 self.horizontal(charx,chary)
             elif self.__coory != chary and not self.__coorx != charx:
                 self.vertical(charx,chary)            
-class Paredes:
+class Paredes(Entidade):
     '''Classe para criar as paredes que ficam no mapa para atrapalhar o jogador.
 
     - Parâmetros:
         - x: Coordenada X que a parede ficará.
         - y: Coordenada Y que a parede ficará.
     '''
-    def __init__(self, x:int, y:int) -> None:
-        self.__x = x
-        self.__y = y
+    def __init__(self, x:int, y:int, img = pygame.Surface) -> None:
+        super().__init__(x, y, img)
         
+    def get_rect(self):
+        return self.__listarect
+    
     def new_rect(self) -> list[pygame.Rect]:
         '''Cria os rect das paredes com os parâmetros dados inicialmente.
 
@@ -437,12 +425,12 @@ class Paredes:
             A lista com os rect da parede.
         '''
         self.__listarect = []
-        self.__rect0 = pygame.Rect(self.__x,self.__y,48, 48)
+        self.__rect0 = pygame.Rect(self.get_x(),self.get_y(),48, 48)
         self.__listarect.append(self.__rect0)
 
-        for a in range(-1,2,2):
-            self.__rect1 = pygame.Rect(self.__x-48*a,self.__y,48, 48)
-            self.__rect2 = pygame.Rect(self.__x,self.__y-48*a,48,48)
+        for multiplier in range(-1,2,2):
+            self.__rect1 = pygame.Rect(self.get_x()-48*multiplier, self.get_y(), 48, 48)
+            self.__rect2 = pygame.Rect(self.get_x(), self.get_y()-48*multiplier, 48,48)
     
             self.__listarect.append(self.__rect1)
             self.__listarect.append(self.__rect2)
@@ -465,3 +453,12 @@ def nextrect(objeto:Player | Ladroes, x:int = 0, y:int = 0) -> pygame.Rect: #x =
     '''
     rect = pygame.Rect(objeto.get_coorx()+x, objeto.get_coory()+y, 48,48)
     return rect
+
+def random_blood_sprite(sprites: list[pygame.Surface]) -> pygame.Surface:
+    rand1 = bool(getrandbits(1))
+    rand2 = bool(getrandbits(1))
+    
+    imagem = sprites[randint(0,len(sprites)-1)]
+    imagem = pygame.transform.flip(imagem, rand1, rand2)
+    
+    return imagem
