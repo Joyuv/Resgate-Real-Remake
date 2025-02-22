@@ -93,16 +93,16 @@ def jogar():
 
         jgdr1 = Player(112 + 48*randint(0,9), 112 + 48*randint(0,9),vida=4,stamina=20,img=knight)
         
-        charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
+        charect = pygame.Rect(jgdr1.x,jgdr1.y,48,48)
 
-        while prinx == jgdr1.get_coorx():
+        while prinx == jgdr1.x:
             random = randint(0,1)
             if random == 0:
                 priny = 112 + 48*randint(0,9)
             else:
                 prinx = 112 + 48*randint(0,9)
 
-        while priny == jgdr1.get_coory():
+        while priny == jgdr1.y:
             random = randint(0,1)
             if random == 0:
                 priny = 112 + 48*randint(0,9)
@@ -298,7 +298,7 @@ def jogar():
 
 
         
-        charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
+        charect = pygame.Rect(jgdr1.x, jgdr1.y, 48, 48)
         #region TELA GAME
 
         
@@ -340,7 +340,7 @@ def jogar():
 
                     if jgdr1.mover(event.key,rectwall):
                         for thief in listaladroes:
-                            thief.andar(jgdr1.get_coorx(), jgdr1.get_coory(),listaladroes,rectwall, prinrect)
+                            thief.andar(jgdr1.x, jgdr1.y, listaladroes, rectwall, prinrect)
 
                     if event.key == pygame.K_SPACE:
                         if not bombanatela and exdelay == 0:
@@ -359,7 +359,7 @@ def jogar():
                             bombanatela = False
                             explosao = True
             #endregion EVENTOS
-            charect = pygame.Rect(jgdr1.get_coorx(),jgdr1.get_coory(),48,48)
+            charect = pygame.Rect(jgdr1.x, jgdr1.y, 48, 48)
             
             if charect.colliderect(prinrect):
                 run = False
@@ -404,20 +404,20 @@ def jogar():
             print_vigor(tela,jgdr1,fonte,vigor_inicial,15,35,tenis)
         
             for sangue in sanguelist:
-                # print(sangue.get_img())
-                tela.blit(sangue.get_img(), ( sangue.get_x(), sangue.get_y() ))
+                # print(sangue.img)
+                tela.blit(sangue.img, (sangue.x, sangue.y))
 
-            tela.blit(jgdr1.get_img(),charect)
-            tela.blit(princesa,prinrect)
+            tela.blit(jgdr1.img, charect)
+            tela.blit(princesa, prinrect)
             
             for thief in listaladroes:
-                tela.blit(thief.get_img(),thief.get_rect())
+                tela.blit(thief.img, thief.get_rect())
                 if thief.get_rect().colliderect(charect):
                     jgdr1.set_vida(jgdr1.get_vida()-1)
                     listaladroes.remove(thief)
 
                     aux_sangue = random_blood_sprite(sangueimg)
-                    sanguelist.append(Entidade(jgdr1.get_coorx(), jgdr1.get_coory(), aux_sangue))
+                    sanguelist.append(Entidade(jgdr1.x, jgdr1.y, aux_sangue))
                     pontos -= 250
 
                     danoTomado += 250
@@ -451,7 +451,7 @@ def jogar():
 
                     elif exrects[a].colliderect(charect) and tomou == False:
                         jgdr1.set_vida(jgdr1.get_vida()-1)
-                        sanguelist.append(Entidade(jgdr1.get_coorx(), jgdr1.get_coory(), random_blood_sprite(sangueimg)))
+                        sanguelist.append(Entidade(jgdr1.x, jgdr1.y, random_blood_sprite(sangueimg)))
                         tomou = True
                         pontos -= 250
                         danoTomado += 250
