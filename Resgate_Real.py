@@ -135,18 +135,18 @@ def jogar():
 
         ladraoqnt = 4
 
-        listaladroes: list[Ladroes]
+        listaladroes: list[Ladrao]
         listaladroes = []
         for a in range(0,ladraoqnt):
             x = 112+48*randint(0,9)
             y = 112+48*randint(0,9)
-            ladrao = Ladroes(x,y,imajenladron)
+            ladrao = Ladrao(x,y,imajenladron)
             thiefrect = ladrao.get_rect()
 
             while any(thiefrect.colliderect(rectwall[b][c])for b in range(0,qntwall) for c in range(0,5)) or any(thiefrect.colliderect(CONDICOES[d]) for d in range(0,2)):
                 x = 112+48*randint(0,9)
                 y = 112+48*randint(0,9)
-                ladrao = Ladroes(x,y, imajenladron)
+                ladrao = Ladrao(x,y, imajenladron)
                 thiefrect = ladrao.get_rect()
 
             listaladroes.append(ladrao)

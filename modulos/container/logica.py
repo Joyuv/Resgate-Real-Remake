@@ -15,21 +15,33 @@ class Entidade(ABC):
         return self.__x
     @x.setter
     def x(self, x: int):
-        self.__x = x
+        if type(x) == int:
+            self.__x = x
+        else:
+            print('ERRO NA ENTIDADE: X não é inteiro')
 
     @property
     def y(self):
         return self.__y
     @y.setter
     def y(self, y: int):
-        self.__y = y
+        if type(y) == int:
+            self.__y = y
+        else:
+            print("ERRO NA ENTIDADE: Y não é inteiro")
 
     @property
     def img(self):
         return self.__img
     @img.setter
-    def img(self, img: int):
-        self.__img = img
+    def img(self, img: pygame.Surface):
+        if type(img) == pygame.Surface:
+            self.__img = img
+        else:
+            print('ERRO NA ENTIDADE: A imagem não é uma Surface')
+
+    def get_rect(self):
+        return pygame.Rect(self.__x, self.y, 48, 48)
         
 class Player(Entidade):
     '''Classe para checar e manipular os atributos do personagem.
@@ -93,17 +105,17 @@ class Player(Entidade):
         - Retorna:
             Um valor booleano que dá partida ao movimento do ladrão.
         '''
-        self.__DIST = 48
+        DISTANCIA = 48
         if key == pygame.K_d or key == pygame.K_RIGHT:
             if self.__olhando == True:
                     self.img = pygame.transform.flip(self.img, True, False)
                     self.__olhando = False
-            if self.x + 48 >= 590: 
+            if self.x + 48 >= 590:
                 pass
             elif any(nextrect(self,x=48).colliderect(paredes[a][b])for a in range(0,len(paredes)) for b in range(0,len(paredes[a]))): 
                 pass
             else:
-                self.x = self.x + self.__DIST
+                self.x = self.x + DISTANCIA
                 self.__stamina =  self.__stamina - 1
 
                 return True
@@ -116,7 +128,7 @@ class Player(Entidade):
             elif any(nextrect(self,x=-48).colliderect(paredes[a][b])for a in range(0,len(paredes)) for b in range(0,len(paredes[a]))): 
                 pass
             else: 
-                self.x = self.x - self.__DIST
+                self.x = self.x - DISTANCIA
                 self.__stamina = self.__stamina - 1
                 
                 return True
@@ -125,7 +137,7 @@ class Player(Entidade):
             elif any(nextrect(self,y=-48).colliderect(paredes[a][b])for a in range(0,len(paredes)) for b in range(0,len(paredes[a]))): 
                 pass
             else: 
-                self.y = self.y - self.__DIST
+                self.y = self.y - DISTANCIA
                 self.__stamina =  self.__stamina - 1
 
                 return True
@@ -135,11 +147,11 @@ class Player(Entidade):
             elif any(nextrect(self,y= 48).colliderect(paredes[a][b])for a in range(0,len(paredes)) for b in range(0,len(paredes[a]))):
                 pass
             else:
-                self.y += self.__DIST
+                self.y += DISTANCIA
                 self.__stamina -= 1
 
                 return True
-class Ladroes(Entidade):
+class Ladrao(Entidade):
     '''Classe para checar e manipular atributos dos ladrões.
     
     - Parâmetros:
@@ -401,7 +413,7 @@ class Paredes(Entidade):
     
         return self.__listarect
     
-def nextrect(objeto:Player | Ladroes, x:int = 0, y:int = 0) -> pygame.Rect: #x = -48 ou 0 ou 48 | y = -48 ou 0 ou 48 
+def nextrect(objeto:Entidade, x:int = 0, y:int = 0) -> pygame.Rect: #x = -48 ou 0 ou 48 | y = -48 ou 0 ou 48 
     '''Função utilizada para checar futuras colisões.
     
     Cria um rect futuro para o objeto com os parâmetros fornecidos.
@@ -417,6 +429,18 @@ def nextrect(objeto:Player | Ladroes, x:int = 0, y:int = 0) -> pygame.Rect: #x =
     '''
     rect = pygame.Rect(objeto.x+x, objeto.y+y, 48,48)
     return rect
+def check_colision_list(entidade: Entidade, objetos: list[pygame.Rect] | list[list[pygame.Rect]], matriz: bool = False, x: int = 0, y: int = 0):
+    '''Checa se haverá alguma colisão futura com uma lista de rects'''
+    if matriz:
+        for objeto in objetos:
+            for rect in objeto:
+                if nextrect(entidade, x ,y).colliderect(rect):
+                    return True
+    else:
+        for rect in objetos:
+            if nextrect(entidade, x, y).colliderect(rect):
+                return True
+    return False
 
 def random_blood_sprite(sprites: list[pygame.Surface]) -> pygame.Surface:
     rand1 = bool(getrandbits(1))
