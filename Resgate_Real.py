@@ -9,6 +9,58 @@ from modulos import *
 
 # LEMBRAR DE TIRAR OS CHEATS NA VERSÃO FINAL
 
+#region CARREGANDO IMAGENS   
+icone = pygame.image.load('./imagens/Icon.png')
+
+knight = pygame.image.load('./imagens/gameplay/Knight.png')
+knight = pygame.transform.scale(knight, (48,48))
+
+princesa_img = pygame.image.load('./imagens/gameplay/Princesa.png')
+princesa_img = pygame.transform.scale(princesa_img,(48,48))
+
+grama = pygame.image.load('./imagens/gameplay/Grama.png')
+grama = pygame.transform.scale(grama,(48,48))
+
+barreira_img = pygame.image.load('./imagens/gameplay/Preda.png')
+barreira_img = pygame.transform.scale(barreira_img,(48,48))
+
+bomba = pygame.image.load('./imagens/gameplay/Bomba.png')
+bomba = pygame.transform.scale(bomba,(48,48))
+excentro = pygame.image.load('./imagens/gameplay/Excentro.png')
+exlados = pygame.image.load('./imagens/gameplay/Exlados.png')
+
+tenis = pygame.image.load('./imagens/gameplay/Tenis.png')
+tenis = pygame.transform.scale_by(tenis,3)
+heart = pygame.image.load('./imagens/gameplay/Heart.png')
+heart = pygame.transform.scale_by(heart,3)
+
+imajenladron = pygame.transform.scale(pygame.image.load('./imagens/gameplay/Ladrao.png'), (48,48))
+icone = pygame.transform.scale_by(icone,2)
+
+wasd = pygame.image.load('./imagens/info/wasd.png')
+wasd = pygame.transform.scale_by(wasd,4)
+
+setinhas = pygame.image.load('./imagens/info/setinhas.png')
+setinhas = pygame.transform.scale_by(setinhas,4)
+
+espaco = pygame.image.load('./imagens/info/espaco.png')
+espaco = pygame.transform.scale_by(espaco,3)
+
+espaco2 = pygame.image.load('./imagens/info/espaco2.png')
+espaco2 = pygame.transform.scale_by(espaco2,3)
+
+sangueimg = [
+    pygame.transform.scale(pygame.image.load('./imagens/gameplay/Sangue_01.png'),(48,48)),
+    pygame.transform.scale(pygame.image.load('./imagens/gameplay/Sangue_02.png'),(48,48))
+    ]
+
+lkey = pygame.image.load('./imagens/L.png')
+lkey = pygame.transform.scale_by(lkey,4)
+
+rkey = pygame.image.load('./imagens/R.png')
+rkey = pygame.transform.scale_by(rkey,4)
+#endregion CARREGANDO IMAGENS
+
 def jogar():
     '''Função que inicializa o jogo e a interface gráfica'''
 
@@ -22,8 +74,10 @@ def jogar():
         jason.close()
 
     pygame.init() #iniciando o módulo pygame
-     
-    icone = pygame.image.load('imagens/Icon.png')
+    
+    fonte = pygame.font.SysFont('./fonte/PixelGameFont.ttf', 20)
+    fonte2 = pygame.font.SysFont('./fonte/PixelGameFont.ttf', 30)
+    
 
     tela = pygame.display.set_mode((700,700)) #setando resolução da tela
     pygame.display.set_caption('Resgate Real') #nome da janela
@@ -33,119 +87,60 @@ def jogar():
 
     #endregion PREPARAÇÃO DO AMBIENTE
 
-    #region CARREGANDO IMAGENS   
-    knight = pygame.image.load('imagens/gameplay/Knight.png')
-    knight = pygame.transform.scale(knight, (48,48))
-
-    princesa = pygame.image.load('imagens/gameplay/Princesa.png')
-    princesa = pygame.transform.scale(princesa,(48,48))
-
-    grama = pygame.image.load('imagens/gameplay/Grama.png')
-    grama = pygame.transform.scale(grama,(48,48))
-
-    barreira = pygame.image.load('imagens/gameplay/Preda.png')
-    barreira = pygame.transform.scale(barreira,(48,48))
-
-    bomba = pygame.image.load('imagens/gameplay/Bomba.png')
-    bomba = pygame.transform.scale(bomba,(48,48))
-    excentro = pygame.image.load('imagens/gameplay/Excentro.png')
-    exlados = pygame.image.load('imagens/gameplay/Exlados.png')
-
-    tenis = pygame.image.load('imagens/gameplay/Tenis.png')
-    tenis = pygame.transform.scale_by(tenis,3)
-    heart = pygame.image.load('imagens/gameplay/Heart.png')
-    heart = pygame.transform.scale_by(heart,3)
-    
-    imajenladron = pygame.transform.scale(pygame.image.load('imagens/gameplay/Ladrao.png'), (48,48))
-    icone = pygame.transform.scale_by(icone,2)
-
-    fonte = pygame.font.SysFont('fonte/PixelGameFont.ttf',20)
-    fonte2 = pygame.font.SysFont('fonte/PixelGameFont.ttf',30)
-
-    wasd = pygame.image.load('imagens/info/wasd.png')
-    wasd = pygame.transform.scale_by(wasd,4)
-
-    setinhas = pygame.image.load('imagens/info/setinhas.png')
-    setinhas = pygame.transform.scale_by(setinhas,4)
-
-    espaco = pygame.image.load('imagens/info/espaco.png')
-    espaco = pygame.transform.scale_by(espaco,3)
-
-    espaco2 = pygame.image.load('imagens/info/espaco2.png')
-    espaco2 = pygame.transform.scale_by(espaco2,3)
-
-    sangueimg = [
-        pygame.transform.scale(pygame.image.load('imagens/gameplay/Sangue_01.png'),(48,48)),
-        pygame.transform.scale(pygame.image.load('imagens/gameplay/Sangue_02.png'),(48,48))
-        ]
-
-    lkey = pygame.image.load('imagens/L.png')
-    lkey = pygame.transform.scale_by(lkey,4)
-
-    rkey = pygame.image.load('imagens/R.png')
-    rkey = pygame.transform.scale_by(rkey,4)
-    #endregion CARREGANDO IMAGENS
-
     #region PRINCESA
     while True:
-        prinx = 112 + 48*randint(0,9)
-        priny = 112 + 48*randint(0,9)
+        aux = 112 + 48*randint(0,9)
 
-        jgdr1 = Player(112 + 48*randint(0,9), 112 + 48*randint(0,9),vida=4,stamina=20,img=knight)
+        princesa = Entidade(aux, 112 + 48*randint(0,9), princesa_img)
+
+        aux = 112 + 48*randint(0,9)
+
+        player = Player(aux, 112 + 48*randint(0,9), vida=4, stamina=20, img=knight)
         
-        charect = pygame.Rect(jgdr1.x,jgdr1.y,48,48)
-
-        while prinx == jgdr1.x:
+        while princesa.x == player.x:
             random = randint(0,1)
             if random == 0:
-                priny = 112 + 48*randint(0,9)
+                princesa.y = 112 + 48*randint(0,9)
             else:
-                prinx = 112 + 48*randint(0,9)
+                princesa.x = 112 + 48*randint(0,9)
 
-        while priny == jgdr1.y:
+        while princesa.y == player.y:
             random = randint(0,1)
             if random == 0:
-                priny = 112 + 48*randint(0,9)
+                princesa.y = 112 + 48*randint(0,9)
             else:
-                prinx = 112 + 48*randint(0,9)
+                princesa.x = 112 + 48*randint(0,9)
         
-        prinrect = pygame.Rect(prinx,priny,48,48)
-
-        CONDICOES = [charect,prinrect]
+        CONDICOES = [player.get_rect(),princesa.get_rect()]
         #endregion PRINCESA
 
         #region PAREDES
         
-        qntwall = 5
-        rectwall = []
+        QNT_WALL = 5
+        barreiras:list[Barreira] = []
         
-        for a in range(0,qntwall):
-            x = 112 + 48*randint(0,9)
-            y = 112 + 48*randint(0,9)
-
-            rectotal = Paredes(x,y).new_rect()
+        for i in range(0, QNT_WALL):
+            barreira = Barreira(barreira_img)
             
-            while any(rectotal[b].colliderect(CONDICOES[a])for b in range(0,5)for a in range(0,len(CONDICOES))): #or any(rectotal[1].colliderect(condicoes[a])for a in range(0,len(condicoes))):
-                x = 112 + 48*randint(0,9)
-                y = 112 + 48*randint(0,9)
-
-                rectotal = Paredes(x,y).new_rect()
+            while any(barreira.get_rect()[rect].colliderect(CONDICOES[condicao])for rect in range(0,5) for condicao in range(0, len(CONDICOES))): #or any(barreira[1].colliderect(condicoes[a])for a in range(0,len(condicoes))):
+                barreira.new_rect()
                 
-            rectwall.append(rectotal)
+            barreiras.append(barreira)
 
-        ladraoqnt = 4
+        QNT_LADRAO = 4
 
         listaladroes: list[Ladrao]
         listaladroes = []
-        for a in range(0,ladraoqnt):
+        for a in range(0, QNT_LADRAO):
             x = 112+48*randint(0,9)
             y = 112+48*randint(0,9)
             ladrao = Ladrao(x,y,imajenladron)
             thiefrect = ladrao.get_rect()
 
-            while any(thiefrect.colliderect(rectwall[b][c])for b in range(0,qntwall) for c in range(0,5)) or any(thiefrect.colliderect(CONDICOES[d]) for d in range(0,2)):
+            while any(thiefrect.colliderect(barreiras[b].get_rect()[c])for b in range(0,QNT_WALL) for c in range(0,5)) or any(thiefrect.colliderect(CONDICOES[condicao]) for condicao in range(0,len(CONDICOES))):
                 x = 112+48*randint(0,9)
                 y = 112+48*randint(0,9)
+                
                 ladrao = Ladrao(x,y, imajenladron)
                 thiefrect = ladrao.get_rect()
 
@@ -170,9 +165,9 @@ def jogar():
 
         leader = False
 
-        vida_inicial = jgdr1.get_vida()
+        vida_inicial = player.vida
         
-        vigor_inicial = jgdr1.get_stamina()
+        vigor_inicial = player.stamina
 
         #region TELA INFO
         PRESSINICIARTXT = fonte2.render('PRESSIONE QUALQUER TECLA PARA INICIAR',False,'yellow')
@@ -208,15 +203,15 @@ def jogar():
             tela.blit(fonte2.render("A bomba pode explodir inimigos e pedras",False,"orange"),(100, 470))
             tela.blit(fonte2.render("MAS TAMBÉM PODE EXPLODIR VOCÊ E A PRINCESA!!!",False,"red"),(100, 500))
 
-            print_hp(tela, jgdr1, fonte, vida_inicial, 100, 550,heart)
+            print_hp(tela, player, fonte, vida_inicial, 100, 550,heart)
             tela.blit(fonte2.render('Pontos de vida',False,'red'),(335,550))
 
-            print_vigor(tela, jgdr1, fonte, vigor_inicial, 100, 580,tenis)
+            print_vigor(tela, player, fonte, vigor_inicial, 100, 580,tenis)
             tela.blit(fonte2.render('Quantidade de passos restantes',False,'cyan'),(335,580))
 
             tela.blit(OBJETIVOTXT,(tela.get_width()/2 - OBJETIVOTXT.get_width()/2,630))
             tela.blit(knight, (30,620))
-            tela.blit(princesa,(670-princesa.get_width(), 620))
+            tela.blit(princesa_img,(670-princesa_img.get_width(), 620))
             
 
             for event in pygame.event.get():
@@ -290,15 +285,11 @@ def jogar():
             clock.tick(frames)
 
 
-
         bombanatela = False
         explosao = False
         tomou = False
         exdelay = 0
 
-
-        
-        charect = pygame.Rect(jgdr1.x, jgdr1.y, 48, 48)
         #region TELA GAME
 
         
@@ -323,12 +314,12 @@ def jogar():
                 if event.type == pygame.KEYDOWN and not explosao and all(listaTelas[a] == False for a in range(len(listaTelas))):
                     
                     #region Cheats
-                    # if event.key == pygame.K_j:
-                    #     jgdr1.set_stamina(1000000)
-                    #     vigor_inicial = 1000000
-                    # if event.key == pygame.K_v:
-                    #     jgdr1.set_vida(1000000)
-                    #     vida_inicial = 1000000
+                    if event.key == pygame.K_j:
+                        player.stamina = 1000000
+                        vigor_inicial = 1000000
+                    if event.key == pygame.K_v:
+                        player.vida = 1000000
+                        vida_inicial = 1000000
                     #endregion Cheats
 
                     if event.key == pygame.K_r:
@@ -338,14 +329,14 @@ def jogar():
                         leader = False
                         run = False
 
-                    if jgdr1.mover(event.key,rectwall):
+                    if player.mover(event.key, barreiras):
                         for thief in listaladroes:
-                            thief.andar(jgdr1.x, jgdr1.y, listaladroes, rectwall, prinrect)
+                            thief.andar(player.x, player.y, listaladroes, barreiras, princesa.get_rect())
 
                     if event.key == pygame.K_SPACE:
                         if not bombanatela and exdelay == 0:
                             bombanatela = True
-                            posbomba = (charect.x, charect.y)
+                            posbomba = (player.x, player.y)
                         else:
                             exrects = [pygame.Rect(posbomba[0],posbomba[1],48,48)]
                             for a in range(-1,2,2):
@@ -359,15 +350,14 @@ def jogar():
                             bombanatela = False
                             explosao = True
             #endregion EVENTOS
-            charect = pygame.Rect(jgdr1.x, jgdr1.y, 48, 48)
             
-            if charect.colliderect(prinrect):
+            if player.get_rect().colliderect(princesa.get_rect()):
                 run = False
                 ganhou = True
                 pontos += 1500
                 break
                 
-            elif jgdr1.get_vida() <= 0 or jgdr1.get_stamina() <= 0:
+            elif player.vida <= 0 or player.stamina <= 0:
                 run = False
                 perdeu = True
                 break
@@ -383,48 +373,50 @@ def jogar():
                 
             
             for a in range(0,12):
-                tela.blit(barreira,(64+48*a,64))
-                tela.blit(barreira,(64+48*a,592))
-                tela.blit(barreira,(592,64+48*a))
-                tela.blit(barreira,(64,64+48*a))
+                tela.blit(barreira_img, (64+48*a,64))
+                tela.blit(barreira_img, (64+48*a,592))
+                tela.blit(barreira_img, (592,64+48*a))
+                tela.blit(barreira_img, (64,64+48*a))
 
-            for a in range(0,len(rectwall)):
-                for b in range(0,len(rectwall[a])):
-                    tela.blit(barreira,rectwall[a][b])
+            for bar in barreiras:
+                # print(bar.get_rect())
+                # print(range(0,len(bar.get_rect())))
+                
+                for b in range(0, len(bar.get_rect())):
+                    tela.blit(bar.img, bar.get_rect()[b])
+                
                     
             for a in range(0,10):
                 for b in range(0,10):
                     pygame.draw.rect(tela,'black', (pygame.Rect(112+48*a,112+48*b,48,48)),width=1)
 
-            # * jgdr1.get_vida() + pontos * (jgdr1.get_stamina()/10) multiplicadores antigos
             tela.blit(fonte2.render('Score:'+str(int(pontos)),0,'white'),(590,8))
 
-            print_hp(tela, jgdr1, fonte, vida_inicial,15,15,heart)
+            print_hp(tela, player, fonte, vida_inicial,15,15,heart)
             
-            print_vigor(tela,jgdr1,fonte,vigor_inicial,15,35,tenis)
+            print_vigor(tela,player,fonte,vigor_inicial,15,35,tenis)
         
             for sangue in sanguelist:
-                # print(sangue.img)
-                tela.blit(sangue.img, (sangue.x, sangue.y))
+                tela.blit(sangue.img, sangue.get_rect())
 
-            tela.blit(jgdr1.img, charect)
-            tela.blit(princesa, prinrect)
+            tela.blit(player.img, player.get_rect())
+            tela.blit(princesa.img, princesa.get_rect())
             
             for thief in listaladroes:
                 tela.blit(thief.img, thief.get_rect())
-                if thief.get_rect().colliderect(charect):
-                    jgdr1.set_vida(jgdr1.get_vida()-1)
+                if thief.get_rect().colliderect(player.get_rect()):
+                    player.vida =  player.vida - 1
                     listaladroes.remove(thief)
 
                     aux_sangue = random_blood_sprite(sangueimg)
-                    sanguelist.append(Entidade(jgdr1.x, jgdr1.y, aux_sangue))
+                    sanguelist.append(Entidade(player.x, player.y, aux_sangue))
                     pontos -= 250
 
                     danoTomado += 250
             
 
             if bombanatela:
-                tela.blit(bomba,(posbomba))
+                tela.blit(bomba, posbomba)
             elif explosao:
                 
                 for a in range(0,5):
@@ -444,14 +436,14 @@ def jogar():
                             fliphor =pygame.transform.rotate(exlados,90)
                             tela.blit(fliphor,(exrects[a]))
 
-                    if exrects[a].colliderect(prinrect):      
+                    if exrects[a].colliderect(princesa.get_rect()):      
                         run = False 
                         decapitado = True
                         break
 
-                    elif exrects[a].colliderect(charect) and tomou == False:
-                        jgdr1.set_vida(jgdr1.get_vida()-1)
-                        sanguelist.append(Entidade(jgdr1.x, jgdr1.y, random_blood_sprite(sangueimg)))
+                    elif exrects[a].colliderect(player.get_rect()) and tomou == False:
+                        player.vida = player.vida - 1
+                        sanguelist.append(Entidade(player.x, player.y, random_blood_sprite(sangueimg)))
                         tomou = True
                         pontos -= 250
                         danoTomado += 250
@@ -461,18 +453,18 @@ def jogar():
                             pontos += 500
                             killEnemy += 500
 
-                new_wall_rect = []
-                for parede in range(0,len(rectwall)):
-                    new_wall_rect.append(rectwall[parede])
-                    for square in rectwall[parede]:
+                new_barreiras:list[Barreira] = []
+                for parede in range(0,len(barreiras)):
+                    new_barreiras.append(barreiras[parede])
+                    for square in barreiras[parede].get_rect():
                         for a in range(0,5):
                             
                             if exrects[a].colliderect(square):
-                                new_wall_rect[parede].remove(square)
+                                new_barreiras[parede].get_rect().remove(square)
                                 pontos += 250
                                 breakWall += 250
                             
-                rectwall = new_wall_rect
+                barreiras = new_barreiras
                             
                 exdelay += 1/frames
 
@@ -487,7 +479,7 @@ def jogar():
         #endregion TELA GAME
         #region TELAS FINAIS
         if ganhou:
-            newpontos = int((pontos)+pontos/2 * jgdr1.get_vida() + pontos * (jgdr1.get_stamina()/10))
+            newpontos = int((pontos)+pontos/2 * player.vida + pontos * (player.stamina/10))
             # print(pontos)
             # print(newpontos)
 
@@ -535,9 +527,9 @@ def jogar():
             stats = fonte2.render("Estatísticas", False, "white")
             tela.blit(stats,(tela.get_width()/2-stats.get_width()/2, 400))
 
-            rVida = fonte2.render(('Vida restante: '+str(jgdr1.get_vida())),False,'cyan')
+            rVida = fonte2.render(('Vida restante: '+str(player.vida)),False,'cyan')
             tela.blit(rVida,(tela.get_width()/2-rVida.get_width()/2,440))
-            rStamina = fonte2.render(('Stamina restante: '+str(jgdr1.get_stamina())),False,'cyan')
+            rStamina = fonte2.render(('Stamina restante: '+str(player.stamina)),False,'cyan')
             tela.blit(rStamina,(tela.get_width()/2-rStamina.get_width()/2,460))
 
             pPrincesa = fonte2.render('Pontuação por salvar a princesa: 1500',False,'white')
@@ -549,9 +541,9 @@ def jogar():
             pPerdidos = fonte2.render('Pontos perdidos por tomar dano: '+str(danoTomado),False,'red')
             tela.blit(pPerdidos,(tela.get_width()/2-pPerdidos.get_width()/2,560))
             
-            bVida = fonte2.render(('Bônus de pontos por quantidade de vida: '+str(int(pontos/2*jgdr1.get_vida()))),False,'yellow')
+            bVida = fonte2.render(('Bônus de pontos por quantidade de vida: '+str(int(pontos/2*player.vida))),False,'yellow')
             tela.blit(bVida,(tela.get_width()/2-bVida.get_width()/2,600))
-            bStamina = fonte2.render(('Bônus de pontos por quantidade de stamina: '+str(int(pontos * jgdr1.get_stamina()/10))),False,'yellow')
+            bStamina = fonte2.render(('Bônus de pontos por quantidade de stamina: '+str(int(pontos * player.stamina/10))),False,'yellow')
             tela.blit(bStamina,(tela.get_width()/2-bStamina.get_width()/2,620))
             
         

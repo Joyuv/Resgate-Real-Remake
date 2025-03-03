@@ -27,12 +27,12 @@ def print_hp(tela: pygame.Surface, player: Player, fonte: pygame.font, vida_inic
     tela.blit(img, (x,y-5))
     linhavida = pygame.Rect(x+30,y,200,15)
     pygame.draw.rect(tela,'red',linhavida,border_radius=10,width=1)
-    vida = player.get_vida() / vida_inicial
+    vida = player.vida / vida_inicial
     barravida = pygame.Rect(x+30,y,200*vida,15)
     pygame.draw.rect(tela,'#A70505',barravida,border_radius=10)
     barravida.height = 10
     pygame.draw.rect(tela,'#CD0C0C',barravida,border_radius=10)
-    tela.blit(fonte.render(str(player.get_vida()),False,'white'),(x+27+100*vida,y))
+    tela.blit(fonte.render(str(player.vida),False,'white'),(x+27+100*vida,y))
 
 def print_vigor(tela: pygame.Surface, player: Player, fonte: pygame.font, vigor_inicial: int, x:int, y: int, img:pygame.Surface):
     '''Função para exibir a barra de stamina do player
@@ -41,9 +41,9 @@ def print_vigor(tela: pygame.Surface, player: Player, fonte: pygame.font, vigor_
     tela.blit(img, (x+3,y-5))
     linhavigor = pygame.Rect(x+30,y,200,15)
     pygame.draw.rect(tela,'cyan',linhavigor,border_radius=10,width=1)
-    vigor = player.get_stamina() / vigor_inicial
+    vigor = player.stamina / vigor_inicial
     barravigor = pygame.Rect(x+30,y,200*vigor,15)
     pygame.draw.rect(tela,'#00D6D0',barravigor,border_radius=10)
     barravigor.height = 10
     pygame.draw.rect(tela,'cyan',barravigor,border_radius=10)
-    tela.blit(fonte.render(str(player.get_stamina()),False,'black'),(x+27+100*vigor,y))
+    tela.blit(fonte.render(str(player.stamina),False,'black'),(x+27+100*vigor,y))

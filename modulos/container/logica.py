@@ -1,4 +1,3 @@
-
 import pygame
 from random import randint, getrandbits
 
@@ -42,7 +41,42 @@ class Entidade(ABC):
 
     def get_rect(self):
         return pygame.Rect(self.__x, self.y, 48, 48)
+
+class Barreira(Entidade):
+    '''Classe para criar as paredes que ficam no mapa para atrapalhar o jogador.
+
+    - Parâmetros:
+        - x: Coordenada X que a parede ficará.
+        - y: Coordenada Y que a parede ficará.
+    '''
+    def __init__(self, img:pygame.Surface, x:int = -1, y:int = -1) -> None:
+        super().__init__(x, y, img)
+
+        self.__listarect = []
+        self.new_rect()
         
+    def get_rect(self) -> list[pygame.Rect]:
+        return self.__listarect
+
+    def new_rect(self) -> list[pygame.Rect]:
+        '''Cria os rect das paredes com posições aleatórias.
+
+        Cada parede inteira tem 5 rects, que é o de cada quadrado que faz parte dela, assim ela pode
+        ser quebrada pela bomba.
+        '''
+        self.__listarect = []
+
+        x = 112 + 48*randint(0,9)
+        y = 112 + 48*randint(0,9)
+        self.x = x
+        self.y = y
+
+        self.__listarect.append(pygame.Rect(self.x, self.y, 48, 48)) #rect central
+
+        for multiplier in range(-1,2,2):
+            self.__listarect.append(pygame.Rect(self.x-48*multiplier, self.y, 48, 48))
+            self.__listarect.append(pygame.Rect(self.x, self.y-48*multiplier, 48, 48))
+
 class Player(Entidade):
     '''Classe para checar e manipular os atributos do personagem.
     
@@ -56,44 +90,32 @@ class Player(Entidade):
     def __init__(self, x:int, y:int, img:pygame.Surface, vida:int, stamina:int):
         super().__init__(x, y, img)
 
-        self.__olhando = bool(getrandbits(1))
-        self.img = pygame.transform.flip(self.img, self.__olhando, False)
+        self.__flipado = bool(getrandbits(1))
+        self.img = pygame.transform.flip(self.img, self.__flipado, False)
 
         self.__vida = vida
         self.__stamina = stamina
 
-    def get_vida(self) -> int:
-        '''Função para pegar a quantidade de vida do jogador.
-        
-        - Retorna:
-            A quantidade de vida restante do jogador.
-        '''
+    @property
+    def vida(self):
         return self.__vida
-    def get_stamina(self) -> int:
-        '''Função para pegar a quantidade de stamina do jogador.
-        
-        - Retorna:
-            A quantidade de stamina restante do jogador.
-        '''
+    @vida.setter
+    def vida(self, quantidade: int):
+        if quantidade < 0:
+            quantidade = 0
+        self.__vida = quantidade
+
+    @property
+    def stamina(self):
         return self.__stamina
+    @stamina.setter
+    def stamina(self, quantidade: int):
+        if quantidade < 0:
+            quantidade = 0
+        self.__stamina = quantidade
 
-    
-    def set_vida(self,vida:int) -> None:
-        '''Função para definir a quantidade de vida do jogador.
 
-        - Parâmetro: 
-            - vida: A quantidade de vida que o jogador terá após tomar algum dano.
-        '''
-        self.__vida = vida
-    def set_stamina(self,stamina:int) -> None:
-        '''Função para definir a quantidade de stamina do jogador.
-
-        - Parâmetro: 
-            - stamina: A quantidade de vida que o jogador terá após andar.
-        '''
-        self.__stamina = stamina
-
-    def mover(self, key:int, paredes:list[list[pygame.Rect]]):
+    def mover(self, key:int, paredes:list[Barreira]):
         '''Função que move o personagem.
 
         Checa a tecla que foi pressionada, se essa tecla estiver entre as teclas que movem o personagem
@@ -107,12 +129,12 @@ class Player(Entidade):
         '''
         DISTANCIA = 48
         if key == pygame.K_d or key == pygame.K_RIGHT:
-            if self.__olhando == True:
+            if self.__flipado == True:
                     self.img = pygame.transform.flip(self.img, True, False)
-                    self.__olhando = False
+                    self.__flipado = False
             if self.x + 48 >= 590:
                 pass
-            elif any(nextrect(self,x=48).colliderect(paredes[a][b])for a in range(0,len(paredes)) for b in range(0,len(paredes[a]))): 
+            elif any(nextrect(self,x=48).colliderect(paredes[a].get_rect()[b])for a in range(0, len(paredes)) for b in range(0,len(paredes[a].get_rect()))): 
                 pass
             else:
                 self.x = self.x + DISTANCIA
@@ -120,12 +142,12 @@ class Player(Entidade):
 
                 return True
         if key == pygame.K_a or key == pygame.K_LEFT:
-            if self.__olhando == False:
+            if self.__flipado == False:
                     self.img = pygame.transform.flip(self.img, True, False)
-                    self.__olhando = True
+                    self.__flipado = True
             if self.x - 48 <= 110: 
                 pass
-            elif any(nextrect(self,x=-48).colliderect(paredes[a][b])for a in range(0,len(paredes)) for b in range(0,len(paredes[a]))): 
+            elif any(nextrect(self,x=-48).colliderect(paredes[a].get_rect()[b])for a in range(0, len(paredes)) for b in range(0,len(paredes[a].get_rect()))): 
                 pass
             else: 
                 self.x = self.x - DISTANCIA
@@ -134,7 +156,7 @@ class Player(Entidade):
                 return True
         if key == pygame.K_w or key == pygame.K_UP:
             if self.y - 48 < 110: pass
-            elif any(nextrect(self,y=-48).colliderect(paredes[a][b])for a in range(0,len(paredes)) for b in range(0,len(paredes[a]))): 
+            elif any(nextrect(self,y=-48).colliderect(paredes[a].get_rect()[b])for a in range(0, len(paredes)) for b in range(0,len(paredes[a].get_rect()))): 
                 pass
             else: 
                 self.y = self.y - DISTANCIA
@@ -144,7 +166,7 @@ class Player(Entidade):
         if key == pygame.K_s or key == pygame.K_DOWN:
             if self.y + 48 >= 590:
                 pass
-            elif any(nextrect(self,y= 48).colliderect(paredes[a][b])for a in range(0,len(paredes)) for b in range(0,len(paredes[a]))):
+            elif any(nextrect(self,y= 48).colliderect(paredes[a].get_rect()[b])for a in range(0, len(paredes)) for b in range(0,len(paredes[a].get_rect()))):
                 pass
             else:
                 self.y += DISTANCIA
@@ -162,8 +184,8 @@ class Ladrao(Entidade):
     def __init__(self, x:int, y:int, img:pygame.Surface) -> None:
         super().__init__(x, y, img)
 
-        self.__olhando = bool(getrandbits(1))
-        self.img = pygame.transform.flip(self.img, self.__olhando, False)
+        self.__flipado = bool(getrandbits(1))
+        self.img = pygame.transform.flip(self.img, self.__flipado, False)
     
     def get_rect(self) -> pygame.Rect:
         '''Pega o rect do ladrão.
@@ -186,8 +208,8 @@ class Ladrao(Entidade):
                         if 'right' in self.__vaicolidir: pass
                         else: #direita (+48)
                             self.x += 48
-                            if self.__olhando == True:
-                                self.img, self.__olhando = pygame.transform.flip(self.img,True,False), False
+                            if self.__flipado == True:
+                                self.img, self.__flipado = pygame.transform.flip(self.img,True,False), False
                     else: self.y += 48 #desce (+48)
                 else: self.y -= 48 #sobe (-48)
             else:
@@ -196,14 +218,14 @@ class Ladrao(Entidade):
                         if 'right' in self.__vaicolidir: pass
                         else: #direita (+48)
                             self.x += 48
-                            if self.__olhando == True:
-                                self.img, self.__olhando = pygame.transform.flip(self.img,True,False), False
+                            if self.__flipado == True:
+                                self.img, self.__flipado = pygame.transform.flip(self.img,True,False), False
                     else: self.y -= 48 #sobe (-48)
                 else: self.y += 48 #desce (+48)                    
         else: #Esquerda (-48)
             self.x -=48
-            if self.__olhando == False:
-                self.img, self.__olhando = pygame.transform.flip(self.img,True,False), True
+            if self.__flipado == False:
+                self.img, self.__flipado = pygame.transform.flip(self.img,True,False), True
     def h_right(self, chary: int):
         '''Parte do movimento horizontal do ladrão.
 
@@ -217,8 +239,8 @@ class Ladrao(Entidade):
                         if 'left' in self.__vaicolidir: pass
                         else: #esquerda (-48)
                             self.x -= 48
-                            if self.__olhando == False:
-                                self.img, self.__olhando = pygame.transform.flip(self.img,True,False), True
+                            if self.__flipado == False:
+                                self.img, self.__flipado = pygame.transform.flip(self.img,True,False), True
                     else: self.y += 48 #desce (+48)
                 else: self.y -= 48 #sobe (-48)                       
             else:
@@ -227,14 +249,14 @@ class Ladrao(Entidade):
                         if 'left' in self.__vaicolidir: pass
                         else: #esquerda (-48)
                             self.x -= 48
-                            if self.__olhando == False:
-                                self.img, self.__olhando = pygame.transform.flip(self.img,True,False), True
+                            if self.__flipado == False:
+                                self.img, self.__flipado = pygame.transform.flip(self.img,True,False), True
                     else: self.y -= 48 #sobe (-48)
                 else: self.y += 48 #desce (+48)
         else: #Direita (-48)
             self.x +=48
-            if self.__olhando == True:
-                self.img, self.__olhando = pygame.transform.flip(self.img,True,False), False
+            if self.__flipado == True:
+                self.img, self.__flipado = pygame.transform.flip(self.img,True,False), False
     def v_up(self, charx: int):
         '''Parte do movimento vertical do ladrão.
 
@@ -249,12 +271,12 @@ class Ladrao(Entidade):
                         else: self.y += 48 #baixo (+48)
                     else: #esquerda (-48)
                         self.x -= 48
-                        if self.__olhando == False:
-                            self.img, self.__olhando = pygame.transform.flip(self.img,True,False), True
+                        if self.__flipado == False:
+                            self.img, self.__flipado = pygame.transform.flip(self.img,True,False), True
                 else: #direita (+48)
                     self.x += 48
-                    if self.__olhando == True:
-                        self.img, self.__olhando = pygame.transform.flip(self.img,True,False), False     
+                    if self.__flipado == True:
+                        self.img, self.__flipado = pygame.transform.flip(self.img,True,False), False     
             else:
                 if 'left' in self.__vaicolidir:
                     if 'right' in self.__vaicolidir:
@@ -262,12 +284,12 @@ class Ladrao(Entidade):
                         else: self.y += 48 #desce (+48)
                     else: #direita (+48)
                         self.x += 48
-                        if self.__olhando == True:
-                            self.img, self.__olhando = pygame.transform.flip(self.img,True,False), False
+                        if self.__flipado == True:
+                            self.img, self.__flipado = pygame.transform.flip(self.img,True,False), False
                 else: #esquerda (-48)
                     self.x -= 48
-                    if self.__olhando == False:
-                        self.img, self.__olhando = pygame.transform.flip(self.img,True,False), True
+                    if self.__flipado == False:
+                        self.img, self.__flipado = pygame.transform.flip(self.img,True,False), True
         else: self.y -=48 #cima (-48)
     def v_down(self, charx: int):
         '''Parte do movimento vertical do ladrão.
@@ -283,12 +305,12 @@ class Ladrao(Entidade):
                         else: self.y -= 48 #cima (-48)
                     else: #esquerda (-48)
                         self.x -= 48
-                        if self.__olhando == False:
-                            self.img, self.__olhando = pygame.transform.flip(self.img,True,False), True
+                        if self.__flipado == False:
+                            self.img, self.__flipado = pygame.transform.flip(self.img,True,False), True
                 else: #direita (+48)
                     self.x += 48
-                    if self.__olhando == True:
-                        self.img, self.__olhando = pygame.transform.flip(self.img,True,False), False
+                    if self.__flipado == True:
+                        self.img, self.__flipado = pygame.transform.flip(self.img,True,False), False
             else:
                 if 'left' in self.__vaicolidir:
                     if 'right' in self.__vaicolidir:
@@ -296,12 +318,12 @@ class Ladrao(Entidade):
                         else: self.y -= 48 #sobe (-48)                                      
                     else: #direita (+48)
                         self.x += 48
-                        if self.__olhando == True:
-                            self.img, self.__olhando = pygame.transform.flip(self.img,True,False), False                                       
+                        if self.__flipado == True:
+                            self.img, self.__flipado = pygame.transform.flip(self.img,True,False), False                                       
                 else: #esquerda (-48)
                     self.x -= 48
-                    if self.__olhando == False:
-                            self.img, self.__olhando = pygame.transform.flip(self.img,True,False), True                                                                                 
+                    if self.__flipado == False:
+                            self.img, self.__flipado = pygame.transform.flip(self.img,True,False), True                                                                                 
         else: self.y +=48 #baixo (+48)
     def horizontal(self, charx:int, chary:int):
         '''Função que junta os movimentos horizontais.
@@ -333,7 +355,7 @@ class Ladrao(Entidade):
                 self.v_up(charx)
             elif self.y < chary:#andando pra baixo(+48)
                 self.v_down(charx)
-    def andar(self,charx:int, chary:int, thiefs:list, paredes:list[list[pygame.Rect]], princesa:pygame.Rect) -> None:
+    def andar(self,charx:int, chary:int, thiefs:list, paredes:list[Barreira], princesa:pygame.Rect) -> None:
         '''Função que move o ladrão, 
         
         Se utiliza de uma variável chamada "vaicolidir" que é uma lista das direções que o ladrão 
@@ -348,13 +370,14 @@ class Ladrao(Entidade):
             - princesa: Rect da princesa.
         '''
         self.__vaicolidir = []
-        if any(nextrect(self,x=48).colliderect(barreira[a]) for barreira in paredes for a in range(0,len(barreira))) or any(nextrect(self,x=48).colliderect(thiefs[t].get_rect())for t in range(0,len(thiefs))):
+
+        if any(nextrect(self,x=48).colliderect(barreira.get_rect()[a]) for barreira in paredes for a in range(0,len(barreira.get_rect()))) or any(nextrect(self,x=48).colliderect(thiefs[t].get_rect())for t in range(0,len(thiefs))):
             self.__vaicolidir.append('right')
-        if any(nextrect(self,x=-48).colliderect(barreira[a]) for barreira in paredes for a in range(0,len(barreira))) or any(nextrect(self,x=-48).colliderect(thiefs[t].get_rect())for t in range(0,len(thiefs))):
+        if any(nextrect(self,x=-48).colliderect(barreira.get_rect()[a]) for barreira in paredes for a in range(0,len(barreira.get_rect()))) or any(nextrect(self,x=-48).colliderect(thiefs[t].get_rect())for t in range(0,len(thiefs))):
             self.__vaicolidir.append('left')
-        if any(nextrect(self,y=-48).colliderect(barreira[a]) for barreira in paredes for a in range(0,len(barreira))) or any(nextrect(self,y=-48).colliderect(thiefs[t].get_rect())for t in range(0,len(thiefs))):
+        if any(nextrect(self,y=-48).colliderect(barreira.get_rect()[a]) for barreira in paredes for a in range(0,len(barreira.get_rect()))) or any(nextrect(self,y=-48).colliderect(thiefs[t].get_rect())for t in range(0,len(thiefs))):
             self.__vaicolidir.append('up')
-        if any(nextrect(self,y=48).colliderect(barreira[a]) for barreira in paredes for a in range(0,len(barreira))) or any(nextrect(self,y=48).colliderect(thiefs[t].get_rect())for t in range(0,len(thiefs))):
+        if any(nextrect(self,y=48).colliderect(barreira.get_rect()[a]) for barreira in paredes for a in range(0,len(barreira.get_rect()))) or any(nextrect(self,y=48).colliderect(thiefs[t].get_rect())for t in range(0,len(thiefs))):
             self.__vaicolidir.append('down')
         if self.x +48 >= 590 or nextrect(self,x=48).colliderect(princesa):
             self.__vaicolidir.append('right')
@@ -378,41 +401,6 @@ class Ladrao(Entidade):
             elif self.y != chary and not self.x != charx:
                 self.vertical(charx,chary)           
 
-class Paredes(Entidade):
-    '''Classe para criar as paredes que ficam no mapa para atrapalhar o jogador.
-
-    - Parâmetros:
-        - x: Coordenada X que a parede ficará.
-        - y: Coordenada Y que a parede ficará.
-    '''
-    def __init__(self, x:int, y:int, img = pygame.Surface) -> None:
-        super().__init__(x, y, img)
-        
-    def get_rect(self):
-        return self.__listarect
-    
-    def new_rect(self) -> list[pygame.Rect]:
-        '''Cria os rect das paredes com os parâmetros dados inicialmente.
-
-        Cada parede inteira tem 5 rects, que é o de cada quadrado que faz parte dela, assim ela pode
-        ser quebrada pela bomba.
-        
-        - Retorna:
-            A lista com os rect da parede.
-        '''
-        self.__listarect = []
-        self.__rect0 = pygame.Rect(self.x,self.y,48, 48)
-        self.__listarect.append(self.__rect0)
-
-        for multiplier in range(-1,2,2):
-            self.__rect1 = pygame.Rect(self.x-48*multiplier, self.y, 48, 48)
-            self.__rect2 = pygame.Rect(self.x, self.y-48*multiplier, 48,48)
-    
-            self.__listarect.append(self.__rect1)
-            self.__listarect.append(self.__rect2)
-    
-        return self.__listarect
-    
 def nextrect(objeto:Entidade, x:int = 0, y:int = 0) -> pygame.Rect: #x = -48 ou 0 ou 48 | y = -48 ou 0 ou 48 
     '''Função utilizada para checar futuras colisões.
     
@@ -429,6 +417,7 @@ def nextrect(objeto:Entidade, x:int = 0, y:int = 0) -> pygame.Rect: #x = -48 ou 
     '''
     rect = pygame.Rect(objeto.x+x, objeto.y+y, 48,48)
     return rect
+
 def check_colision_list(entidade: Entidade, objetos: list[pygame.Rect] | list[list[pygame.Rect]], matriz: bool = False, x: int = 0, y: int = 0):
     '''Checa se haverá alguma colisão futura com uma lista de rects'''
     if matriz:
